@@ -62,4 +62,64 @@ class MemberServiceTest {
         assertThatThrownBy(() -> memberService.save(requestDto))
                 .isInstanceOf(DuplicatedMemberEmailException.class);
     }
+    
+    @Test
+    @DisplayName("회원가입 - 이메일 @ 누락 예외")
+    void validateEmailTest1() {
+        // given
+        MemberSaveRequestDto requestDto = MemberSaveRequestDto.builder()
+                .name("홍길동")
+                .email("hong")
+                .password("!Test123")
+                .build();
+        
+        // when
+        assertThatThrownBy(() -> memberService.save(requestDto))
+                .isInstanceOf(NotValidateEmailException.class);
+    }
+    
+    @Test
+    @DisplayName("회원가입 - 이메일 local 누락 예외")
+    void validateEmailTest2() {
+        // given
+        MemberSaveRequestDto requestDto = MemberSaveRequestDto.builder()
+                .name("홍길동")
+                .email("@test.com")
+                .password("!Test123")
+                .build();
+        
+        // when
+        assertThatThrownBy(() -> memberService.save(requestDto))
+                .isInstanceOf(NotValidateEmailException.class);
+    }
+    
+    @Test
+    @DisplayName("회원가입 - 이메일 domain 누락 예외")
+    void validateEmailTest3() {
+        // given
+        MemberSaveRequestDto requestDto = MemberSaveRequestDto.builder()
+                .name("홍길동")
+                .email("hong@test")
+                .password("!Test123")
+                .build();
+        
+        // when
+        assertThatThrownBy(() -> memberService.save(requestDto))
+                .isInstanceOf(NotValidateEmailException.class);
+    }
+    
+    @Test
+    @DisplayName("회원가입 - 이메일 domain 누락 예외2")
+    void validateEmailTest4() {
+        // given
+        MemberSaveRequestDto requestDto = MemberSaveRequestDto.builder()
+                .name("홍길동")
+                .email("hong@test.")
+                .password("!Test123")
+                .build();
+        
+        // when
+        assertThatThrownBy(() -> memberService.save(requestDto))
+                .isInstanceOf(NotValidateEmailException.class);
+    }
 }
