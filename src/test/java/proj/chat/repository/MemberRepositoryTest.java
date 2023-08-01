@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import proj.chat.entity.Member;
 
 @SpringBootTest
-@Transactional(readOnly = true)
+@Transactional
 class MemberRepositoryTest {
     
     @Autowired
