@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @Getter
@@ -35,5 +36,23 @@ public class Member extends BaseTimeEntity {
         this.name = name;
         this.email = email;
         this.password = password;
+    }
+    
+    /**
+     * 비밀번호 암호화
+     * @param passwordEncoder 암호화에 사용할 인코더 클래스
+     */
+    public void hashPassword(PasswordEncoder passwordEncoder) {
+        password = passwordEncoder.encode(password);
+    }
+    
+    /**
+     * 비밀번호 일치 확인
+     * @param plainPassword 암호화되지 않은 비밀빈호
+     * @param passwordEncoder 암호화에 사용한 인코더 클래스
+     * @return 비밀번호 일치 여부(true/false)
+     */
+    public boolean checkPassword(String plainPassword, PasswordEncoder passwordEncoder) {
+        return passwordEncoder.matches(plainPassword, password);
     }
 }
