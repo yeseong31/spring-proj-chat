@@ -45,4 +45,21 @@ class MemberServiceTest {
         // then
         assertThat(responseDto.getEmail()).isEqualTo("hong@test.com");
     }
+    
+    @Test
+    @DisplayName("회원가입 - 중복 회원 예외")
+    void duplicateMember() {
+        // given
+        MemberSaveRequestDto requestDto = MemberSaveRequestDto.builder()
+                .name("홍길동")
+                .email("hong@test.com")
+                .password("!Test123")
+                .build();
+        
+        memberService.save(requestDto);
+        
+        // when
+        assertThatThrownBy(() -> memberService.save(requestDto))
+                .isInstanceOf(DuplicatedMemberEmailException.class);
+    }
 }
