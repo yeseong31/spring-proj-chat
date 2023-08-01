@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base :: layout(~{::title}, ~{::section}, ~{::link})}"
+      lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>채팅 페이지</title>
+  <!-- Custom CSS -->
+  <link th:href="@{/css/chat.css}" rel="stylesheet">
+</head>
+<body>
+
+<section>
+  <div class="container py-5" data-bs-theme="dark">
+    <div class="row d-flex justify-content-center">
+      <div class="col-md-10 col-lg-8 col-xl-10">
+        <!-- Card -->
+        <div class="card" id="chat2" style="min-height: 1000px; max-height: 1000px">
+          <!-- Card Header -->
+          <div class="card-header d-flex justify-content-between align-items-center p-3">
+            <h4 class="mb-0">Chat</h4>
+            <button type="button" class="btn btn-danger btn-sm">나가기</button>
+          </div>
+          <!-- Card Body -->
+          <div class="card-body overflow-auto" style="position: relative; flex-direction: column-reverse">
+            
+            <!-- 상대방 -->
+            <div class="d-flex flex-row justify-content-start">
+              <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp"
+                   alt="avatar 1" style="width: 45px; height: 100%;">
+              <div>
+                <p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #f5f6f7; color: black">Hi</p>
+                <p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #f5f6f7; color: black">How are you ...???</p>
+                <p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #f5f6f7; color: black">What are you doing tomorrow? Can we come up a bar?</p>
+                <p class="small ms-3 mb-3 rounded-3 text-muted d-flex">23:58</p>
+              </div>
+            </div>
+            
+            <!-- 구분선(Today) -->
+            <div class="divider align-items-center mb-4">
+              <p class="text-center mx-3 mb-0" style="color: #a2aab7;">Today</p>
+            </div>
+            
+            <!-- 본인 -->
+            <div class="d-flex flex-row justify-content-end mb-4 pt-1">
+              <div>
+                <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">Hiii, I'm good.</p>
+                <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">How are you doing?</p>
+                <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">Long time no see! Tomorrow office. will be free on sunday.</p>
+                <p class="small me-3 mb-3 rounded-3 text-muted d-flex justify-content-end">00:06</p>
+              </div>
+              <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava4-bg.webp"
+                   alt="avatar 1" style="width: 45px; height: 100%;">
+            </div>
+          
+          </div><!-- end Card Body -->
+          <div class="card-footer text-muted d-flex justify-content-start align-items-center p-3">
+            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp"
+                 alt="avatar 3" style="width: 40px; height: 100%;">
+            <label for="exampleFormControlInput1"></label>
+            <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="메시지를 입력해주세요" style="margin: 0 10px">
+            <a class="ms-1 text-muted" href="#!"><i class="fas fa-paperclip"></i></a>
+            <a class="ms-3" href="#!"><i class="fas fa-paper-plane"></i></a>
+          </div>
+        </div><!-- end Card -->
+      
+      </div>
+    </div>
+  
+  </div>
+</section>
+
+</body>
+</html>
