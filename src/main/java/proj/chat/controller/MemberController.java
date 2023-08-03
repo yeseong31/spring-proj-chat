@@ -1,7 +1,12 @@
 package proj.chat.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -62,5 +67,19 @@ public class MemberController {
     @GetMapping("/login")
     public String loginForm(@ModelAttribute LoginRequestDto loginRequestDto) {
         return "login";
+    }
+    
+    /**
+     * 로그아웃
+     */
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        if (authentication != null) {
+            new SecurityContextLogoutHandler().logout(request, response, authentication);
+        }
+        
+        return "redirect:/";
     }
 }
