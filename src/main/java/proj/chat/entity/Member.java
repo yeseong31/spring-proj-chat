@@ -10,11 +10,13 @@ import jakarta.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
+@ToString(exclude = "password")
 public class Member extends BaseTimeEntity {
     
     @Id

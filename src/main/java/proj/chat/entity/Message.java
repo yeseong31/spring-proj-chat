@@ -13,10 +13,12 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
+@ToString(exclude = {"member", "room"})
 public class Message {
     
     @Id
