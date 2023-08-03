@@ -25,8 +25,8 @@ public class Room extends BaseEntity {
     @Column(nullable = false)
     private String name;
     
-    @Builder.Default()
-    private int maxCount = 10;
+    @Column(columnDefinition = "integer default 25")
+    private int maxCount;
     private int count;
     
     @Builder
