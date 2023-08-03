@@ -31,7 +31,7 @@ public class SecurityConfig {
                         .loginProcessingUrl("/auth/v1/login")
                         .usernameParameter("email")
                         .passwordParameter("password")
-                        .defaultSuccessUrl("/auth/v1/signup", true)
+                        .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
                 .logout(logout -> logout
