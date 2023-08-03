@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import proj.chat.dto.LoginRequestDto;
 import proj.chat.dto.MemberSaveRequestDto;
 import proj.chat.service.MemberService;
 
@@ -53,5 +54,13 @@ public class MemberController {
         log.info("회원가입 왼료: ID={}", savedId);
     
         return "redirect:" + redirectUrl;
+    }
+    
+    /**
+     * 로그인(GET)
+     */
+    @GetMapping("/login")
+    public String loginForm(@ModelAttribute LoginRequestDto loginRequestDto) {
+        return "login";
     }
 }
