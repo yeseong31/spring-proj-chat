@@ -9,6 +9,7 @@ lib/
 **/src/main/generated/
 env.properties
 src/main/resources/static/image/**
+spy.log
 
 ### STS ###
 .apt_generated
