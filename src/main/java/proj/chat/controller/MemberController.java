@@ -8,9 +8,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import proj.chat.dto.LoginRequestDto;
 import proj.chat.dto.MemberSaveRequestDto;
 import proj.chat.service.MemberService;
+import proj.chat.validator.MemberSaveRequestDtoValidator;
 
 @Slf4j
 @Controller
@@ -26,6 +29,13 @@ import proj.chat.service.MemberService;
 public class MemberController {
     
     private final MemberService memberService;
+    private final MemberSaveRequestDtoValidator memberSaveRequestDtoValidator;
+    
+    @InitBinder("memberSaveRequestDto")
+    public void initBinder(WebDataBinder webDataBinder) {
+        // memberSaveRequestDto 객체를 받을 때 자동으로 검증이 들어감
+        webDataBinder.addValidators(memberSaveRequestDtoValidator);
+    }
     
     /**
      * 회원가입(GET)
@@ -40,24 +50,17 @@ public class MemberController {
      */
     @PostMapping("/signup")
     public String signup(
-            @Validated @ModelAttribute MemberSaveRequestDto dto, BindingResult bindingResult,
+            @Validated @ModelAttribute MemberSaveRequestDto dto, Errors errors,
             @RequestParam(defaultValue = "/") String redirectUrl) {
-    
-        if (bindingResult.hasErrors()) {
+        
+        if (errors.hasErrors()) {
             return "signup";
         }
         
-        // 비밀번호가 일치하지 않는 경우
-        if (!dto.getPassword().equals(dto.getMatchingPassword())) {
-            bindingResult.rejectValue("matchingPassword", "passwordIncorrect",
-                    "비밀번호가 일치하지 않습니다");
-            return "signup";
-        }
-    
         // 회원가입 진행
         Long savedId = memberService.save(dto);
         log.info("회원가입 왼료: ID={}", savedId);
-    
+        
         return "redirect:" + redirectUrl;
     }
     
