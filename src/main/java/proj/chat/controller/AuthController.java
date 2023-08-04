@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -26,10 +27,11 @@ import proj.chat.validator.MemberSaveRequestDtoValidator;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/auth/v1")
-public class MemberController {
+public class AuthController {
     
-    private final MemberService memberService;
     private final MemberSaveRequestDtoValidator memberSaveRequestDtoValidator;
+    private final JavaMailSender javaMailSender;
+    private final MemberService memberService;
     
     @InitBinder("memberSaveRequestDto")
     public void initBinder(WebDataBinder webDataBinder) {
