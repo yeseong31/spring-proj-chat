@@ -3,6 +3,7 @@ package proj.chat.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,9 @@ import proj.chat.entity.Member;
 public class MemberSaveRequestDto {
 
     @NotBlank(message = "이름을 입력해주세요")
+    @Length(min = 3, max = 20)
+    @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-z0-9_-]{3,20}$",
+            message = "엉어, 숫자, 한글, 언더바(_), 대시(-)만 입력할 수 있습니다")
     private String name;
     
     @NotEmpty(message = "이메일을 입력해주세요")
