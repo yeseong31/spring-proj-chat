@@ -38,6 +38,12 @@ body {
   border-top-right-radius: 0;
 }
 
+.form-login input[id="verificationToken"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
 .btn-nav-login {
   --bs-btn-padding-y: .25rem;
   --bs-btn-padding-x: .5rem;
