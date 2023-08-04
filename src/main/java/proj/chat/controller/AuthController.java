@@ -26,7 +26,7 @@ import proj.chat.validator.MemberSaveRequestDtoValidator;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/auth/v1")
+@RequestMapping("/auth")
 public class AuthController {
     
     private final MemberSaveRequestDtoValidator memberSaveRequestDtoValidator;

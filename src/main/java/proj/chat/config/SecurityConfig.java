@@ -23,19 +23,19 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
                         .requestMatchers("/", "/home", "/image/**", "/css/**", "/js/**",
-                                "/auth/v1/login", "/auth/v1/signup").permitAll()
+                                "/auth/login", "/auth/signup").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
-                        .loginPage("/auth/v1/login")
-                        .loginProcessingUrl("/auth/v1/login")
+                        .loginPage("/auth/login")
+                        .loginProcessingUrl("/auth/login")
                         .usernameParameter("email")
                         .passwordParameter("password")
                         .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/auth/v1/logout")
+                        .logoutUrl("/auth/logout")
                         .logoutSuccessUrl("/")
                         .logoutSuccessHandler((request, response, authentication)
                                 -> response.setStatus(HttpServletResponse.SC_OK))
