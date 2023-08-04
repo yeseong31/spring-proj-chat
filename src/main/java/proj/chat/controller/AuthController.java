@@ -4,11 +4,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import proj.chat.dto.EmailVerificationDto;
 import proj.chat.dto.LoginRequestDto;
 import proj.chat.dto.MemberSaveRequestDto;
+import proj.chat.service.MailService;
 import proj.chat.service.MemberService;
 import proj.chat.validator.MemberSaveRequestDtoValidator;
 
@@ -30,8 +32,8 @@ import proj.chat.validator.MemberSaveRequestDtoValidator;
 public class AuthController {
     
     private final MemberSaveRequestDtoValidator memberSaveRequestDtoValidator;
-    private final JavaMailSender javaMailSender;
     private final MemberService memberService;
+    private final MailService mailService;
     
     @InitBinder("memberSaveRequestDto")
     public void initBinder(WebDataBinder webDataBinder) {
@@ -53,7 +55,7 @@ public class AuthController {
     @PostMapping("/signup")
     public String signup(
             @Validated @ModelAttribute MemberSaveRequestDto dto, Errors errors,
-            @RequestParam(defaultValue = "/") String redirectUrl) {
+            @RequestParam(defaultValue = "/") String redirectUrl, Model model) throws Exception {
         
         if (errors.hasErrors()) {
             return "signup";
@@ -61,9 +63,21 @@ public class AuthController {
         
         // 회원가입 진행
         Long savedId = memberService.save(dto);
-        log.info("회원가입 왼료: ID={}", savedId);
+        log.info("회원가입 완료: ID={}", savedId);
+    
+        // 이메일 인증 준비
+        EmailVerificationDto emailVerificationDto = new EmailVerificationDto();
+        emailVerificationDto.setEmail(dto.getEmail());
+    
+        model.addAttribute("emailVerificationDto", emailVerificationDto);
         
-        return "redirect:" + redirectUrl;
+        // 이메일 인증 코드 발송
+        String token = mailService.sendSimpleMessage(dto.getEmail());
+        log.info("이메일 인증 코드 발송: {}", token);
+        
+        // 이메일 인증 관련 내용 저장
+        
+        return "email-verification";
     }
     
     /**
