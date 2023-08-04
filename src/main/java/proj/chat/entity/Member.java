@@ -33,6 +33,9 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false)
     private String password;
     
+    @Column(columnDefinition = "boolean default false")
+    private boolean isActive;
+    
     @Builder
     public Member(String name, String email, String password) {
         this.name = name;
