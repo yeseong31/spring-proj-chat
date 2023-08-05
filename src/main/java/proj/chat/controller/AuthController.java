@@ -18,9 +18,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import proj.chat.dto.EmailVerificationDto;
+import proj.chat.dto.EmailVerificationRequestDto;
+import proj.chat.dto.EmailVerificationResponseDto;
 import proj.chat.dto.LoginRequestDto;
 import proj.chat.dto.MemberSaveRequestDto;
+import proj.chat.service.EmailTokenService;
 import proj.chat.service.MailService;
 import proj.chat.service.MemberService;
 import proj.chat.validator.MemberSaveRequestDtoValidator;
@@ -32,6 +34,7 @@ import proj.chat.validator.MemberSaveRequestDtoValidator;
 public class AuthController {
     
     private final MemberSaveRequestDtoValidator memberSaveRequestDtoValidator;
+    private final EmailTokenService emailTokenService;
     private final MemberService memberService;
     private final MailService mailService;
     
@@ -54,7 +57,7 @@ public class AuthController {
      */
     @PostMapping("/signup")
     public String signup(
-            @Validated @ModelAttribute MemberSaveRequestDto dto, Errors errors,
+            @Validated @ModelAttribute MemberSaveRequestDto requestDto, Errors errors,
             @RequestParam(defaultValue = "/") String redirectUrl, Model model) throws Exception {
         
         if (errors.hasErrors()) {
@@ -62,20 +65,26 @@ public class AuthController {
         }
         
         // 회원가입 진행
-        Long savedId = memberService.save(dto);
-        log.info("회원가입 완료: ID={}", savedId);
+        Long savedMemberId = memberService.save(requestDto);
+        log.info("회원가입 완료: ID={}", savedMemberId);
     
         // 이메일 인증 준비
-        EmailVerificationDto emailVerificationDto = new EmailVerificationDto();
-        emailVerificationDto.setEmail(dto.getEmail());
+        EmailVerificationRequestDto emailVerificationRequestDto = new EmailVerificationRequestDto();
+        emailVerificationRequestDto.setEmail(requestDto.getEmail());
     
-        model.addAttribute("emailVerificationDto", emailVerificationDto);
-        
+    
         // 이메일 인증 코드 발송
-        String token = mailService.sendSimpleMessage(dto.getEmail());
-        log.info("이메일 인증 코드 발송: {}", token);
+        String token = mailService.sendSimpleMessage(requestDto.getEmail());
+        emailVerificationRequestDto.setVerificationToken(token);
+    
+        // 이메일 인증 정보 저장
+        Long savedEmailTokenId = emailTokenService.save(emailVerificationRequestDto);
+    
+        // 응답 DTO 구성
+        EmailVerificationResponseDto responseDto = new EmailVerificationResponseDto();
+        responseDto.setEmail(requestDto.getEmail());
         
-        // 이메일 인증 관련 내용 저장
+        model.addAttribute("emailVerificationResponseDto", responseDto);
         
         return "email-verification";
     }
