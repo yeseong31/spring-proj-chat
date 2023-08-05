@@ -13,9 +13,9 @@
 <body class="d-flex align-items-center py-4 bg-body-tertiary" data-bs-theme="light">
 
 <main class="form-login w-100 m-auto">
-  <form action="email-verification.html" th:action="@{/auth/email-verification}" th:object="${emailVerificationDto}" method="post">
+  <form action="email-verification.html" th:action="@{/auth/email-verification}" th:object="${emailVerificationResponseDto}" method="post">
     <img class="mb-4 form-logo" src="/static/image/logo.png" th:src="@{/image/logo.png}"
-         th:onclick="|location.href='@{/}'|" alt="로고" width="296">
+         th:onclick="|location.href='@{/auth/login}'|" alt="로고" width="296">
     <!-- errors -->
     <div th:if="${param.error}">
       <div class="alert alert-danger" style="margin-bottom: 10px">
@@ -33,7 +33,7 @@
       <label for="email">이메일</label>
     </div>
     <div class="form-floating">
-      <input type="text" class="form-control" id="verificationToken" th:field="*{verificationToken}" placeholder="Password">
+      <input type="text" class="form-control" id="verificationToken" placeholder="Password">
       <label for="verificationToken">인증 코드</label>
     </div>
     <button class="btn btn-primary w-100 py-2" type="submit">인증</button>
