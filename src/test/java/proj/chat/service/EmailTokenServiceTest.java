@@ -41,7 +41,7 @@ class EmailTokenServiceTest {
         
         EmailVerificationRequestDto emailRequestDto = EmailVerificationRequestDto.builder()
                 .email(email)
-                .verificationToken(UUID.randomUUID().toString().substring(0, 8))
+                .token(UUID.randomUUID().toString().substring(0, 8))
                 .build();
         
         emailTokenService.save(emailRequestDto);

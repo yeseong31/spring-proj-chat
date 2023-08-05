@@ -21,18 +21,18 @@ public class EmailVerificationRequestDto {
     private String email;
     
     @NotEmpty(message = "인증 번호를 입력해주세요")
-    private String verificationToken;
+    private String token;
     
     @Builder
-    public EmailVerificationRequestDto(String email, String verificationToken) {
+    public EmailVerificationRequestDto(String email, String token) {
         this.email = email;
-        this.verificationToken = verificationToken;
+        this.token = token;
     }
     
     public EmailToken dtoToEntity() {
         return EmailToken.builder()
-                .verificationToken(verificationToken)
-                .verificationTokenTime(LocalDateTime.now())
+                .token(token)
+                .tokenTime(LocalDateTime.now())
                 .expirationTime(LocalDateTime.now().plusMinutes(5))  // 토큰 유효시간: 5분
                 .build();
     }

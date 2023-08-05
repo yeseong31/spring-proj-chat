@@ -38,12 +38,12 @@ public class EmailTokenService {
         emailToken.registerMember(findMember);
         
         log.info("email: {}", emailToken.getMember());
-        log.info("token: {}", emailToken.getVerificationToken());
+        log.info("token: {}", emailToken.getToken());
     
         // 인증 코드 암호화
         emailToken.hashVerificationToken(passwordEncoder);
     
-        log.info("token: {}", emailToken.getVerificationToken());
+        log.info("token: {}", emailToken.getToken());
         
         return emailTokenRepository.save(emailToken).getId();
     }
