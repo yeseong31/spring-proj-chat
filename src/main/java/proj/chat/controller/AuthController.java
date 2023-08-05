@@ -41,6 +41,7 @@ public class AuthController {
     @InitBinder("memberSaveRequestDto")
     public void initBinder(WebDataBinder webDataBinder) {
         // memberSaveRequestDto 객체를 받을 때 자동으로 검증이 들어감
+        log.info("init binder = {}", webDataBinder);
         webDataBinder.addValidators(memberSaveRequestDtoValidator);
     }
     
@@ -61,6 +62,7 @@ public class AuthController {
             @RequestParam(defaultValue = "/") String redirectUrl, Model model) throws Exception {
         
         if (errors.hasErrors()) {
+            log.info("errors={}", errors);
             return "signup";
         }
         
@@ -75,7 +77,7 @@ public class AuthController {
     
         // 이메일 인증 코드 발송
         String token = mailService.sendSimpleMessage(requestDto.getEmail());
-        emailVerificationRequestDto.setVerificationToken(token);
+        emailVerificationRequestDto.setToken(token);
     
         // 이메일 인증 정보 저장
         Long savedEmailTokenId = emailTokenService.save(emailVerificationRequestDto);
