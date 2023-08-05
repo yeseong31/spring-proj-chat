@@ -16,11 +16,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@ToString(exclude = {"verificationToken", "verificationTokenTime", "member"})
+@ToString(exclude = {"token", "tokenTime", "member"})
 public class EmailToken {
     
     @Id
@@ -28,29 +29,29 @@ public class EmailToken {
     @Column(name = "emailtoken_id")
     private Long id;
     
-    @Column(name = "verification_token")
-    private String verificationToken;
+    @Column(name = "token")
+    private String token;
     
-    @Column(name = "verification_token_time")
-    private LocalDateTime verificationTokenTime;
+    @Column(name = "token_time")
+    private LocalDateTime tokenTime;
     
     @Column(columnDefinition = "boolean default false")
     private boolean expired;
     
-    @Column(name = "expiration_date")
-    private LocalDateTime expirationDate;
+    @Column(name = "expiration_time")
+    private LocalDateTime expirationTime;
     
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
     
     @Builder
-    public EmailToken(String verificationToken, LocalDateTime verificationTokenTime,
-            LocalDateTime expirationDate, Member member) {
+    public EmailToken(String token, LocalDateTime tokenTime,
+            LocalDateTime expirationTime, Member member) {
         
-        this.verificationToken = verificationToken;
-        this.verificationTokenTime = verificationTokenTime;
-        this.expirationDate = expirationDate;
+        this.token = token;
+        this.tokenTime = tokenTime;
+        this.expirationTime = expirationTime;
         this.member = member;
         this.expired = false;
     }
@@ -58,13 +59,50 @@ public class EmailToken {
     public static EmailToken generateVerificationToken(Member member) {
         return EmailToken.builder()
                 .member(member)
-                .verificationToken(UUID.randomUUID().toString())
-                .verificationTokenTime(LocalDateTime.now())
-                .expirationDate(LocalDateTime.now().plusMinutes(5L))
+                .token(UUID.randomUUID().toString())
+                .tokenTime(LocalDateTime.now())
+                .expirationTime(LocalDateTime.now().plusMinutes(5L))
                 .build();
     }
     
+    /**
+     * 사용자 정보 등록
+     * @param member 인증 정보를 소유할 사용자
+     */
+    public void registerMember(Member member) {
+        this.member = member;
+    }
+    
+    /**
+     * 인증 코드 만료 처리
+     */
     public void expiredToken() {
         this.expired = true;
+    }
+    
+    /**
+     * 인증 코드 만료 여부 확인
+     * @return 인증 코드 만료 여부(true/false)
+     */
+    public boolean checkTokenTime() {
+        return LocalDateTime.now().compareTo(tokenTime) > 0;
+    }
+    
+    /**
+     * 인증 코드 암호화
+     * @param passwordEncoder 암호화에 사용할 인코더 클래스
+     */
+    public void hashVerificationToken(PasswordEncoder passwordEncoder) {
+        token = passwordEncoder.encode(token);
+    }
+    
+    /**
+     * 인증 코드 일치 확인
+     * @param plainToken 암호화되지 않은 인증 코드
+     * @param passwordEncoder 암호화에 사용한 인코더 클래스
+     * @return 인증 코드 일치 여부(true/false)
+     */
+    public boolean checkVerificationToken(String plainToken, PasswordEncoder passwordEncoder) {
+        return passwordEncoder.matches(plainToken, token);
     }
 }
