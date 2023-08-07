@@ -10,43 +10,57 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import proj.chat.dto.EmailVerificationRequestDto;
 
+/**
+ * 비동기 task를 관리하는 클래스
+ */
 @Slf4j
-@Service
-@Transactional
+@Service("asyncTask")
 @RequiredArgsConstructor
-public class MailService {
+public class AsyncMailService {
     
+    private final EmailTokenService emailTokenService;
     private final JavaMailSender emailSender;
     
-    private String emailToken;
-    
-    public String sendSimpleMessage(String email) throws Exception {
-        // TODO Auto-generated method stub
-        emailToken = createKey();
-    
-        MimeMessage message = createMessage(email);
+    @Async("executor")
+    public void executor(String email) throws MessagingException, UnsupportedEncodingException {
+        // 인증 코드 생성
+        String token = createKey();
+        
+        // 메일 내용 구성
+        MimeMessage message = createMessage(email, token);
+        
         try {
-//            emailSender.send(message);
-            return emailToken;
+            // 메일 전송
+            emailSender.send(message);
+            
+            // 인증 정보 저장
+            EmailVerificationRequestDto emailVerificationRequestDto = EmailVerificationRequestDto.builder()
+                    .email(email)
+                    .token(token)
+                    .build();
+            emailTokenService.save(emailVerificationRequestDto);
+    
         } catch (MailException e) {
-            log.error("[ERROR] {}", e.getMessage());
+            log.error("[executor] errors={}", e.getMessage());
             throw new IllegalArgumentException();
         }
     }
     
     /**
      * 메일로 전달할 내용 생성
+     *
      * @param email 메일을 보내는 대상
      * @return 메일로 전달할 내용
      */
-    private MimeMessage createMessage(String email)
+    private MimeMessage createMessage(String email, String token)
             throws MessagingException, UnsupportedEncodingException {
         
-        log.info("[이메일] 보내는 대상: {}", email);
-        log.info("[이메일] 인증 번호: {}", emailToken);
+        log.info("[createMessage] 이메일: {}", email);
+        log.info("[createMessage] 인증 코드: {}", token);
         
         MimeMessage message = emailSender.createMimeMessage();
         message.addRecipients(RecipientType.TO, email);  // 보내는 대상
@@ -65,7 +79,7 @@ public class MailService {
                             <div style='font-size:130%'>
                                 인증 코드: <strong>
                 """;
-        msg += emailToken;
+        msg += token;
         msg += """
                                 </strong>
                             </div>

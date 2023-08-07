@@ -21,8 +21,7 @@ import proj.chat.dto.EmailVerificationRequestDto;
 import proj.chat.dto.LoginRequestDto;
 import proj.chat.dto.MemberSaveRequestDto;
 import proj.chat.dto.MemberUpdateRequestDto;
-import proj.chat.service.EmailTokenService;
-import proj.chat.service.MailService;
+import proj.chat.service.AsyncMailService;
 import proj.chat.service.MemberService;
 import proj.chat.validator.EmailVerificationRequestDtoValidator;
 import proj.chat.validator.MemberSaveRequestDtoValidator;
@@ -33,9 +32,8 @@ import proj.chat.validator.MemberSaveRequestDtoValidator;
 @RequestMapping("/auth")
 public class AuthController {
     
-    private final EmailTokenService emailTokenService;
     private final MemberService memberService;
-    private final MailService mailService;
+    private final AsyncMailService mailService;
     
     private final MemberSaveRequestDtoValidator memberSaveRequestDtoValidator;
     private final EmailVerificationRequestDtoValidator emailVerificationRequestDtoValidator;
@@ -84,12 +82,8 @@ public class AuthController {
         EmailVerificationRequestDto emailVerificationRequestDto = new EmailVerificationRequestDto();
         emailVerificationRequestDto.setEmail(requestDto.getEmail());
         
-        // 이메일 인증 코드 발송
-        String token = mailService.sendSimpleMessage(requestDto.getEmail());
-        emailVerificationRequestDto.setToken(token);
-        
-        // 이메일 인증 정보 저장
-        Long savedEmailTokenId = emailTokenService.save(emailVerificationRequestDto);
+        // 이메일 인증 코드 발송 & 인증 정보 저장
+        mailService.executor(requestDto.getEmail());
         
         // redirect 시 파라미터 전달
         redirectAttributes.addAttribute("email", requestDto.getEmail());
