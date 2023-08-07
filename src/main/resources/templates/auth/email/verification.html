@@ -12,6 +12,44 @@
 </head>
 <body class="d-flex align-items-center py-4 bg-body-tertiary" data-bs-theme="light">
 
+<!-- Modal - 이메일 재전송 -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">인증 코드 재전송</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        인증 코드를 재전송하시겠습니까?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+        <button type="button" class="btn btn-primary"
+                data-bs-target="#staticBackdrop2" data-bs-toggle="modal">재전송</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal - 이메일 재전송 확인 -->
+<div class="modal fade" id="staticBackdrop2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel2" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">인증 코드 재전송 확인</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        인증 코드를 재전송했습니다
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <main class="form-login w-100 m-auto">
   <form action="verification.html" th:action th:object="${emailVerificationRequestDto}" method="post">
     <img class="mb-4 form-logo" src="/static/image/logo.png" th:src="@{/image/logo.png}"
@@ -32,6 +70,10 @@
       <label for="token">인증 코드</label>
     </div>
     <button class="btn btn-primary w-100 py-2" type="submit">인증</button>
+    <button type="button" class="btn btn-danger w-100 py-2" style="margin-top: 10px"
+            data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+      인증 코드 재전송
+    </button>
   </form>
   <div class="mx-auto p-2 text-center">
     <a class="icon-link icon-link-hover" href="#" th:href="@{/auth/signup}">회원가입</a>
