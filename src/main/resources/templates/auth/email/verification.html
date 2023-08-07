@@ -13,28 +13,23 @@
 <body class="d-flex align-items-center py-4 bg-body-tertiary" data-bs-theme="light">
 
 <main class="form-login w-100 m-auto">
-  <form action="email-verification.html" th:action="@{/auth/email-verification}" th:object="${emailVerificationResponseDto}" method="post">
+  <form action="verification.html" th:action th:object="${emailVerificationRequestDto}" method="post">
     <img class="mb-4 form-logo" src="/static/image/logo.png" th:src="@{/image/logo.png}"
-         th:onclick="|location.href='@{/auth/login}'|" alt="로고" width="296">
+         th:onclick="|location.href='@{/}'|" alt="로고" width="296">
     <!-- errors -->
-    <div th:if="${param.error}">
-      <div class="alert alert-danger" style="margin-bottom: 10px">
-        인증 번호를 입력해주새요.
-      </div>
+    <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}" style="margin-bottom: 10px">
+      <div th:each="err : ${#fields.allErrors()}" th:text="${err}"></div>
     </div>
-    <div th:unless="${param.error}">
-      <div class="alert alert-success" style="margin-bottom: 10px">
-        인증 코드를 메일로 전송했습니다.
-      </div>
+    <div class="alert alert-success" role="alert" th:unless="${#fields.hasAnyErrors()}" style="margin-bottom: 10px">
+      인증 코드를 메일로 전송했습니다.
     </div>
     <!-- inputs -->
     <div class="form-floating">
-      <input type="email" class="form-control" id="email" th:field="*{email}" placeholder="name@example.com" readonly>
-      <label for="email">이메일</label>
+      <input type="email" class="form-control" id="email" th:field="*{email}" th:text="${email}" placeholder="name@example.com" readonly disabled>
     </div>
     <div class="form-floating">
-      <input type="text" class="form-control" id="verificationToken" placeholder="Password">
-      <label for="verificationToken">인증 코드</label>
+      <input type="text" class="form-control" id="token" th:field="*{token}" placeholder="Password">
+      <label for="token">인증 코드</label>
     </div>
     <button class="btn btn-primary w-100 py-2" type="submit">인증</button>
   </form>
