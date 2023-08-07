@@ -3,7 +3,7 @@ package proj.chat.entity;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
-import static proj.chat.entity.MemberRole.GUEST;
+import static proj.chat.entity.MemberRole.MEMBER;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,7 +37,6 @@ public class Member extends BaseTimeEntity {
     private String password;
     
     @Enumerated(STRING)
-    @Column(columnDefinition = "varchar default GUEST")
     private MemberRole role;
     
     @Column(columnDefinition = "boolean default false")
@@ -50,7 +49,7 @@ public class Member extends BaseTimeEntity {
         this.email = email;
         this.password = password;
         this.status = status;
-        this.role = GUEST;
+        this.role = MEMBER;
     }
     
     /**
