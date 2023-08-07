@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import proj.chat.dto.MemberResponseDto;
 import proj.chat.dto.MemberSaveRequestDto;
+import proj.chat.dto.MemberUpdateRequestDto;
 import proj.chat.entity.Member;
 import proj.chat.exception.DataNotFoundException;
 import proj.chat.repository.MemberRepository;
@@ -63,5 +64,33 @@ public class MemberService {
                 .orElseThrow(() -> new DataNotFoundException("존재하지 않는 회원입니다"));
         
         return new MemberResponseDto(findMember);
+    }
+    
+    /**
+     * 사용자 수정
+     * @param id 사용자 ID(인덱스)
+     * @param requestDto 사용자 정보가 담긴 DTO
+     * @return 사용자 ID(인덱스)
+     */
+    @Transactional
+    public Long update(Long id, MemberUpdateRequestDto requestDto) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("존재하지 않는 회원입니다"));
+    
+        requestDto.setId(member.getId());
+        if (requestDto.getName() == null) {
+            requestDto.setName(member.getName());
+        }
+        if (requestDto.getEmail() == null) {
+            requestDto.setEmail(member.getEmail());
+        }
+        if (requestDto.getPassword() == null) {
+            requestDto.setPassword(member.getPassword());
+        }
+        requestDto.setStatus(true);
+        
+        memberRepository.save(requestDto.dtoToEntity());
+        
+        return id;
     }
 }
