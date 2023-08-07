@@ -18,7 +18,7 @@ import lombok.ToString;
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@ToString(exclude = {"member", "room"})
+@ToString(exclude = {"member"})
 public class Message {
     
     @Id
@@ -29,27 +29,7 @@ public class Message {
     @JoinColumn(name = "member_id")
     private Member member;
     
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "room_id")
-    private Room room;
-    
     @Lob
     @Column(columnDefinition = "BLOB")
     private String text;
-    
-    // === 비즈니스 로직 ===
-    
-    /**
-     * 방 입장 시 정원 수 갱신
-     */
-    public void enter() {
-        getRoom().addCount(-1);
-    }
-    
-    /**
-     * 방 퇴장 시 정원 수 갱신
-     */
-    public void leave() {
-        getRoom().addCount(1);
-    }
 }
