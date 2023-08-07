@@ -23,7 +23,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
                         .requestMatchers("/", "/home", "/image/**", "/css/**", "/js/**",
-                                "/auth/login", "/auth/signup", "/auth/email/verification").permitAll()
+                                "/auth/login", "/auth/signup", "/auth/email/verification",
+                                "/chat/**", "/ws/chat").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
@@ -62,5 +63,4 @@ public class SecurityConfig {
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    
 }
