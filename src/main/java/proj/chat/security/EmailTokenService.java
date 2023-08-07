@@ -1,4 +1,4 @@
-package proj.chat.service;
+package proj.chat.security;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package proj.chat.service;
+package proj.chat.security;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
