@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import proj.chat.dto.EmailVerificationRequestDto;
 import proj.chat.dto.EmailVerificationResponseDto;
 import proj.chat.dto.MemberSaveRequestDto;
+import proj.chat.security.EmailTokenService;
 
 @Slf4j
 @SpringBootTest

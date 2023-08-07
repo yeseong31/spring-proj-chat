@@ -21,7 +21,7 @@ import proj.chat.dto.EmailVerificationRequestDto;
 import proj.chat.dto.LoginRequestDto;
 import proj.chat.dto.MemberSaveRequestDto;
 import proj.chat.dto.MemberUpdateRequestDto;
-import proj.chat.service.AsyncMailService;
+import proj.chat.security.AsyncMailService;
 import proj.chat.service.MemberService;
 import proj.chat.validator.EmailVerificationRequestDtoValidator;
 import proj.chat.validator.MemberSaveRequestDtoValidator;
