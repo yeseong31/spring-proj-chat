@@ -12,6 +12,7 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import proj.chat.aop.annotation.Trace;
 import proj.chat.dto.EmailVerificationRequestDto;
 
 /**
@@ -25,6 +26,7 @@ public class AsyncMailService {
     private final EmailTokenService emailTokenService;
     private final JavaMailSender emailSender;
     
+    @Trace
     @Async("executor")
     public void executor(String email) throws MessagingException, UnsupportedEncodingException {
         // 인증 코드 생성
@@ -43,7 +45,7 @@ public class AsyncMailService {
                     .token(token)
                     .build();
             emailTokenService.save(emailVerificationRequestDto);
-    
+            
         } catch (MailException e) {
             log.error("[executor] errors={}", e.getMessage());
             throw new IllegalArgumentException();
