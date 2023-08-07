@@ -93,4 +93,15 @@ public class MemberService {
         
         return id;
     }
+    
+    /**
+     * 사용자 삭제
+     * @param id 사용자 ID(인덱스)
+     * @return 사용자 ID(인덱스)
+     */
+    @Transactional
+    public Long delete(Long id) {
+        memberRepository.deleteById(id);
+        return id;
+    }
 }
