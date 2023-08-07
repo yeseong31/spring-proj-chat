@@ -20,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import proj.chat.dto.EmailVerificationRequestDto;
 import proj.chat.dto.LoginRequestDto;
 import proj.chat.dto.MemberSaveRequestDto;
+import proj.chat.dto.MemberUpdateRequestDto;
 import proj.chat.service.EmailTokenService;
 import proj.chat.service.MailService;
 import proj.chat.service.MemberService;
@@ -144,10 +145,15 @@ public class AuthController {
             return "auth/email/verification";
         }
         
-        // TODO: 이메일 인증 완료 -> 사용자 활성화
-        // ...
+        // 사용자 활성화
+        Long findMemberId = memberService.findByEmail(requestDto.getEmail()).getId();
+        
+        MemberUpdateRequestDto updateDto = new MemberUpdateRequestDto();
+        updateDto.setStatus(true);
+        Long updatedId = memberService.update(findMemberId, updateDto);
         
         log.info("[emailVerification] 이메일 인증 성공");
+        log.info("[emailVerification] 사용자 활성화 ID={}", updatedId);
         
         // redirect 시 파라미터 전달
         redirectAttributes.addFlashAttribute("message", "인증 완료! 로그인을 진행해주세요");
