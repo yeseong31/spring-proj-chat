@@ -8,7 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import proj.chat.dto.EmailVerificationRequestDto;
 import proj.chat.dto.LoginRequestDto;
@@ -68,17 +67,17 @@ public class AuthController {
      */
     @PostMapping("/signup")
     public String signup(
-            @Validated @ModelAttribute MemberSaveRequestDto requestDto, Errors errors,
+            @Validated @ModelAttribute MemberSaveRequestDto requestDto, BindingResult bindingResult,
             RedirectAttributes redirectAttributes) throws Exception {
         
-        if (errors.hasErrors()) {
-            log.info("errors={}", errors);
+        if (bindingResult.hasErrors()) {
+            log.info("errors={}", bindingResult);
             return "auth/signup";
         }
         
         // 회원가입 진행
         Long savedMemberId = memberService.save(requestDto);
-        log.info("회원가입 완료: ID={}", savedMemberId);
+        log.info("[signup] 회원가입 완료: ID={}", savedMemberId);
         
         // 이메일 인증 준비
         EmailVerificationRequestDto emailVerificationRequestDto = new EmailVerificationRequestDto();
@@ -127,5 +126,32 @@ public class AuthController {
             @ModelAttribute EmailVerificationRequestDto emailVerificationRequestDto) {
         
         return "auth/email/verification";
+    }
+    
+    /**
+     * 이메일 인증(POST)
+     */
+    @PostMapping("/email/verification")
+    public String emailVerification(
+            @Validated @ModelAttribute EmailVerificationRequestDto requestDto,
+            BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        
+        log.info("[emailVerification] email={}", requestDto.getEmail());
+        log.info("[emailVerification] token={}", requestDto.getToken());
+        
+        if (bindingResult.hasErrors()) {
+            log.info("errors={}", bindingResult);
+            return "auth/email/verification";
+        }
+        
+        // TODO: 이메일 인증 완료 -> 사용자 활성화
+        // ...
+        
+        log.info("[emailVerification] 이메일 인증 성공");
+        
+        // redirect 시 파라미터 전달
+        redirectAttributes.addFlashAttribute("message", "인증 완료! 로그인을 진행해주세요");
+        
+        return "redirect:/auth/login";
     }
 }
