@@ -1,10 +1,13 @@
 package proj.chat.entity;
 
+import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
+import static proj.chat.entity.MemberRole.GUEST;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.Builder;
@@ -33,6 +36,10 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false)
     private String password;
     
+    @Enumerated(STRING)
+    @Column(columnDefinition = "varchar default GUEST")
+    private MemberRole role;
+    
     @Column(columnDefinition = "boolean default false")
     private boolean status;
     
@@ -43,10 +50,12 @@ public class Member extends BaseTimeEntity {
         this.email = email;
         this.password = password;
         this.status = status;
+        this.role = GUEST;
     }
     
     /**
      * 비밀번호 암호화
+     *
      * @param passwordEncoder 암호화에 사용할 인코더 클래스
      */
     public void hashPassword(PasswordEncoder passwordEncoder) {
@@ -55,7 +64,8 @@ public class Member extends BaseTimeEntity {
     
     /**
      * 비밀번호 일치 확인
-     * @param plainPassword 암호화되지 않은 비밀빈호
+     *
+     * @param plainPassword   암호화되지 않은 비밀빈호
      * @param passwordEncoder 암호화에 사용한 인코더 클래스
      * @return 비밀번호 일치 여부(true/false)
      */
