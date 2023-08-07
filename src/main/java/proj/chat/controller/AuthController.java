@@ -70,17 +70,13 @@ public class AuthController {
             RedirectAttributes redirectAttributes) throws Exception {
         
         if (bindingResult.hasErrors()) {
-            log.info("errors={}", bindingResult);
+            log.info("[signup] errors={}", bindingResult);
             return "auth/signup";
         }
         
         // 회원가입 진행
         Long savedMemberId = memberService.save(requestDto);
         log.info("[signup] 회원가입 완료: ID={}", savedMemberId);
-        
-        // 이메일 인증 준비
-        EmailVerificationRequestDto emailVerificationRequestDto = new EmailVerificationRequestDto();
-        emailVerificationRequestDto.setEmail(requestDto.getEmail());
         
         // 이메일 인증 코드 발송 & 인증 정보 저장
         mailService.executor(requestDto.getEmail());
@@ -107,6 +103,7 @@ public class AuthController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         
         if (authentication != null) {
+            log.info("[logout] 로그아웃: email={}", authentication.getName());
             new SecurityContextLogoutHandler().logout(request, response, authentication);
         }
         
@@ -135,19 +132,21 @@ public class AuthController {
         log.info("[emailVerification] token={}", requestDto.getToken());
         
         if (bindingResult.hasErrors()) {
-            log.info("errors={}", bindingResult);
+            log.info("[emailVerification] errors={}", bindingResult);
             return "auth/email/verification";
         }
         
         // 사용자 활성화
         Long findMemberId = memberService.findByEmail(requestDto.getEmail()).getId();
         
-        MemberUpdateRequestDto updateDto = new MemberUpdateRequestDto();
-        updateDto.setStatus(true);
+        MemberUpdateRequestDto updateDto = MemberUpdateRequestDto.builder()
+                .status(true)
+                .build();
         Long updatedId = memberService.update(findMemberId, updateDto);
         
         log.info("[emailVerification] 이메일 인증 성공");
-        log.info("[emailVerification] 사용자 활성화 ID={}", updatedId);
+        log.info("[emailVerification] 사용자 활성화: ID={}", updatedId);
+        
         
         // redirect 시 파라미터 전달
         redirectAttributes.addFlashAttribute("message", "인증 완료! 로그인을 진행해주세요");
