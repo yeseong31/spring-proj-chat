@@ -24,6 +24,7 @@ import proj.chat.dto.MemberSaveRequestDto;
 import proj.chat.service.EmailTokenService;
 import proj.chat.service.MailService;
 import proj.chat.service.MemberService;
+import proj.chat.validator.EmailVerificationRequestDtoValidator;
 import proj.chat.validator.MemberSaveRequestDtoValidator;
 
 @Slf4j
@@ -32,17 +33,27 @@ import proj.chat.validator.MemberSaveRequestDtoValidator;
 @RequestMapping("/auth")
 public class AuthController {
     
-    private final MemberSaveRequestDtoValidator memberSaveRequestDtoValidator;
     private final EmailTokenService emailTokenService;
     private final MemberService memberService;
     private final MailService mailService;
     
+    private final MemberSaveRequestDtoValidator memberSaveRequestDtoValidator;
+    private final EmailVerificationRequestDtoValidator emailVerificationRequestDtoValidator;
+    
     @InitBinder("memberSaveRequestDto")
-    public void initBinder(WebDataBinder webDataBinder) {
+    public void initBinder1(WebDataBinder webDataBinder) {
         // memberSaveRequestDto 객체를 받을 때 자동으로 검증이 들어감
         log.info("init binder = {}", webDataBinder);
         webDataBinder.addValidators(memberSaveRequestDtoValidator);
     }
+    
+    @InitBinder("emailVerificationRequestDto")
+    public void initBinder2(WebDataBinder webDataBinder) {
+        // emailVerificationRequestDto 객체를 받을 때 자동으로 검증이 들어감
+        log.info("init binder = {}", webDataBinder);
+        webDataBinder.addValidators(emailVerificationRequestDtoValidator);
+    }
+    
     
     /**
      * 회원가입(GET)
@@ -68,16 +79,15 @@ public class AuthController {
         // 회원가입 진행
         Long savedMemberId = memberService.save(requestDto);
         log.info("회원가입 완료: ID={}", savedMemberId);
-    
+        
         // 이메일 인증 준비
         EmailVerificationRequestDto emailVerificationRequestDto = new EmailVerificationRequestDto();
         emailVerificationRequestDto.setEmail(requestDto.getEmail());
-    
-    
+        
         // 이메일 인증 코드 발송
         String token = mailService.sendSimpleMessage(requestDto.getEmail());
         emailVerificationRequestDto.setToken(token);
-    
+        
         // 이메일 인증 정보 저장
         Long savedEmailTokenId = emailTokenService.save(emailVerificationRequestDto);
         
@@ -114,10 +124,8 @@ public class AuthController {
      */
     @GetMapping("/email/verification")
     public String emailVerificationForm(
-            @ModelAttribute EmailVerificationRequestDto emailVerificationRequestDto,
-            @RequestParam("email") String email) {
-    
-        emailVerificationRequestDto.setEmail(email);
+            @ModelAttribute EmailVerificationRequestDto emailVerificationRequestDto) {
+        
         return "auth/email/verification";
     }
 }
