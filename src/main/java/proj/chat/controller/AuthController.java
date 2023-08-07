@@ -8,7 +8,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
@@ -18,8 +17,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import proj.chat.dto.EmailVerificationRequestDto;
-import proj.chat.dto.EmailVerificationResponseDto;
 import proj.chat.dto.LoginRequestDto;
 import proj.chat.dto.MemberSaveRequestDto;
 import proj.chat.service.EmailTokenService;
@@ -50,7 +49,7 @@ public class AuthController {
      */
     @GetMapping("/signup")
     public String signupForm(@ModelAttribute MemberSaveRequestDto memberSaveRequestDto) {
-        return "signup";
+        return "auth/signup";
     }
     
     /**
@@ -59,11 +58,11 @@ public class AuthController {
     @PostMapping("/signup")
     public String signup(
             @Validated @ModelAttribute MemberSaveRequestDto requestDto, Errors errors,
-            @RequestParam(defaultValue = "/") String redirectUrl, Model model) throws Exception {
+            RedirectAttributes redirectAttributes) throws Exception {
         
         if (errors.hasErrors()) {
             log.info("errors={}", errors);
-            return "signup";
+            return "auth/signup";
         }
         
         // 회원가입 진행
@@ -81,14 +80,11 @@ public class AuthController {
     
         // 이메일 인증 정보 저장
         Long savedEmailTokenId = emailTokenService.save(emailVerificationRequestDto);
-    
-        // 응답 DTO 구성
-        EmailVerificationResponseDto responseDto = new EmailVerificationResponseDto();
-        responseDto.setEmail(requestDto.getEmail());
         
-        model.addAttribute("emailVerificationResponseDto", responseDto);
+        // redirect 시 파라미터 전달
+        redirectAttributes.addAttribute("email", requestDto.getEmail());
         
-        return "email-verification";
+        return "redirect:/auth/email/verification";
     }
     
     /**
@@ -96,7 +92,7 @@ public class AuthController {
      */
     @GetMapping("/login")
     public String loginForm(@ModelAttribute LoginRequestDto loginRequestDto) {
-        return "login";
+        return "auth/login";
     }
     
     /**
@@ -111,5 +107,17 @@ public class AuthController {
         }
         
         return "redirect:/";
+    }
+    
+    /**
+     * 이메일 인증(GET)
+     */
+    @GetMapping("/email/verification")
+    public String emailVerificationForm(
+            @ModelAttribute EmailVerificationRequestDto emailVerificationRequestDto,
+            @RequestParam("email") String email) {
+    
+        emailVerificationRequestDto.setEmail(email);
+        return "auth/email/verification";
     }
 }
