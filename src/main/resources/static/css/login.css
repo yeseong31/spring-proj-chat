@@ -38,7 +38,7 @@ body {
   border-top-right-radius: 0;
 }
 
-.form-login input[id="verificationToken"] {
+.form-login input[id="token"] {
   margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
