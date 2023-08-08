@@ -12,23 +12,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
-import proj.chat.entity.ChatRoom;
+import proj.chat.dto.RoomDto;
 
 @Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class ChatService {
+public class RoomService {
     
     private final ObjectMapper objectMapper;
-    private final HashMap<String, ChatRoom> chatRooms = new HashMap<>();  // 임시 저장소
+    private final HashMap<String, RoomDto> chatRooms = new HashMap<>();  // 임시 저장소
     
     /**
      * 채팅방 목록 조회
      *
      * @return 채팅방 목록
      */
-    public List<ChatRoom> findAllRooms() {
+    public List<RoomDto> findAllRooms() {
         return new ArrayList<>(chatRooms.values());
     }
     
@@ -38,27 +38,26 @@ public class ChatService {
      * @param roomId 조회하고자 하는 방 ID
      * @return 결과 채팅방
      */
-    public ChatRoom findRoomById(String roomId) {
+    public RoomDto findRoomById(String roomId) {
         return chatRooms.get(roomId);
     }
     
     /**
      * 채팅방 생성
      *
-     * @param name 채팅방 이름
+     * @param roomName 채팅방 이름
      * @return 채팅방 ID
      */
     @Transactional
-    public ChatRoom createChatRoom(String name) {
+    public RoomDto createChatRoom(String roomName) {
         String roomId = UUID.randomUUID().toString().substring(0, 8);
         
-        ChatRoom newRoom = ChatRoom.builder()
-                .roomId(roomId)
-                .name(name)
+        RoomDto newRoomDto = RoomDto.builder()
+                .roomName(roomName)
                 .build();
         
-        chatRooms.put(roomId, newRoom);
-        return newRoom;
+        chatRooms.put(roomId, newRoomDto);
+        return newRoomDto;
     }
     
     /**
