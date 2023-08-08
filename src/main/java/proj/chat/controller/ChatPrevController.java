@@ -7,25 +7,25 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import proj.chat.entity.ChatRoom;
-import proj.chat.service.ChatService;
+import proj.chat.dto.RoomDto;
+import proj.chat.service.RoomService;
 
 @Slf4j
 @RestController
-@RequestMapping("/chat")
+@RequestMapping("/chat/prev")
 @RequiredArgsConstructor
-public class ChatController {
+public class ChatPrevController {
     
-    private final ChatService chatService;
+    private final RoomService roomService;
     
     @GetMapping
-    public List<ChatRoom> chat() {
-        return chatService.findAllRooms();
+    public List<RoomDto> chat() {
+        return roomService.findAllRooms();
     }
     
     // TODO: PostMapping으로 변경할 것
     @GetMapping("/create")
-    public ChatRoom createChatRoom(@RequestParam String name) {
-        return chatService.createChatRoom(name);
+    public RoomDto createChatRoom(@RequestParam String name) {
+        return roomService.createChatRoom(name);
     }
 }
