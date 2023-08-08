@@ -123,7 +123,7 @@ public class StompChatController {
     /**
      * 채팅에 참여 중인 사용자 목록 반환
      */
-    @GetMapping("/users")
+    @GetMapping("/members")
     @ResponseBody
     public List<String> userList(String roomId) {
         return chatRoomRepository.getMemberList(roomId);
