@@ -9,8 +9,8 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import proj.chat.dto.ChatMessageDto;
-import proj.chat.entity.ChatRoom;
-import proj.chat.service.ChatService;
+import proj.chat.dto.RoomDto;
+import proj.chat.service.RoomService;
 
 @Slf4j
 @Component
@@ -18,7 +18,7 @@ import proj.chat.service.ChatService;
 public class WebSocketChatHandler extends TextWebSocketHandler {
     
     private final ObjectMapper objectMapper;
-    private final ChatService chatService;
+    private final RoomService roomService;
     
     /**
      * 메시지 전달
@@ -39,11 +39,11 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
         log.info("[handleTextMessage] session={}", chatMessage.toString());
         
         // 전달받은 채팅 메시지에 담겨 있는 채팅방 조회
-        ChatRoom targetRoom = chatService.findRoomById(chatMessage.getRoomId());
-        log.info("[handleTextMessage] room={}", targetRoom.toString());
+        RoomDto targetRoomDto = roomService.findRoomById(chatMessage.getRoomId());
+        log.info("[handleTextMessage] room={}", targetRoomDto.toString());
         
         // 해당 채팅방에 입장해 있는 모든 Websocket Session을 대상으로 타입에 따른 메시지 전달
-        targetRoom.handlerActions(session, chatMessage, chatService);
+        targetRoomDto.handlerActions(session, chatMessage, roomService);
     }
     
     /**
