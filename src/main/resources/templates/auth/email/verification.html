@@ -63,15 +63,14 @@
     </div>
     <!-- inputs -->
     <div class="form-floating">
-      <input type="email" class="form-control" id="email" th:field="*{email}" th:text="${email}" placeholder="name@example.com" readonly disabled>
+      <input type="email" class="form-control" id="email" th:field="*{email}" placeholder="name@example.com" readonly disabled>
     </div>
     <div class="form-floating">
       <input type="text" class="form-control" id="token" th:field="*{token}" placeholder="Password">
       <label for="token">인증 코드</label>
     </div>
     <button class="btn btn-primary w-100 py-2" type="submit">인증</button>
-    <button type="button" class="btn btn-danger w-100 py-2" style="margin-top: 10px"
-            data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+    <button type="button" class="btn btn-danger w-100 py-2" style="margin-top: 10px" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
       인증 코드 재전송
     </button>
   </form>
