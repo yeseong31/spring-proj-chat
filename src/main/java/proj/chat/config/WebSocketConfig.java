@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
-import proj.chat.websocket.handler.WebSocketChatHandler;
+import proj.chat.handler.WebSocketHandler;
 
 @Slf4j
 @Configuration
@@ -14,7 +14,7 @@ import proj.chat.websocket.handler.WebSocketChatHandler;
 @RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketConfigurer {
     
-    private final WebSocketChatHandler webSocketChatHandler;
+    private final WebSocketHandler webSocketHandler;
     
     /**
      * 채팅 진행을 위한 endpoint 설정: /ws/chat
@@ -23,7 +23,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         // "ws://localhost:8080/ws/chat"으로 요청이 들어오면 websocket 통신 진행
         registry
-                .addHandler(webSocketChatHandler, "/ws/chat")
+                .addHandler(webSocketHandler, "/ws/chat")
                 .setAllowedOrigins("*");
     }
 }
