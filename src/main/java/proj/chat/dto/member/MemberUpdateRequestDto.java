@@ -1,4 +1,4 @@
-package proj.chat.dto;
+package proj.chat.dto.member;
 
 import lombok.Builder;
 import lombok.Getter;
