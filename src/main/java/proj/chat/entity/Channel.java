@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -51,6 +52,13 @@ public class Channel extends BaseEntity {
         this.count = count;
         this.maxCount = maxCount;
         this.password = password;
+    }
+    
+    /**
+     * 채널 UUID 생성
+     */
+    public void createUUID() {
+        uuid = UUID.randomUUID().toString();
     }
     
     /**
