@@ -1,10 +1,6 @@
 package proj.chat.controller;
 
-import static proj.chat.dto.ChatMessageDto.MessageType.LEAVE;
-
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -14,12 +10,8 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
-import proj.chat.dto.ChatMessageDto;
-import proj.chat.dto.ChatRoomDto;
-import proj.chat.repository.ChatRoomRepository;
+import proj.chat.dto.MessageDto;
 
 /**
  * 채팅을 송수신(pub/sub)하는 컨트롤러
@@ -32,48 +24,42 @@ import proj.chat.repository.ChatRoomRepository;
 public class StompChatController {
     
     private final SimpMessageSendingOperations template;  // 특정 브로커로 메시지 전달
-    private final ChatRoomRepository chatRoomRepository;
     
     /**
-     * MessageMapping 애노테이션을 통해 websocket으로 들어오는 메시지를 송신 처리
+     * MessageMapping 애노테이션을 통해 WebSocket으로 들어오는 메시지를 송신 처리
      */
-    @MessageMapping("/chat/enter")
-    public void enterMember(
-            @Payload ChatMessageDto chat, SimpMessageHeaderAccessor headerAccessor) {
+    @MessageMapping("/enter")
+    public void enter(@Payload MessageDto message) {
         
-        // 대상이 되는 채팅방
-        ChatRoomDto targetChatRoomDto = chatRoomRepository.findByRoomId(chat.getRoomId());
+        // 메시지 발송 시간 설정
+        message.setTime(LocalDateTime.now());
         
-        // 채팅방 사용자 증가 -> 사용자 UUID 반환
-        String memberUUID = targetChatRoomDto.addMember(chat.getSender());
+        // 입장 메시지 구성
+        message.setMessage(message.getMemberId() + "님이 입장했습니다");
         
-        // stomp session 조회
-        Map<String, Object> sessionAttributes = headerAccessor.getSessionAttributes();
-        if (sessionAttributes == null) {
-            throw new IllegalStateException("세션을 찾을 수 없습니다");
-        }
+        log.info("[ENTER] {} 닙이 입장했습니다", message.getMemberId());
         
-        // 사용자 UUID를 socket session에 저장
-        headerAccessor.getSessionAttributes().put("memberUUID", memberUUID);
-        headerAccessor.getSessionAttributes().put("roomId", chat.getRoomId());
-        
-        // 저장 후 "/sub/chat/room/roomId"로 메시지 전송
-        chat.setMessage(chat.getSender() + "님이 입장했습니다");
-        chat.setTime(LocalDateTime.now());
-        template.convertAndSend("/sub/chat/room/" + targetChatRoomDto.getRoomId(), chat);
+        // 메시지 전달
+        template.convertAndSend(
+                "/sub/channel/" + message.getChannelId(),
+                message);
     }
     
     /**
      * 메시지 송신
      */
-    @MessageMapping("/chat/message")
-    public void message(@Payload ChatMessageDto chat) {
+    @MessageMapping("/message")
+    public void message(@Payload MessageDto messageDto) {
         
-        log.info("[sendMessage] chat={}", chat);
+        // 메시지 발송 시간 설정
+        messageDto.setTime(LocalDateTime.now());
         
-        chat.setMessage(chat.getMessage());
-        chat.setTime(LocalDateTime.now());
-        template.convertAndSend("/sub/chat/room/" + chat.getRoomId(), chat);
+        log.info("[MESSAGE] message={}", messageDto.getMessage());
+        
+        // 메시지 전달
+        template.convertAndSend(
+                "/sub/channel/" + messageDto.getChannelId(),
+                messageDto);
     }
     
     /**
@@ -83,49 +69,7 @@ public class StompChatController {
     public void webSocketDisconnectListener(SessionDisconnectEvent event) {
         
         log.info("[Disconnect] event={}", event);
-        
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        
-        // stomp session 조회
-        Map<String, Object> sessionAttributes = headerAccessor.getSessionAttributes();
-        if (sessionAttributes == null) {
-            throw new IllegalStateException("세션을 찾을 수 없습니다");
-        }
-        
-        // stomp 세션 내 사용자 UUID와 roomId 확인
-        String memberUUID = (String) sessionAttributes.get("memberUUID");
-        String roomId = (String) sessionAttributes.get("roomId");
-        
         log.info("[Disconnect] headAccessor={}", headerAccessor);
-        
-        // 대상이 되는 채팅방
-        ChatRoomDto targetChatRoomDto = chatRoomRepository.findByRoomId(roomId);
-        
-        // 채팅방에서 사용자 삭제
-        targetChatRoomDto.deleteMember(memberUUID);
-        
-        // 사용자 퇴장 메시지 구성
-        String memberName = targetChatRoomDto.getMemberName(memberUUID);
-        if (memberName != null) {
-            log.info("[Disconnect] 사용자 {} 퇴장", memberName);
-            
-            ChatMessageDto chat = ChatMessageDto.builder()
-                    .type(LEAVE)
-                    .sender(memberName)
-                    .message(memberName + " 님이 나갔습니다")
-                    .time(LocalDateTime.now())
-                    .build();
-            
-            template.convertAndSend("/sub/chat/room/" + roomId, chat);
-        }
-    }
-    
-    /**
-     * 채팅에 참여 중인 사용자 목록 반환
-     */
-    @GetMapping("/members")
-    @ResponseBody
-    public List<String> userList(String roomId) {
-        return chatRoomRepository.getMemberList(roomId);
     }
 }
