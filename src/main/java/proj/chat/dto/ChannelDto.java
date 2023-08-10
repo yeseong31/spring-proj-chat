@@ -8,49 +8,52 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor(access = PROTECTED)
-public class ChatRoomDto {
+public class ChannelDto {
     
-    private String roomId;    // 채팅방 ID
-    private String roomName;  // 채팅방 이름
-    private int count;        // 채팅방 인원
-    private int maxCount;     // 채팅방 최대 인원
+    private Long id;
+    private String channelId;
+    private String channelName;
+    private int count;
+    private int maxCount;
     
     private final HashMap<String, String> memberList = new HashMap<>();
     
     @Builder
-    public ChatRoomDto(String roomName) {
-        this.roomId = UUID.randomUUID().toString().substring(0, 8);
-        this.roomName = roomName;
+    public ChannelDto(String channelName) {
+        this.channelId = UUID.randomUUID().toString();
+        this.channelName = channelName;
         this.count = 0;
         this.maxCount = 10;
     }
     
     /**
-     * 채팅방 인원 증가
+     * 채널 인원 증가
      */
     public void increaseMember() {
         if (count == maxCount) {
-            throw new IllegalStateException("이미 정원이 찬 채팅방입니다");
+            throw new IllegalStateException("이미 정원이 찬 채널입니다");
         }
         count += 1;
     }
     
     /**
-     * 채팅방 인원 감소
+     * 채널 인원 감소
      */
     public void decreaseMember() {
         if (count == 0) {
-            throw new IllegalStateException("빈 채팅방입니다");
+            throw new IllegalStateException("채널에 아무도 없습니다");
         }
         count -= 1;
     }
     
     /**
-     * 채팅방에 사용자 추가
+     * 채널에 사용자 추가
      *
      * @param memberName 사용자 이름
      * @return 사용자 UUID
@@ -69,7 +72,7 @@ public class ChatRoomDto {
     }
     
     /**
-     * 채팅방에서 사용자 삭제
+     * 채널에서 사용자 삭제
      *
      * @param memberUUID 사용자 UUID
      */
@@ -88,4 +91,3 @@ public class ChatRoomDto {
         return memberList.get(memberUUID);
     }
 }
-
