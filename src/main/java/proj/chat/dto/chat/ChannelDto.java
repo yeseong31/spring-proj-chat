@@ -1,4 +1,4 @@
-package proj.chat.dto;
+package proj.chat.dto.chat;
 
 import static lombok.AccessLevel.PROTECTED;
 

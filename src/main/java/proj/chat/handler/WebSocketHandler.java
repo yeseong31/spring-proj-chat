@@ -16,7 +16,7 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import proj.chat.dto.PrevMessageDto;
+import proj.chat.dto.chat.PrevMessageDto;
 
 /**
  * 웹 서버가 1대인 경우에만 정상적으로 동작하는 WebSocket 핸들러 클래스
