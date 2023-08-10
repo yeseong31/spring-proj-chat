@@ -23,8 +23,7 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // stomp 접속 URL: "/ws-stomp"
         registry
                 .addEndpoint("/ws-stomp")
-                .setAllowedOrigins("http://localhost:8080")
-                .withSockJS();
+                .setAllowedOrigins("*");
     }
     
     /**
