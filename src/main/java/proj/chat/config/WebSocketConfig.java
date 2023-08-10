@@ -21,9 +21,9 @@ public class WebSocketConfig implements WebSocketConfigurer {
      */
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        // "ws://localhost:8080/ws/chat"으로 요청이 들어오면 websocket 통신 진행
+        // "ws://localhost:8080/ws-chat"으로 요청이 들어오면 websocket 통신 진행
         registry
-                .addHandler(webSocketHandler, "/ws/chat")
+                .addHandler(webSocketHandler, "/ws-chat")
                 .setAllowedOrigins("*");
     }
 }
