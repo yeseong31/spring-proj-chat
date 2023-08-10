@@ -16,7 +16,7 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import proj.chat.dto.MessageDto;
+import proj.chat.dto.PrevMessageDto;
 
 /**
  * 웹 서버가 1대인 경우에만 정상적으로 동작하는 WebSocket 핸들러 클래스
@@ -45,7 +45,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         log.info("[handleTextMessage] payload={}", payload);
         
         // 전달받은 채팅 메시지를 채팅 메시지 객체로 변환 (JSON -> ChatDto)
-        MessageDto chatMessage = objectMapper.readValue(payload, MessageDto.class);
+        PrevMessageDto chatMessage = objectMapper.readValue(payload, PrevMessageDto.class);
         chatMessage.setType(TALK);
         chatMessage.setTime(LocalDateTime.now());
         
@@ -73,7 +73,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         log.info("[afterConnectionEstablished] ID={} 접속", sessionId);
         
         // 입장 메시지 구성
-        MessageDto chatMessage = MessageDto.builder()
+        PrevMessageDto chatMessage = PrevMessageDto.builder()
                 .type(ENTER)
                 .message(sessionId + "님이 입장했습니다")
                 .sender(sessionId)
@@ -108,7 +108,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         log.info("[afterConnectionClosed] ID={} 접속 해제", sessionId);
         
         // 퇴장 메시지 구성
-        MessageDto chatMessage = MessageDto.builder()
+        PrevMessageDto chatMessage = PrevMessageDto.builder()
                 .type(LEAVE)
                 .message(sessionId + "님이 나갔습니다")
                 .sender(sessionId)
