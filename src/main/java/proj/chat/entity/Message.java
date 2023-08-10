@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -18,8 +19,8 @@ import lombok.ToString;
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@ToString(exclude = {"member"})
-public class Message {
+@ToString(exclude = {"member", "channel"})
+public class Message extends BaseEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,5 +32,17 @@ public class Message {
     
     @Lob
     @Column(columnDefinition = "BLOB")
-    private String text;
+    private String content;
+    
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "channel_id")
+    public Channel channel;
+    
+    @Builder
+    public Message(Long id, Member member, String content, Channel channel) {
+        this.id = id;
+        this.member = member;
+        this.content = content;
+        this.channel = channel;
+    }
 }
