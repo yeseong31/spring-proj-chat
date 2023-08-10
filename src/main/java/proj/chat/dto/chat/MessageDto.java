@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import proj.chat.entity.Message;
+import proj.chat.entity.MessageType;
 
 @Getter
 @Setter
@@ -15,25 +17,26 @@ import lombok.ToString;
 @NoArgsConstructor(access = PROTECTED)
 public class MessageDto {
     
-    public enum MessageType {
-        ENTER, TALK, LEAVE
-    }
-    
     private MessageType type;    // 메시지 타입
     private String memberId;     // 사용자 ID
     private String channelId;    // 채널 ID
-    private String message;      // 메시지
+    private String content;      // 메시지
     private LocalDateTime time;  // 채팅 발송 시간
     
     @Builder
-    public MessageDto(MessageType type, String memberId, String channelId, String message,
-            LocalDateTime time) {
-        
-        this.type = type;
-        this.memberId = memberId;
-        this.channelId = channelId;
-        this.message = message;
-        this.time = time;
+    public MessageDto(Message entity) {
+        this.type = entity.getType();
+        this.memberId = entity.getMember().getName();
+        this.channelId = entity.getChannel().getUuid();
+        this.content = entity.getContent();
+        this.time = entity.getCreatedDate();
+    }
+    
+    public Message dtoToEntity() {
+        return Message.builder()
+                .type(type)
+                .content(content)
+                .build();
     }
 }
 
