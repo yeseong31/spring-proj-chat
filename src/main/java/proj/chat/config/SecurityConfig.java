@@ -24,7 +24,7 @@ public class SecurityConfig {
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
                         .requestMatchers("/", "/home", "/image/**", "/css/**", "/js/**",
                                 "/auth/login", "/auth/signup", "/auth/email/verification",
-                                "/chat/**", "/ws/chat").permitAll()
+                                "/ws-chat", "/ws-stomp").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
