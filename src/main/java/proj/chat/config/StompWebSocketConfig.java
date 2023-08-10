@@ -21,6 +21,8 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // stomp 접속 URL: "/ws-stomp"
+    
+        // TODO: withSockJS()를 사용하면 apic을 통한 STOMP 테스트가 실패함
         registry
                 .addEndpoint("/ws-stomp")
                 .setAllowedOrigins("*");

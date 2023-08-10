@@ -38,6 +38,8 @@ public class AuthController {
     private final MemberSaveRequestDtoValidator memberSaveRequestDtoValidator;
     private final EmailVerificationRequestDtoValidator emailVerificationRequestDtoValidator;
     
+    // TODO: WebInitBinder를 적용한 뒤로 검증에 대한 테스트를 진행할 수 없는 문제가 있음
+    
     @InitBinder("memberSaveRequestDto")
     public void initBinder1(WebDataBinder webDataBinder) {
         // memberSaveRequestDto 객체를 받을 때 자동으로 검증이 들어감
@@ -82,6 +84,7 @@ public class AuthController {
         mailService.executor(requestDto.getEmail());
         
         // redirect 시 파라미터 전달
+        // TODO: 인증 페이지로 넘어갈 때 이메일이 아니라 ID 값을 넘가도록 수정해야 함
         redirectAttributes.addAttribute("email", requestDto.getEmail());
         
         return "redirect:/auth/email/verification";
@@ -116,6 +119,10 @@ public class AuthController {
     @GetMapping("/email/verification")
     public String emailVerificationForm(
             @ModelAttribute EmailVerificationRequestDto emailVerificationRequestDto) {
+        
+        // TODO: 이메일 인증 페이지에 잘못된 방식으로 접근하면 emailToken 값이 null이 되는 오류가 있음
+        
+        // TODO: 이메일 인증 페이지 접근 권한이 없는 경우 회원가입 페이지로 redirect해야 함 (회원가입을 하지 않았거나 URL 직접 접근 시)
         
         return "auth/email/verification";
     }
