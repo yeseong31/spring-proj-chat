@@ -7,7 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import proj.chat.dto.EmailVerificationRequestDto;
+import proj.chat.dto.email.EmailVerificationRequestDto;
 import proj.chat.entity.EmailToken;
 import proj.chat.repository.EmailTokenRepository;
 import proj.chat.repository.MemberRepository;

@@ -1,4 +1,4 @@
-package proj.chat.dto;
+package proj.chat.dto.email;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
