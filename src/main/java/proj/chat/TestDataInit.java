@@ -32,9 +32,10 @@ public class TestDataInit {
                     .matchingPassword("!Test" + i)
                     .build();
     
-            Long savedId = memberService.save(dto);
-            log.info("회원{} 저장", savedId);
+            memberService.save(dto);
         }
+    
+        log.info("테스트용 사용자 데이터 저장 완료");
         
         for (int i = 0; i < 5; i++) {
             ChannelSaveRequestDto dto = ChannelSaveRequestDto.builder()
@@ -44,10 +45,10 @@ public class TestDataInit {
                     .build();
     
             dto.setMemberEmail("test" + i + "@test.com");
-            Long savedId = channelService.save(dto);
-            log.info("채널{} 저장", savedId);
+            channelService.save(dto);
         }
-        
+    
+        log.info("테스트용 채널 데이터 저장 완료");
         log.info("초기화 메서드 종료");
     }
 }
