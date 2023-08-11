@@ -1,5 +1,7 @@
 package proj.chat.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,6 +42,17 @@ public class ChannelService {
         channel.createUUID();
         
         return channelRepository.save(channel).getId();
+    }
+    
+    /**
+     * 채널 목록 조회
+     *
+     * @return 채널 정보가 담긴 DTO 목록
+     */
+    public List<ChannelResponseDto> findAll() {
+        return channelRepository.findAll().stream()
+                .map(ChannelResponseDto::new)
+                .collect(Collectors.toList());
     }
     
     /**
