@@ -25,6 +25,8 @@ public class ChannelSaveRequestDto {
     
     private String password;
     
+    private String memberEmail;
+    
     @Range(min = 2, max = 20, message = "최대 인원은 2~20의 범위로 설정해 주세요")
     private int maxCount;
     
