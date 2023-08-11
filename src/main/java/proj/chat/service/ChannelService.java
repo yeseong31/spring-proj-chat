@@ -38,7 +38,7 @@ public class ChannelService {
         
         // 채널 UUID 생성
         channel.createUUID();
-    
+        
         return channelRepository.save(channel).getId();
     }
     
@@ -49,10 +49,10 @@ public class ChannelService {
      * @return 채널 정보가 담긴 DTO
      */
     public ChannelResponseDto findById(Long id) {
-    
+        
         Channel findChannel = channelRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("존재하지 않는 채널입니다"));
-    
+        
         return new ChannelResponseDto(findChannel);
     }
     
@@ -63,10 +63,10 @@ public class ChannelService {
      * @return 채널 정보가 담긴 DTO
      */
     public ChannelResponseDto findByUuid(String uuid) {
-    
+        
         Channel findChannel = channelRepository.findByUuid(uuid)
                 .orElseThrow(() -> new DataNotFoundException("존재하지 않는 채널입니다"));
-    
+        
         return new ChannelResponseDto(findChannel);
     }
 }
