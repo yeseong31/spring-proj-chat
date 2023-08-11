@@ -36,13 +36,14 @@ public class TestDataInit {
             log.info("회원{} 저장", savedId);
         }
         
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             ChannelSaveRequestDto dto = ChannelSaveRequestDto.builder()
                     .name("channel" + i)
                     .password("!Test" + i)
                     .maxCount(5)
                     .build();
     
+            dto.setMemberEmail("test" + i + "@test.com");
             Long savedId = channelService.save(dto);
             log.info("채널{} 저장", savedId);
         }
