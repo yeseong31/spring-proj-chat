@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base :: layout(~{::title}, ~{::section}, ~{::link})}"
+      lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>채널 목록 페이지</title>
+  <!-- Custom CSS -->
+  <link th:href="@{/css/cover.css}" rel="stylesheet">
+</head>
+<body>
+
+<section>
+  <div class="container">
+    <h2>채널 목록</h2>
+    <!-- modal: create channel form -->
+    <form action="list.html" th:action th:object="${channelSaveRequestDto}" method="post" style="text-align: left">
+      <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}" style="margin-bottom: 10px">
+        채널 생성에 실패했습니다
+      </div>
+      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">채널 생성</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+              <div class="modal-body">
+              <!-- errors -->
+              <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}" style="margin-bottom: 10px">
+                <div th:each="err : ${#fields.allErrors()}" th:text="${err}"></div>
+              </div>
+              <div class="mb-3">
+                <label for="inputChannelName" class="form-label">채널 이름</label>
+                <input type="text" class="form-control" id="inputChannelName" th:field="*{name}" placeholder="채널 이름을 입력해 주세요">
+              </div>
+              <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">비밀번호 (선택)</label>
+                <input type="password" class="form-control" id="exampleInputPassword1" th:field="*{password}" placeholder="비밀번호를 입력해 주세요">
+              </div>
+              <div class="mb-3">
+                <label for="inputCount" class="form-label">최대 인원 (기본 10)</label>
+                <input type="number" class="form-control" id="inputCount" th:field="*{maxCount}" placeholder="최대 인원을 설정해 주세요">
+              </div>
+              <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                <label class="form-check-label" for="exampleCheck1">Check me out</label>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+              <button type="submit" class="btn btn-primary">채널 생성</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="d-grid gap-2 d-flex justify-content-end btn-snippet" style="margin-bottom: 10px">
+      <!-- search -->
+      <div class="col-auto">
+        <label>
+          <input class="form-control" type="text" placeholder="검색 내용을 입력해주세요">
+        </label>
+      </div>
+      <!-- refresh button -->
+      <button type="button" class="btn btn-secondary" th:onclick="|location.href='@{/channel/list}'|">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+          <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+        </svg>
+      </button>
+      <!-- toggle button -->
+      <div class="btn-group dropup">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">채널 생성</button>
+        <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" data-bs-offset="0,10">
+          <span class="visually-hidden">메뉴</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
+          <li><a class="dropdown-item" href="#">둘러보기</a></li>
+          <li><a class="dropdown-item" href="#">북마크</a></li>
+        </ul>
+      </div>
+    </div>
+    <!-- channel list -->
+    <table class="table">
+      <thead>
+      <tr class="text-center">
+        <th>번호</th>
+        <th style="width: 50%">채널 이름</th>
+        <th style="width: 10%">인원</th>
+        <th>생성일</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="channel : ${channels}" class="text-center">
+        <td th:text="${channelStat.count}">채널 번호</td>
+        <td class="text-center">
+          <a href="list.html" th:text="${channel.name}"></a>
+        </td>
+        <!-- count -->
+        <td class="text-center">
+          <span class="text-danger small mx-2" th:text="|${channel.count}/${channel.maxCount}|">채널 인원</span>
+        </td>
+        <!-- createdDate -->
+        <td th:text="${#temporals.format(channel.createdDate,'yyyy-MM-dd')}">생성일</td>
+      </tr>
+      </tbody>
+      <!-- if not exists channel list -->
+      <tr th:if="${channels eq null or channels.size eq 0}">
+        <td colspan="4">채널이 없습니다</td>
+      </tr>
+    </table>
+  </div>
+  <!-- paging -->
+  <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+      <li class="page-item disabled">
+        <a class="page-link" href="#" tabindex="-1">Prev</a>
+      </li>
+      <li class="page-item"><a class="page-link active" href="#">1</a></li>
+      <li class="page-item"><a class="page-link" href="#">2</a></li>
+      <li class="page-item"><a class="page-link" href="#">3</a></li>
+      <li class="page-item">
+        <a class="page-link" href="#">Next</a>
+      </li>
+    </ul>
+  </nav>
+</section>
+
+</body>
+</html>
