@@ -24,8 +24,6 @@ public class ChannelSaveRequestDto {
     
     private String password;
     
-    private Long member;
-    
     private int maxCount;
     
     public Channel dtoToEntity() {
@@ -38,10 +36,9 @@ public class ChannelSaveRequestDto {
     }
     
     @Builder
-    public ChannelSaveRequestDto(String name, String password, Long member, int maxCount) {
+    public ChannelSaveRequestDto(String name, String password, int maxCount) {
         this.name = name;
         this.password = password;
-        this.member = member;
         this.maxCount = maxCount;
     }
 }
