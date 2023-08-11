@@ -10,8 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 import proj.chat.dto.chat.ChannelResponseDto;
 import proj.chat.dto.chat.ChannelSaveRequestDto;
 import proj.chat.entity.Channel;
+import proj.chat.entity.Member;
 import proj.chat.exception.DataNotFoundException;
 import proj.chat.repository.ChannelRepository;
+import proj.chat.repository.MemberRepository;
 
 @Slf4j
 @Service
@@ -20,6 +22,7 @@ import proj.chat.repository.ChannelRepository;
 public class ChannelService {
     
     private final ChannelRepository channelRepository;
+    private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     
     /**
@@ -29,7 +32,7 @@ public class ChannelService {
      * @return 채널 생성 이후에 부여되는 채널 ID(인덱스)
      */
     @Transactional
-    public Long save(ChannelSaveRequestDto dto) {
+    public String save(ChannelSaveRequestDto dto) {
         
         Channel channel = dto.dtoToEntity();
         
@@ -40,8 +43,16 @@ public class ChannelService {
         
         // 채널 UUID 생성
         channel.createUUID();
+    
+        Member findMember = memberRepository.findByEmail(dto.getMemberEmail())
+                .orElseThrow(() -> new DataNotFoundException("존재하지 않는 사용자입니다"));
+    
+        channel.addMember(findMember);
         
-        return channelRepository.save(channel).getId();
+        // TODO: 이미 방에 참가 중인 사람에 대해서는 저장을 하면 안 됨
+        //  지금 Member와 Channel이 1:N 관계라서 하나의 계정에 대해 채널을 여러 개 설정할 수 없음
+        
+        return channelRepository.save(channel).getUuid();
     }
     
     /**
