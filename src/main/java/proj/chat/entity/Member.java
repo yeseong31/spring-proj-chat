@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,9 @@ public class Member extends BaseTimeEntity {
     private String name;
     
     @Column(nullable = false)
+    private String uuid;
+    
+    @Column(nullable = false)
     private String email;
     
     @Column(nullable = false)
@@ -43,13 +47,23 @@ public class Member extends BaseTimeEntity {
     private boolean status;
     
     @Builder
-    public Member(Long id, String name, String email, String password, boolean status) {
+    public Member(
+            Long id, String name, String uuid, String email, String password, boolean status) {
+        
         this.id = id;
         this.name = name;
+        this.uuid = uuid;
         this.email = email;
         this.password = password;
         this.status = status;
         this.role = MEMBER;
+    }
+    
+    /**
+     * 사용자 UUID 생성
+     */
+    public void createUUID() {
+        uuid = UUID.randomUUID().toString();
     }
     
     /**
