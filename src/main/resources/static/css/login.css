@@ -40,8 +40,6 @@ body {
 
 .form-login input[id="token"] {
   margin-bottom: 10px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
 }
 
 .btn-nav-login {
