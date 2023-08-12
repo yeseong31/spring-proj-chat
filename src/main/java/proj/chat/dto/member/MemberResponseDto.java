@@ -12,11 +12,13 @@ public class MemberResponseDto {
     private String name;
     private String email;
     private String password;
+    private String uuid;
     
     public MemberResponseDto(Member entity) {
         this.id = entity.getId();
         this.name = entity.getName();
         this.email = entity.getEmail();
         this.password = entity.getPassword();
+        this.uuid = entity.getUuid();
     }
 }
