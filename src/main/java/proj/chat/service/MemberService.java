@@ -28,14 +28,17 @@ public class MemberService {
      * @return 회원가입 이후에 부여되는 사용자 ID(인덱스)
      */
     @Transactional
-    public Long save(MemberSaveRequestDto dto) {
+    public String save(MemberSaveRequestDto dto) {
         
         Member member = dto.dtoToEntity();
         
         // 비밀번호 암호화
         member.hashPassword(passwordEncoder);
         
-        return memberRepository.save(member).getId();
+        // 사용자 UUID 생성
+        member.createUUID();
+        
+        return memberRepository.save(member).getUuid();
     }
     
     /**
@@ -61,6 +64,20 @@ public class MemberService {
     public MemberResponseDto findByEmail(String email) {
         
         Member findMember = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new DataNotFoundException("존재하지 않는 회원입니다"));
+        
+        return new MemberResponseDto(findMember);
+    }
+    
+    /**
+     * 사용자 UUID로 조회
+     *
+     * @param uuid 사용자 이메일
+     * @return 사용자 정보가 담긴 DTO
+     */
+    public MemberResponseDto findByUuid(String uuid) {
+        
+        Member findMember = memberRepository.findByUuid(uuid)
                 .orElseThrow(() -> new DataNotFoundException("존재하지 않는 회원입니다"));
         
         return new MemberResponseDto(findMember);
