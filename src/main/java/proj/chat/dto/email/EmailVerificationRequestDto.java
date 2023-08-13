@@ -16,7 +16,6 @@ import proj.chat.entity.EmailToken;
 @NoArgsConstructor
 public class EmailVerificationRequestDto {
     
-    @NotEmpty(message = "이메일을 입력해주세요.")
     @Email(regexp = "^[a-zA-Z0-9+-\\_.]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$")
     private String email;
     
