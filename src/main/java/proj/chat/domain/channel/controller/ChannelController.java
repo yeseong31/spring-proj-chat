@@ -1,4 +1,4 @@
-package proj.chat.controller;
+package proj.chat.domain.channel.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
