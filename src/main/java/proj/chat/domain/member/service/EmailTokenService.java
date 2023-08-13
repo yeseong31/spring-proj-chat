@@ -11,7 +11,7 @@ import proj.chat.domain.member.dto.EmailVerificationResponseDto;
 import proj.chat.domain.member.entity.EmailToken;
 import proj.chat.domain.member.entity.Member;
 import proj.chat.exception.DataNotFoundException;
-import proj.chat.repository.EmailTokenRepository;
+import proj.chat.domain.member.repository.EmailTokenRepository;
 import proj.chat.domain.member.repository.MemberRepository;
 
 @Slf4j
