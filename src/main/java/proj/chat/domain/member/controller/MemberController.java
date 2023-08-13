@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import proj.chat.domain.member.dto.MemberLoginRequestDto;
-import proj.chat.dto.email.EmailVerificationRequestDto;
+import proj.chat.security.dto.EmailVerificationRequestDto;
 import proj.chat.domain.member.dto.MemberResponseDto;
 import proj.chat.domain.member.dto.MemberSaveRequestDto;
 import proj.chat.domain.member.dto.MemberUpdateRequestDto;
