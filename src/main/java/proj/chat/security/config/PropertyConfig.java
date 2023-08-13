@@ -1,4 +1,4 @@
-package proj.chat.config;
+package proj.chat.security.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
