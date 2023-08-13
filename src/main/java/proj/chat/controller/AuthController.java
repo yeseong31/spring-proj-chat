@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import proj.chat.dto.auth.LoginRequestDto;
+import proj.chat.domain.member.dto.MemberLoginRequestDto;
 import proj.chat.dto.email.EmailVerificationRequestDto;
 import proj.chat.domain.member.dto.MemberResponseDto;
 import proj.chat.domain.member.dto.MemberSaveRequestDto;
@@ -96,7 +96,7 @@ public class AuthController {
      * 로그인(GET)
      */
     @GetMapping("/login")
-    public String loginForm(@ModelAttribute LoginRequestDto loginRequestDto) {
+    public String loginForm(@ModelAttribute MemberLoginRequestDto loginRequestDto) {
         return "auth/login";
     }
     

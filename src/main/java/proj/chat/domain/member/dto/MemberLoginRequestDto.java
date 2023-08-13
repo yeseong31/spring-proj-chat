@@ -1,4 +1,4 @@
-package proj.chat.dto.auth;
+package proj.chat.domain.member.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -13,7 +13,7 @@ import org.hibernate.validator.constraints.Length;
 @Setter
 @ToString
 @NoArgsConstructor
-public class LoginRequestDto {
+public class MemberLoginRequestDto {
 
     @NotEmpty(message = "이메일을 입력해주세요.")
     @Email(regexp = "^[a-zA-Z0-9+-\\_.]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$")
@@ -24,7 +24,7 @@ public class LoginRequestDto {
     private String password;
     
     @Builder
-    public LoginRequestDto(String email, String password) {
+    public MemberLoginRequestDto(String email, String password) {
         this.email = email;
         this.password = password;
     }
