@@ -96,7 +96,9 @@ public class MemberController {
      * 로그인(GET)
      */
     @GetMapping("/login")
-    public String loginForm(@ModelAttribute MemberLoginRequestDto loginRequestDto) {
+    public String loginForm(
+            @ModelAttribute("loginRequestDto") MemberLoginRequestDto loginRequestDto) {
+        
         return "auth/login";
     }
     
