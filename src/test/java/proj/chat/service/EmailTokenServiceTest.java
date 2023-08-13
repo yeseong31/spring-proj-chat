@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import proj.chat.domain.member.service.MemberService;
 import proj.chat.dto.email.EmailVerificationRequestDto;
 import proj.chat.dto.email.EmailVerificationResponseDto;
 import proj.chat.domain.member.dto.MemberSaveRequestDto;

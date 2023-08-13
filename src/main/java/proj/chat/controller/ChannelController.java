@@ -19,7 +19,7 @@ import proj.chat.dto.chat.ChannelSaveRequestDto;
 import proj.chat.dto.chat.MessageDto;
 import proj.chat.domain.member.dto.MemberResponseDto;
 import proj.chat.service.ChannelService;
-import proj.chat.service.MemberService;
+import proj.chat.domain.member.service.MemberService;
 import proj.chat.service.MessageService;
 
 @Slf4j

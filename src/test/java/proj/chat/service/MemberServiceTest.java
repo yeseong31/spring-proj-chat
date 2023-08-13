@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import proj.chat.domain.member.dto.MemberResponseDto;
 import proj.chat.domain.member.dto.MemberSaveRequestDto;
+import proj.chat.domain.member.service.MemberService;
 import proj.chat.exception.DuplicatedMemberEmailException;
 import proj.chat.exception.NotValidateEmailException;
 
