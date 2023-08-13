@@ -1,4 +1,4 @@
-package proj.chat.domain.common.config;
+package proj.chat.aop.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
