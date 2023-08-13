@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import proj.chat.dto.chat.MessageDto;
 import proj.chat.domain.channel.entity.Channel;
 import proj.chat.entity.Message;
-import proj.chat.repository.ChannelRepository;
+import proj.chat.domain.channel.repository.ChannelRepository;
 import proj.chat.repository.MessageRepository;
 
 @Slf4j

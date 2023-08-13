@@ -1,4 +1,4 @@
-package proj.chat.repository;
+package proj.chat.domain.channel.repository;
 
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
