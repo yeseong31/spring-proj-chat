@@ -1,4 +1,4 @@
-package proj.chat.controller;
+package proj.chat.websocket.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,8 +9,8 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
-import proj.chat.dto.chat.MessageDto;
-import proj.chat.service.MessageService;
+import proj.chat.domain.message.dto.MessageDto;
+import proj.chat.domain.message.service.MessageService;
 
 /**
  * 채팅을 송수신(pub/sub)하는 컨트롤러
