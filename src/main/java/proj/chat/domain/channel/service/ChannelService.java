@@ -1,4 +1,4 @@
-package proj.chat.service;
+package proj.chat.domain.channel.service;
 
 import java.util.List;
 import java.util.stream.Collectors;

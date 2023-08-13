@@ -8,7 +8,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import proj.chat.domain.channel.dto.ChannelSaveRequestDto;
 import proj.chat.domain.member.dto.MemberSaveRequestDto;
-import proj.chat.service.ChannelService;
+import proj.chat.domain.channel.service.ChannelService;
 import proj.chat.domain.member.service.MemberService;
 
 @Slf4j
