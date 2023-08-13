@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import proj.chat.entity.EmailToken;
+import proj.chat.domain.member.entity.EmailToken;
 
 @Getter
 @Setter

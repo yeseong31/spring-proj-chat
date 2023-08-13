@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import proj.chat.aop.annotation.Trace;
 import proj.chat.security.dto.EmailVerificationRequestDto;
 import proj.chat.security.dto.EmailVerificationResponseDto;
-import proj.chat.entity.EmailToken;
+import proj.chat.domain.member.entity.EmailToken;
 import proj.chat.domain.member.entity.Member;
 import proj.chat.exception.DataNotFoundException;
 import proj.chat.repository.EmailTokenRepository;
