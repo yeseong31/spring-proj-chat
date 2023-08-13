@@ -36,7 +36,13 @@ public class ChannelController {
      * 채널 목록 조회
      */
     @GetMapping("/list")
-    public String list(Model model) {
+    public String list(@AuthenticationPrincipal User user, Model model) {
+    
+        if (user == null) {
+            log.info("[list] 로그인을 하지 않은 사용자입니다");
+            return "auth/login";
+        }
+        
         model.addAttribute("channels", channelService.findAll());
         model.addAttribute("channelSaveRequestDto", new ChannelSaveRequestDto());
         return "channel/list";

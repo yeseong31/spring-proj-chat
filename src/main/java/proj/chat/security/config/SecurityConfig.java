@@ -32,7 +32,7 @@ public class SecurityConfig {
                         .loginProcessingUrl("/auth/login")
                         .usernameParameter("email")
                         .passwordParameter("password")
-                        .defaultSuccessUrl("/", true)
+                        .defaultSuccessUrl("/channel/list", true)
                         .permitAll()
                 )
                 .logout(logout -> logout
