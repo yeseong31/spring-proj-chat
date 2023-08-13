@@ -13,7 +13,7 @@ import proj.chat.domain.member.service.MemberService;
 import proj.chat.dto.email.EmailVerificationRequestDto;
 import proj.chat.dto.email.EmailVerificationResponseDto;
 import proj.chat.domain.member.dto.MemberSaveRequestDto;
-import proj.chat.security.EmailTokenService;
+import proj.chat.security.service.EmailTokenService;
 
 @Slf4j
 @SpringBootTest

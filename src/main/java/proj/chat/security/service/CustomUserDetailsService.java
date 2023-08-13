@@ -1,4 +1,4 @@
-package proj.chat.security;
+package proj.chat.security.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;

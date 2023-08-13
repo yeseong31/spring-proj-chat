@@ -23,7 +23,7 @@ import proj.chat.dto.email.EmailVerificationRequestDto;
 import proj.chat.domain.member.dto.MemberResponseDto;
 import proj.chat.domain.member.dto.MemberSaveRequestDto;
 import proj.chat.domain.member.dto.MemberUpdateRequestDto;
-import proj.chat.security.AsyncMailService;
+import proj.chat.security.service.AsyncMailService;
 import proj.chat.domain.member.service.MemberService;
 import proj.chat.validator.EmailVerificationRequestDtoValidator;
 import proj.chat.validator.MemberSaveRequestDtoValidator;
