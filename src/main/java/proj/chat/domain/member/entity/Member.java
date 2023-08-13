@@ -1,9 +1,9 @@
-package proj.chat.entity;
+package proj.chat.domain.member.entity;
 
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
-import static proj.chat.entity.MemberRole.MEMBER;
+import static proj.chat.domain.member.entity.MemberRole.MEMBER;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

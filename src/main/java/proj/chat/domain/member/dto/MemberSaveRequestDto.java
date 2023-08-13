@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
-import proj.chat.entity.Member;
+import proj.chat.domain.member.entity.Member;
 
 @Getter
 @Setter

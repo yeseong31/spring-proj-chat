@@ -9,7 +9,7 @@ import proj.chat.aop.annotation.Trace;
 import proj.chat.dto.email.EmailVerificationRequestDto;
 import proj.chat.dto.email.EmailVerificationResponseDto;
 import proj.chat.entity.EmailToken;
-import proj.chat.entity.Member;
+import proj.chat.domain.member.entity.Member;
 import proj.chat.exception.DataNotFoundException;
 import proj.chat.repository.EmailTokenRepository;
 import proj.chat.repository.MemberRepository;

@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import proj.chat.dto.chat.ChannelResponseDto;
 import proj.chat.dto.chat.ChannelSaveRequestDto;
 import proj.chat.entity.Channel;
-import proj.chat.entity.Member;
+import proj.chat.domain.member.entity.Member;
 import proj.chat.exception.DataNotFoundException;
 import proj.chat.repository.ChannelRepository;
 import proj.chat.repository.MemberRepository;

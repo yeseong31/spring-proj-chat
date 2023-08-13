@@ -2,7 +2,7 @@ package proj.chat.domain.member.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import proj.chat.entity.Member;
+import proj.chat.domain.member.entity.Member;
 
 @Getter
 @NoArgsConstructor

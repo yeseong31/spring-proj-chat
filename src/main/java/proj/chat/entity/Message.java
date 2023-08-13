@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import proj.chat.domain.common.entity.BaseTimeEntity;
+import proj.chat.domain.member.entity.Member;
 
 @Entity
 @Getter

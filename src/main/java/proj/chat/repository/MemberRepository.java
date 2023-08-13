@@ -3,7 +3,7 @@ package proj.chat.repository;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
-import proj.chat.entity.Member;
+import proj.chat.domain.member.entity.Member;
 
 @Transactional(readOnly = true)
 public interface MemberRepository extends JpaRepository<Member, Long> {

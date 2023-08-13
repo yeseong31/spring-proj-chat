@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import proj.chat.domain.member.dto.MemberResponseDto;
 import proj.chat.domain.member.dto.MemberSaveRequestDto;
 import proj.chat.domain.member.dto.MemberUpdateRequestDto;
-import proj.chat.entity.Member;
+import proj.chat.domain.member.entity.Member;
 import proj.chat.exception.DataNotFoundException;
 import proj.chat.repository.MemberRepository;
 
