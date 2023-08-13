@@ -1,4 +1,4 @@
-package proj.chat.entity;
+package proj.chat.domain.message.entity;
 
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;

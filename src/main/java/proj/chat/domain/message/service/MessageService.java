@@ -1,14 +1,14 @@
-package proj.chat.service;
+package proj.chat.domain.message.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import proj.chat.dto.chat.MessageDto;
+import proj.chat.domain.message.dto.MessageDto;
 import proj.chat.domain.channel.entity.Channel;
-import proj.chat.entity.Message;
+import proj.chat.domain.message.entity.Message;
 import proj.chat.domain.channel.repository.ChannelRepository;
-import proj.chat.repository.MessageRepository;
+import proj.chat.domain.message.repository.MessageRepository;
 
 @Slf4j
 @Service

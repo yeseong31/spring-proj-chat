@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import proj.chat.domain.channel.dto.ChannelSaveRequestDto;
-import proj.chat.dto.chat.MessageDto;
+import proj.chat.domain.message.dto.MessageDto;
 import proj.chat.domain.member.dto.MemberResponseDto;
 import proj.chat.domain.channel.service.ChannelService;
 import proj.chat.domain.member.service.MemberService;
-import proj.chat.service.MessageService;
+import proj.chat.domain.message.service.MessageService;
 
 @Slf4j
 @Controller

@@ -1,4 +1,4 @@
-package proj.chat.dto.chat;
+package proj.chat.domain.message.dto;
 
 import static lombok.AccessLevel.PROTECTED;
 
@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import proj.chat.entity.Message;
+import proj.chat.domain.message.entity.Message;
 
 @Getter
 @Setter
