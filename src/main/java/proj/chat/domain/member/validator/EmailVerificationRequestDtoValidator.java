@@ -1,4 +1,4 @@
-package proj.chat.validator;
+package proj.chat.domain.member.validator;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

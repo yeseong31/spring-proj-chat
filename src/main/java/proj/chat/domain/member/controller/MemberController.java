@@ -25,8 +25,8 @@ import proj.chat.domain.member.dto.MemberSaveRequestDto;
 import proj.chat.domain.member.dto.MemberUpdateRequestDto;
 import proj.chat.security.service.AsyncMailService;
 import proj.chat.domain.member.service.MemberService;
-import proj.chat.validator.EmailVerificationRequestDtoValidator;
-import proj.chat.validator.MemberSaveRequestDtoValidator;
+import proj.chat.domain.member.validator.EmailVerificationRequestDtoValidator;
+import proj.chat.domain.member.validator.MemberSaveRequestDtoValidator;
 
 @Slf4j
 @Controller

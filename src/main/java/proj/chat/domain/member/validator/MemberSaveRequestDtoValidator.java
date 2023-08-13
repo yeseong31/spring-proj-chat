@@ -1,4 +1,4 @@
-package proj.chat.validator;
+package proj.chat.domain.member.validator;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
