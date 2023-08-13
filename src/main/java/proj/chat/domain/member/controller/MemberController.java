@@ -1,4 +1,4 @@
-package proj.chat.controller;
+package proj.chat.domain.member.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,7 +32,7 @@ import proj.chat.validator.MemberSaveRequestDtoValidator;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/auth")
-public class AuthController {
+public class MemberController {
     
     private final MemberService memberService;
     private final AsyncMailService mailService;
