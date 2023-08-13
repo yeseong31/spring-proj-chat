@@ -104,6 +104,9 @@ public class MemberService {
         if (requestDto.getPassword() == null) {
             requestDto.setPassword(member.getPassword());
         }
+        if (requestDto.getUuid() == null) {
+            requestDto.setUuid(member.getUuid());
+        }
         requestDto.setStatus(true);
         
         memberRepository.save(requestDto.dtoToEntity());
