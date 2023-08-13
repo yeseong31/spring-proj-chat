@@ -1,4 +1,4 @@
-package proj.chat.security.dto;
+package proj.chat.domain.member.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
