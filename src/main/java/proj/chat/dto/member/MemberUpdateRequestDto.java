@@ -17,6 +17,8 @@ public class MemberUpdateRequestDto {
     
     private String name;
     
+    private String uuid;
+    
     private String email;
     
     private String password;
@@ -28,6 +30,7 @@ public class MemberUpdateRequestDto {
         return Member.builder()
                 .id(id)
                 .name(name)
+                .uuid(uuid)
                 .email(email)
                 .password(password)
                 .status(status)
@@ -35,11 +38,13 @@ public class MemberUpdateRequestDto {
     }
     
     @Builder
-    public MemberUpdateRequestDto(Long id, String name, String email, String password,
-            String matchingPassword, boolean status) {
+    public MemberUpdateRequestDto(
+            Long id, String name, String uuid, String email,
+            String password, String matchingPassword, boolean status) {
         
         this.id = id;
         this.name = name;
+        this.uuid = uuid;
         this.email = email;
         this.password = password;
         this.status = status;
