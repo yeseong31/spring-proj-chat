@@ -1,4 +1,4 @@
-package proj.chat.config;
+package proj.chat.security.config;
 
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServletResponse;
