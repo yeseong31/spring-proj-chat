@@ -1,4 +1,4 @@
-package proj.chat.config;
+package proj.chat.domain.common.config;
 
 import java.util.Properties;
 import org.springframework.beans.factory.annotation.Value;

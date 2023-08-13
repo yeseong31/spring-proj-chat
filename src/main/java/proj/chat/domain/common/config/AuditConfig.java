@@ -1,4 +1,4 @@
-package proj.chat.config;
+package proj.chat.domain.common.config;
 
 import java.util.Optional;
 import java.util.UUID;

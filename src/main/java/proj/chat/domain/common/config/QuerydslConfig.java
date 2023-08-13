@@ -1,4 +1,4 @@
-package proj.chat.config;
+package proj.chat.domain.common.config;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;

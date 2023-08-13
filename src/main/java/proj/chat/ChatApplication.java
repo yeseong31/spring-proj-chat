@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import proj.chat.config.AopConfig;
+import proj.chat.domain.common.config.AopConfig;
 import proj.chat.aop.trace.logtrace.LogTrace;
 import proj.chat.aop.trace.logtrace.ThreadLocalLogTrace;
 
