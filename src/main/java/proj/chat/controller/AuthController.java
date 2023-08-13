@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import proj.chat.dto.email.EmailVerificationRequestDto;
 import proj.chat.dto.auth.LoginRequestDto;
+import proj.chat.dto.member.MemberResponseDto;
 import proj.chat.dto.member.MemberSaveRequestDto;
 import proj.chat.dto.member.MemberUpdateRequestDto;
 import proj.chat.security.AsyncMailService;
@@ -77,15 +79,14 @@ public class AuthController {
         }
         
         // 회원가입 진행
-        Long savedMemberId = memberService.save(requestDto);
-        log.info("[signup] 회원가입 완료: ID={}", savedMemberId);
+        String savedMemberUuid = memberService.save(requestDto);
+        log.info("[signup] 회원가입 완료: UUID={}", savedMemberUuid);
         
         // 이메일 인증 코드 발송 & 인증 정보 저장
         mailService.executor(requestDto.getEmail());
         
         // redirect 시 파라미터 전달
-        // TODO: 인증 페이지로 넘어갈 때 이메일이 아니라 ID 값을 넘가도록 수정해야 함
-        redirectAttributes.addAttribute("email", requestDto.getEmail());
+        redirectAttributes.addAttribute("uuid", savedMemberUuid);
         
         return "redirect:/auth/email/verification";
     }
@@ -118,11 +119,18 @@ public class AuthController {
      */
     @GetMapping("/email/verification")
     public String emailVerificationForm(
+            @RequestParam("uuid") String memberUuid,
             @ModelAttribute EmailVerificationRequestDto emailVerificationRequestDto) {
-        
-        // TODO: 이메일 인증 페이지에 잘못된 방식으로 접근하면 emailToken 값이 null이 되는 오류가 있음
-        
-        // TODO: 이메일 인증 페이지 접근 권한이 없는 경우 회원가입 페이지로 redirect해야 함 (회원가입을 하지 않았거나 URL 직접 접근 시)
+    
+        if (memberUuid == null) {
+            log.info("[emailVerificationForm] 회원가입을 하지 않은 사용자입니다");
+            return "auth/signup";
+        }
+    
+        if (!memberService.findByUuid(memberUuid).getUuid().equals(memberUuid)) {
+            log.info("[emailVerificationForm] 올바르지 않은 사용자입니다");
+            return "auth/signup";
+        }
         
         return "auth/email/verification";
     }
@@ -132,24 +140,30 @@ public class AuthController {
      */
     @PostMapping("/email/verification")
     public String emailVerification(
+            @RequestParam("uuid") String memberUuid,
             @Validated @ModelAttribute EmailVerificationRequestDto requestDto,
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         
-        log.info("[emailVerification] email={}", requestDto.getEmail());
         log.info("[emailVerification] token={}", requestDto.getToken());
         
         if (bindingResult.hasErrors()) {
             log.info("[emailVerification] errors={}", bindingResult);
             return "auth/email/verification";
         }
-        
-        // 사용자 활성화
-        Long findMemberId = memberService.findByEmail(requestDto.getEmail()).getId();
+    
+        MemberResponseDto findMember = memberService.findByUuid(memberUuid);
+    
+        if (!findMember.getUuid().equals(memberUuid)) {
+            log.info("[emailVerificationForm] 올바르지 않은 사용자입니다");
+            return "auth/signup";
+        }
         
         MemberUpdateRequestDto updateDto = MemberUpdateRequestDto.builder()
+                .email(findMember.getEmail())
                 .status(true)
                 .build();
-        Long updatedId = memberService.update(findMemberId, updateDto);
+        
+        Long updatedId = memberService.update(findMember.getId(), updateDto);
         
         log.info("[emailVerification] 이메일 인증 성공");
         log.info("[emailVerification] 사용자 활성화: ID={}", updatedId);
