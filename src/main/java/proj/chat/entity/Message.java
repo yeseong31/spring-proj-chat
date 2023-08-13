@@ -13,6 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import proj.chat.domain.common.entity.BaseTimeEntity;
 
 @Entity
 @Getter

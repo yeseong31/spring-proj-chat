@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import proj.chat.domain.common.entity.BaseEntity;
 
 @Entity
 @Getter

@@ -1,4 +1,4 @@
-package proj.chat.entity;
+package proj.chat.domain.common.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
