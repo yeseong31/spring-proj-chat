@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
@@ -121,22 +122,24 @@ public class MemberController {
      * 이메일 인증(GET)
      */
     @GetMapping("/email/verification")
-    public String emailVerificationForm(
-            @ModelAttribute EmailVerificationRequestDto emailVerificationRequestDto,
-            HttpServletRequest request) {
+    public String emailVerificationForm(Model model, HttpServletRequest request) {
         
         HttpSession session = request.getSession();
         String memberUuid = (String) session.getAttribute("uuid");
         
         if (memberUuid == null) {
             log.info("[emailVerificationForm] 회원가입을 하지 않은 사용자입니다");
+            model.addAttribute("memberSaveRequestDto", new MemberSaveRequestDto());
             return "auth/signup";
         }
         
         if (!memberService.findByUuid(memberUuid).getUuid().equals(memberUuid)) {
             log.info("[emailVerificationForm] 올바르지 않은 사용자입니다");
+            model.addAttribute("memberSaveRequestDto", new MemberSaveRequestDto());
             return "auth/signup";
         }
+    
+        model.addAttribute("emailVerificationRequestDto", new EmailVerificationRequestDto());
         
         return "auth/email/verification";
     }
