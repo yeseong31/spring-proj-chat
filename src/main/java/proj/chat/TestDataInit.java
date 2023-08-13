@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import proj.chat.dto.chat.ChannelSaveRequestDto;
-import proj.chat.dto.member.MemberSaveRequestDto;
+import proj.chat.domain.member.dto.MemberSaveRequestDto;
 import proj.chat.service.ChannelService;
 import proj.chat.service.MemberService;
 

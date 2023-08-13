@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-import proj.chat.dto.member.MemberResponseDto;
+import proj.chat.domain.member.dto.MemberResponseDto;
 import proj.chat.service.MemberService;
 
 @Component

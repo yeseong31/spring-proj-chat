@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import proj.chat.dto.chat.ChannelSaveRequestDto;
 import proj.chat.dto.chat.MessageDto;
-import proj.chat.dto.member.MemberResponseDto;
+import proj.chat.domain.member.dto.MemberResponseDto;
 import proj.chat.service.ChannelService;
 import proj.chat.service.MemberService;
 import proj.chat.service.MessageService;
