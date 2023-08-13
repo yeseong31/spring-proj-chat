@@ -1,4 +1,4 @@
-package proj.chat.dto.chat;
+package proj.chat.domain.channel.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

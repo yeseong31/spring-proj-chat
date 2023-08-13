@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import proj.chat.dto.chat.ChannelSaveRequestDto;
+import proj.chat.domain.channel.dto.ChannelSaveRequestDto;
 import proj.chat.dto.chat.MessageDto;
 import proj.chat.domain.member.dto.MemberResponseDto;
 import proj.chat.service.ChannelService;

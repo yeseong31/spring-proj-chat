@@ -1,4 +1,4 @@
-package proj.chat.dto.chat;
+package proj.chat.domain.channel.dto;
 
 import java.time.LocalDateTime;
 import lombok.Getter;
