@@ -1,4 +1,4 @@
-package proj.chat.handler;
+package proj.chat.websocket.handler;
 
 import static proj.chat.domain.message.entity.MessageType.ENTER;
 import static proj.chat.domain.message.entity.MessageType.LEAVE;

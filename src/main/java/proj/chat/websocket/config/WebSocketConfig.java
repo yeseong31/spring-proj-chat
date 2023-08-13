@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
-import proj.chat.handler.WebSocketHandler;
+import proj.chat.websocket.handler.WebSocketHandler;
 
 @Slf4j
 @Configuration
