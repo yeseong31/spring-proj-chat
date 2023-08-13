@@ -9,7 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
-import proj.chat.entity.Channel;
+import proj.chat.domain.channel.entity.Channel;
 
 @Getter
 @Setter

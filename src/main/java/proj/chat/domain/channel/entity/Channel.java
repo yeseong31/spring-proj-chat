@@ -1,4 +1,4 @@
-package proj.chat.entity;
+package proj.chat.domain.channel.entity;
 
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;

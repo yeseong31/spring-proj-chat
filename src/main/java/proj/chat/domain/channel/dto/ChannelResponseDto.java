@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import proj.chat.entity.Channel;
+import proj.chat.domain.channel.entity.Channel;
 
 @Getter
 @Setter

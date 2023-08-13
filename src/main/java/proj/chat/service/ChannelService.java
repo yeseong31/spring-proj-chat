@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import proj.chat.domain.channel.dto.ChannelResponseDto;
 import proj.chat.domain.channel.dto.ChannelSaveRequestDto;
-import proj.chat.entity.Channel;
+import proj.chat.domain.channel.entity.Channel;
 import proj.chat.domain.member.entity.Member;
 import proj.chat.exception.DataNotFoundException;
 import proj.chat.repository.ChannelRepository;
