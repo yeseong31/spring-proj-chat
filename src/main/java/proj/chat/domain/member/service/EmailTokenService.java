@@ -1,4 +1,4 @@
-package proj.chat.security.service;
+package proj.chat.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,8 +6,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import proj.chat.aop.annotation.Trace;
-import proj.chat.security.dto.EmailVerificationRequestDto;
-import proj.chat.security.dto.EmailVerificationResponseDto;
+import proj.chat.domain.member.dto.EmailVerificationRequestDto;
+import proj.chat.domain.member.dto.EmailVerificationResponseDto;
 import proj.chat.domain.member.entity.EmailToken;
 import proj.chat.domain.member.entity.Member;
 import proj.chat.exception.DataNotFoundException;

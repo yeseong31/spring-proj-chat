@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import proj.chat.domain.member.service.MemberService;
-import proj.chat.security.dto.EmailVerificationRequestDto;
-import proj.chat.security.dto.EmailVerificationResponseDto;
+import proj.chat.domain.member.dto.EmailVerificationRequestDto;
+import proj.chat.domain.member.dto.EmailVerificationResponseDto;
 import proj.chat.domain.member.dto.MemberSaveRequestDto;
-import proj.chat.security.service.EmailTokenService;
+import proj.chat.domain.member.service.EmailTokenService;
 
 @Slf4j
 @SpringBootTest
