@@ -10,7 +10,7 @@ import proj.chat.domain.member.dto.MemberSaveRequestDto;
 import proj.chat.domain.member.dto.MemberUpdateRequestDto;
 import proj.chat.domain.member.entity.Member;
 import proj.chat.exception.DataNotFoundException;
-import proj.chat.repository.MemberRepository;
+import proj.chat.domain.member.repository.MemberRepository;
 
 @Slf4j
 @Service

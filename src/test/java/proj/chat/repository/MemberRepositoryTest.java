@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import proj.chat.domain.member.entity.Member;
+import proj.chat.domain.member.repository.MemberRepository;
 
 @SpringBootTest
 @Transactional

@@ -13,7 +13,7 @@ import proj.chat.entity.Channel;
 import proj.chat.domain.member.entity.Member;
 import proj.chat.exception.DataNotFoundException;
 import proj.chat.repository.ChannelRepository;
-import proj.chat.repository.MemberRepository;
+import proj.chat.domain.member.repository.MemberRepository;
 
 @Slf4j
 @Service
