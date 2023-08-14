@@ -28,7 +28,7 @@ public class MemberService {
      * @return 회원가입 이후에 부여되는 사용자 ID(인덱스)
      */
     @Transactional
-    public String save(MemberSaveRequestDto dto) {
+    public Long save(MemberSaveRequestDto dto) {
         
         Member member = dto.dtoToEntity();
         
@@ -38,7 +38,7 @@ public class MemberService {
         // 사용자 UUID 생성
         member.createUUID();
         
-        return memberRepository.save(member).getUuid();
+        return memberRepository.save(member).getId();
     }
     
     /**
@@ -81,6 +81,16 @@ public class MemberService {
                 .orElseThrow(() -> new DataNotFoundException("존재하지 않는 회원입니다"));
         
         return new MemberResponseDto(findMember);
+    }
+    
+    /**
+     * 사용자 존재 여부 확인
+     *
+     * @param id 사용자 ID(인덱스)
+     * @return 사용자 존재 여부
+     */
+    public boolean existsById(Long id) {
+        return memberRepository.existsById(id);
     }
     
     /**

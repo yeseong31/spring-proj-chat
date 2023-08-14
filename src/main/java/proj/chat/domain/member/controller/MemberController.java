@@ -80,15 +80,17 @@ public class MemberController {
         }
         
         // 회원가입 진행
-        String savedMemberUuid = memberService.save(requestDto);
-        log.info("[signup] 회원가입 완료: UUID={}", savedMemberUuid);
+        Long savedId = memberService.save(requestDto);
+        log.info("[signup] 회원가입 완료: ID={}", savedId);
         
         // 이메일 인증 코드 발송 & 인증 정보 저장
         mailService.executor(requestDto.getEmail());
-        
+    
+        MemberResponseDto findMember = memberService.findById(savedId);
+    
         // 세션에 사용자 UUID 저장
         HttpSession session = request.getSession();
-        session.setAttribute("uuid", savedMemberUuid);
+        session.setAttribute("uuid", findMember.getUuid());
         
         return "redirect:/auth/email/verification";
     }
