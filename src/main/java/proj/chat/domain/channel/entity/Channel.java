@@ -1,6 +1,5 @@
 package proj.chat.domain.channel.entity;
 
-import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -8,9 +7,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,9 +38,6 @@ public class Channel extends BaseEntity {
     private int maxCount;
     
     private String password;
-    
-    @OneToMany(fetch = LAZY)
-    private final List<Member> members = new ArrayList<>();
     
     @Builder
     public Channel(Long id, String uuid, String name, int count, int maxCount, String password) {
@@ -81,26 +74,6 @@ public class Channel extends BaseEntity {
      */
     public boolean checkPassword(String plainPassword, PasswordEncoder passwordEncoder) {
         return passwordEncoder.matches(plainPassword, password);
-    }
-    
-    /**
-     * 채널에 사용자 추가
-     *
-     * @param member 추가할 사용자
-     */
-    public void addMember(Member member) {
-        increaseCount();
-        this.members.add(member);
-    }
-    
-    /**
-     * 채널에서 사용자 삭제
-     *
-     * @param member 삭제할 사용자
-     */
-    public void deleteMember(Member member) {
-        decreaseCount();
-        this.members.remove(member);
     }
     
     /**
