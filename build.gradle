@@ -51,10 +51,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
 	// sockjs
-	implementation 'org.webjars:sockjs-client'
+	implementation 'org.webjars:sockjs-client:1.1.2'
 
 	// stomp
-	implementation 'org.webjars:stomp-websocket'
+	implementation 'org.webjars:stomp-websocket:2.3.4'
 
 	// gson
 	implementation 'com.google.code.gson:gson'
@@ -64,6 +64,9 @@ dependencies {
 
 	testImplementation 'com.h2database:h2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 
 tasks.named('test') {
