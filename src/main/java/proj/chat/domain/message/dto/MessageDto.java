@@ -1,7 +1,5 @@
 package proj.chat.domain.message.dto;
 
-import static lombok.AccessLevel.PROTECTED;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +10,7 @@ import proj.chat.domain.message.entity.Message;
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor(access = PROTECTED)
+@NoArgsConstructor
 public class MessageDto {
     
     private String channelUuid;  // 채널 UUID
