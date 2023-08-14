@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ class MemberRepositoryTest {
         Member member = Member.builder()
                 .name("홍길동")
                 .email("hong@test.com")
+                .uuid(UUID.randomUUID().toString())
                 .password("Test123")
                 .build();
         
@@ -43,12 +45,14 @@ class MemberRepositoryTest {
         Member member1 = Member.builder()
                 .name("홍길동")
                 .email("hong@test.com")
+                .uuid(UUID.randomUUID().toString())
                 .password("Test123")
                 .build();
     
         Member member2 = Member.builder()
                 .name("홍길동")
                 .email("hong@test.com")
+                .uuid(UUID.randomUUID().toString())
                 .password("Test123")
                 .build();
     
@@ -69,6 +73,7 @@ class MemberRepositoryTest {
         Member member = Member.builder()
                 .name("홍길동")
                 .email("hong@test.com")
+                .uuid(UUID.randomUUID().toString())
                 .password("Test123")
                 .build();
     

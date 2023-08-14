@@ -36,7 +36,7 @@ class MemberControllerTest {
         mvc.perform(get("/auth/signup"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(view().name("signup"));
+                .andExpect(view().name("auth/signup"));
     }
     
     @Test
