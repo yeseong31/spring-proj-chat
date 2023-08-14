@@ -99,6 +99,7 @@ public class Channel extends BaseEntity {
      * @param member 삭제할 사용자
      */
     public void deleteMember(Member member) {
+        decreaseCount();
         this.members.remove(member);
     }
     
