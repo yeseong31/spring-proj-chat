@@ -1,5 +1,6 @@
 package proj.chat.domain.channel.controller;
 
+import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -10,16 +11,16 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import proj.chat.domain.channel.dto.ChannelResponseDto;
 import proj.chat.domain.channel.dto.ChannelSaveRequestDto;
-import proj.chat.domain.message.dto.MessageDto;
-import proj.chat.domain.member.dto.MemberResponseDto;
 import proj.chat.domain.channel.service.ChannelService;
+import proj.chat.domain.member.dto.MemberResponseDto;
 import proj.chat.domain.member.service.MemberService;
+import proj.chat.domain.message.dto.MessageDto;
 import proj.chat.domain.message.service.MessageService;
 
 @Slf4j
@@ -37,7 +38,7 @@ public class ChannelController {
      */
     @GetMapping("/list")
     public String list(@AuthenticationPrincipal User user, Model model) {
-    
+        
         if (user == null) {
             log.info("[list] 로그인을 하지 않은 사용자입니다");
             return "auth/login";
@@ -79,21 +80,56 @@ public class ChannelController {
         
         String savedChannelUuid = channelService.save(requestDto);
         
-        MemberResponseDto memberResponseDto = memberService.findByEmail(user.getUsername());
-        
-        redirectAttributes.addAttribute("name", memberResponseDto.getName());
-        redirectAttributes.addAttribute("channelUuid", savedChannelUuid);
         redirectAttributes.addAttribute("status", true);
-    
-        return "channel/list";
-//        return "redirect:/channel/{channelUuid}";
+        
+        return "redirect:/channel?uuid=" + savedChannelUuid;
     }
     
     /**
      * 채널 입장
      */
-    @GetMapping("/{channelUuid}")
-    public String enter(@PathVariable String channelUuid, @ModelAttribute MessageDto messageDto) {
+    @GetMapping
+    public String enterForm(
+            @RequestParam("uuid") String uuid, @AuthenticationPrincipal User user, Model model) {
+        
+        // 로그인하지 않은 사용자인 경우
+        if (user == null) {
+            log.info("[enterForm] 로그인을 하지 않은 사용자입니다");
+            return "auth/login";
+        }
+        
+        MemberResponseDto findMemberDto = memberService.findByEmail(user.getUsername());
+        if (findMemberDto == null) {
+            log.info("[enterForm] 회원가입을 하지 않은 사용자입니다");
+            return "auth/signup";
+        }
+        
+        // UUID 형식 확인
+        Pattern regex =
+                Pattern.compile(
+                        "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
+        
+        if (!regex.matcher(uuid).matches()) {
+            log.info("[enterForm] 유효하지 않은 UUID입니다");
+            model.addAttribute("channels", channelService.findAll());
+            model.addAttribute("channelSaveRequestDto", new ChannelSaveRequestDto());
+            return "redirect:/channel/list";
+        }
+        
+        // TODO: 유효하지 않은 UUID를 넘겼을 때 channelService에서 사용자 정보를 조회하지 못하여
+        //  DataNotFoundException을 던지고, 이를 처리하지 못하는 것으로 인해 Whitelabel Error Page가 표시됨
+        ChannelResponseDto findChannelDto = channelService.findByUuid(uuid);
+
+//        if (findChannelDto == null) {
+//            log.info("[enterForm] 존재하지 않는 채널입니다");
+//            model.addAttribute("channels", channelService.findAll());
+//            return "channel/list";
+//        }
+        
+        model.addAttribute("messageDto", new MessageDto());
+        model.addAttribute("channelName", findChannelDto.getName());
+        model.addAttribute("memberName", findMemberDto.getName());
+        
         return "channel/chat";
     }
 }
