@@ -17,6 +17,7 @@ public class ChannelResponseDto {
     private String name;
     private int count;
     private int maxCount;
+    private String uuid;
     private String createdBy;
     private LocalDateTime createdDate;
     
@@ -25,6 +26,7 @@ public class ChannelResponseDto {
         this.name = entity.getName();
         this.count = entity.getCount();
         this.maxCount = entity.getMaxCount();
+        this.uuid = entity.getUuid();
         this.createdBy = entity.getCreatedBy();
         this.createdDate = entity.getCreatedDate();
     }
