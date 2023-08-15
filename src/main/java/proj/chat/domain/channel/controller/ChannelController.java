@@ -39,6 +39,7 @@ public class ChannelController {
     @GetMapping("/list")
     public String list(@AuthenticationPrincipal User user, Model model) {
         
+        // 로그인하지 않은 사용자인 경우
         if (user == null) {
             log.info("[list] 로그인을 하지 않은 사용자입니다");
             return "auth/login";
@@ -66,6 +67,7 @@ public class ChannelController {
             return "channel/list";
         }
         
+        // 로그인하지 않은 사용자인 경우
         if (user == null) {
             log.info("[createChannel] 접근 권한이 없습니다.");
             return "redirect:" + redirectUrl;
@@ -98,6 +100,7 @@ public class ChannelController {
             return "auth/login";
         }
         
+        // 사용자 정보를 찾지 못한 경우
         MemberResponseDto findMemberDto = memberService.findByEmail(user.getUsername());
         if (findMemberDto == null) {
             log.info("[enterForm] 회원가입을 하지 않은 사용자입니다");
@@ -105,9 +108,8 @@ public class ChannelController {
         }
         
         // UUID 형식 확인
-        Pattern regex =
-                Pattern.compile(
-                        "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
+        Pattern regex = Pattern.compile(
+                "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
         
         if (!regex.matcher(uuid).matches()) {
             log.info("[enterForm] 유효하지 않은 UUID입니다");
@@ -119,12 +121,6 @@ public class ChannelController {
         // TODO: 유효하지 않은 UUID를 넘겼을 때 channelService에서 사용자 정보를 조회하지 못하여
         //  DataNotFoundException을 던지고, 이를 처리하지 못하는 것으로 인해 Whitelabel Error Page가 표시됨
         ChannelResponseDto findChannelDto = channelService.findByUuid(uuid);
-
-//        if (findChannelDto == null) {
-//            log.info("[enterForm] 존재하지 않는 채널입니다");
-//            model.addAttribute("channels", channelService.findAll());
-//            return "channel/list";
-//        }
         
         model.addAttribute("messageDto", new MessageDto());
         model.addAttribute("channelName", findChannelDto.getName());
