@@ -1,3 +1,7 @@
+$(document).ready(function() {
+  connect();
+});
+
 // 서버 연결: 엔트포인트(브로커 URL) 설정
 const stompClient = new StompJs.Client({
   brokerURL: 'ws://localhost:8080/ws-stomp'
@@ -34,12 +38,14 @@ stompClient.onStompError = (frame) => {
 function setConnected(connected) {
   $("#connect").prop("disabled", connected);
   $("#disconnect").prop("disabled", !connected);
-  if (connected) {
-    $("#conversation").show();
-  } else {
-    $("#conversation").hide();
-  }
-  $("#greetings").html("");
+  $("#content").prop("disabled", !connected);
+  $("#send").prop("disabled", !connected);
+  // if (connected) {
+  //   $("#conversation").show();
+  // } else {
+  //   $("#conversation").hide();
+  // }
+  // $("#greetings").html("");
 }
 
 function connect() {
