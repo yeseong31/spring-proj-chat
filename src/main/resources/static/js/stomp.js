@@ -40,14 +40,16 @@ function setConnected(connected) {
   $("#disconnect").prop("disabled", !connected);
   $("#content").prop("disabled", !connected);
   $("#send").prop("disabled", !connected);
-  // if (connected) {
-  //   $("#conversation").show();
-  // } else {
-  //   $("#conversation").hide();
-  // }
-  // $("#greetings").html("");
+
+  if (connected) {
+    $("#conversation").show();
+  } else {
+    $("#conversation").hide();
+  }
+  $("#greetings").html("");
 }
 
+// 소켓 연결
 function connect() {
   stompClient.activate();
 }
@@ -63,14 +65,18 @@ function disconnect() {
 function sendMessage() {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
+  const content = $("#content");
 
   stompClient.publish({
     destination: "/pub/message",
     body: JSON.stringify({
-      'content': $("#content").val(),
-      'channelUuid': urlParams.get('uuid')
+      'memberName': $("#memberName").val(),
+      'content': content.val(),
+      'channelUuid': urlParams.get('uuid'),
     })
   });
+
+  content.val("");
 }
 
 // 메시지 출력
