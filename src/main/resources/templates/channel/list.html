@@ -95,7 +95,7 @@
       <tr th:each="channel : ${channels}" class="text-center">
         <td th:text="${channelStat.count}">채널 번호</td>
         <td class="text-center">
-          <a href="list.html" th:text="${channel.name}"></a>
+          <a href="list.html" th:text="${channel.name}" th:href="@{/channel(uuid=${channel.uuid})}"></a>
         </td>
         <!-- count -->
         <td class="text-center">
