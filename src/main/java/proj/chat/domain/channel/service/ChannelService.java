@@ -47,9 +47,6 @@ public class ChannelService {
         Member findMember = memberRepository.findByEmail(dto.getMemberEmail())
                 .orElseThrow(() -> new DataNotFoundException("존재하지 않는 사용자입니다"));
         
-        // TODO: 이미 방에 참가 중인 사람에 대해서는 저장을 하면 안 됨
-        //  지금 Member와 Channel이 1:N 관계라서 하나의 계정에 대해 채널을 여러 개 설정할 수 없음
-        
         return channelRepository.save(channel).getUuid();
     }
     
