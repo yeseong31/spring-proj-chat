@@ -5,7 +5,10 @@ const stompClient = new StompJs.Client({
 
 // 소켓 연결에 성공한 경우: 클라이언트는 '/sub/channel/{channelUuid}로 구독'
 stompClient.onConnect = (frame) => {
-  const path = '/sub/channel/' + $("#channelUuid").text();
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const path = '/sub/channel/' + urlParams.get('uuid');
+
   setConnected(true);
 
   console.log('Connected: ' + frame);
@@ -52,11 +55,14 @@ function disconnect() {
 
 // 양방향 메시지 송수신: 수신 대상은 '/pub/message'
 function sendMessage() {
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+
   stompClient.publish({
     destination: "/pub/message",
     body: JSON.stringify({
       'content': $("#content").val(),
-      'channelUuid': $("#channelUuid").text()
+      'channelUuid': urlParams.get('uuid')
     })
   });
 }
