@@ -37,6 +37,7 @@ public class Channel extends BaseEntity {
     
     private int maxCount;
     
+    @Column(nullable = false)
     private String password;
     
     @Builder

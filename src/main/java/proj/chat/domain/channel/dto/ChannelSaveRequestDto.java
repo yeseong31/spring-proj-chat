@@ -1,6 +1,7 @@
 package proj.chat.domain.channel.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +24,8 @@ public class ChannelSaveRequestDto {
             message = "엉어, 숫자, 한글, 언더바(_), 대시(-)만 입력할 수 있습니다")
     private String name;
     
+    @Length(min = 4, max = 16, message = "비밀번호는 4~16자여야 합니다")
+    @NotEmpty(message = "비밀번호를 입력해주세요")
     private String password;
     
     private String memberEmail;
