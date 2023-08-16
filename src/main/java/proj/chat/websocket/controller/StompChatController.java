@@ -10,7 +10,6 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import proj.chat.domain.message.dto.MessageDto;
-import proj.chat.domain.message.service.MessageService;
 
 /**
  * 채팅을 송수신(pub/sub)하는 컨트롤러
@@ -23,7 +22,6 @@ import proj.chat.domain.message.service.MessageService;
 public class StompChatController {
     
     private final SimpMessageSendingOperations template;  // 특정 브로커로 메시지 전달
-    private final MessageService messageService;
     
     /**
      * MessageMapping 애노테이션을 통해 WebSocket으로 들어오는 메시지를 송신 처리
@@ -39,7 +37,7 @@ public class StompChatController {
         
         // 입장 메시지 구성
         message.setContent(message.getMemberName() + "님이 입장했습니다");
-
+        
         log.info("[ENTER] {}님이 입장했습니다", message.getMemberName());
         
         // 메시지 전달
@@ -62,9 +60,6 @@ public class StompChatController {
          */
         
         log.info("[MESSAGE] {}", message.getContent());
-        
-        // 메시지 저장
-        messageService.save(message);
         
         // 메시지 전달
         template.convertAndSend(
