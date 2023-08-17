@@ -19,15 +19,15 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import proj.chat.domain.member.dto.MemberLoginRequestDto;
 import proj.chat.domain.member.dto.EmailVerificationRequestDto;
+import proj.chat.domain.member.dto.MemberLoginRequestDto;
 import proj.chat.domain.member.dto.MemberResponseDto;
 import proj.chat.domain.member.dto.MemberSaveRequestDto;
 import proj.chat.domain.member.dto.MemberUpdateRequestDto;
-import proj.chat.security.service.AsyncMailService;
+import proj.chat.domain.member.service.EmailTokenService;
 import proj.chat.domain.member.service.MemberService;
-import proj.chat.domain.member.validator.EmailVerificationRequestDtoValidator;
 import proj.chat.domain.member.validator.MemberSaveRequestDtoValidator;
+import proj.chat.security.service.AsyncMailService;
 
 @Slf4j
 @Controller
@@ -37,9 +37,9 @@ public class MemberController {
     
     private final MemberService memberService;
     private final AsyncMailService mailService;
+    private final EmailTokenService emailTokenService;
     
     private final MemberSaveRequestDtoValidator memberSaveRequestDtoValidator;
-    private final EmailVerificationRequestDtoValidator emailVerificationRequestDtoValidator;
     
     // TODO: WebInitBinder를 적용한 뒤로 검증에 대한 테스트를 진행할 수 없는 문제가 있음
     
@@ -48,13 +48,6 @@ public class MemberController {
         // memberSaveRequestDto 객체를 받을 때 자동으로 검증이 들어감
         log.info("init binder = {}", webDataBinder);
         webDataBinder.addValidators(memberSaveRequestDtoValidator);
-    }
-    
-    @InitBinder("emailVerificationRequestDto")
-    public void initBinder2(WebDataBinder webDataBinder) {
-        // emailVerificationRequestDto 객체를 받을 때 자동으로 검증이 들어감
-        log.info("init binder = {}", webDataBinder);
-        webDataBinder.addValidators(emailVerificationRequestDtoValidator);
     }
     
     
@@ -85,9 +78,9 @@ public class MemberController {
         
         // 이메일 인증 코드 발송 & 인증 정보 저장
         mailService.executor(requestDto.getEmail());
-    
+        
         MemberResponseDto findMember = memberService.findById(savedId);
-    
+        
         // 세션에 사용자 UUID 저장
         HttpSession session = request.getSession();
         session.setAttribute("uuid", findMember.getUuid());
@@ -140,7 +133,7 @@ public class MemberController {
             model.addAttribute("memberSaveRequestDto", new MemberSaveRequestDto());
             return "auth/signup";
         }
-    
+        
         model.addAttribute("emailVerificationRequestDto", new EmailVerificationRequestDto());
         
         return "auth/email/verification";
@@ -169,9 +162,20 @@ public class MemberController {
         // 세션의 UUID가 사용자 UUID와 다른 경우
         if (!findMember.getUuid().equals(memberUuid)) {
             log.info("[emailVerificationForm] 올바르지 않은 사용자입니다");
+            bindingResult.rejectValue("email", "invalid.email",
+                    "올바르지 않은 사용자입니다");
             return "auth/signup";
         }
         
+        // 인증 정보가 생성되지 않은 경우
+        if (!emailTokenService.checkToken(findMember.getId(), requestDto.getToken())) {
+            log.info("[emailVerificationForm] 인증 번호가 일치하지 않습니다");
+            bindingResult.rejectValue("token", "invalid.token",
+                    "인증 번호가 일치하지 않습니다");
+            return "auth/email/verification";
+        }
+        
+        // 사용자 활성화 및 저장
         MemberUpdateRequestDto updateDto = MemberUpdateRequestDto.builder()
                 .email(findMember.getEmail())
                 .status(true)
