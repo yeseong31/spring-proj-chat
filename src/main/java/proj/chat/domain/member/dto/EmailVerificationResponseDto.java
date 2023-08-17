@@ -11,8 +11,10 @@ import proj.chat.domain.member.entity.EmailToken;
 public class EmailVerificationResponseDto {
     
     private String email;
+    private String token;
     
     public EmailVerificationResponseDto(EmailToken entity) {
         this.email = entity.getMember().getEmail();
+        this.token = entity.getToken();
     }
 }
