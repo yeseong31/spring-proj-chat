@@ -49,4 +49,16 @@ public class EmailTokenService {
         
         return emailTokenRepository.save(emailToken).getId();
     }
+    
+    /**
+     * 이메일 인증 정보 조회
+     *
+     * @param memberId 조회하고자 하는 사용자 ID(인덱스)
+     * @return 사용자 인증 정보를 담은 DTO
+     */
+    public EmailVerificationResponseDto findByMemberId(Long memberId) {
+        EmailToken findEmailToken = emailTokenRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new DataNotFoundException("인증 정보가 존재하지 않습니다"));
+        return new EmailVerificationResponseDto(findEmailToken);
+    }
 }
