@@ -61,4 +61,17 @@ public class EmailTokenService {
                 .orElseThrow(() -> new DataNotFoundException("인증 정보가 존재하지 않습니다"));
         return new EmailVerificationResponseDto(findEmailToken);
     }
+    
+    /**
+     * 인증 토큰 일치 여부 확인
+     *
+     * @param memberId 인증 정보를 가지는 사용자 ID(인덱스)
+     * @param token 토큰 정보
+     * @return 인증 토른 일치 여부
+     */
+    public boolean checkToken(Long memberId, String token) {
+        EmailToken findEmailToken = emailTokenRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new DataNotFoundException("인증 정보가 존재하지 않습니다"));
+        return findEmailToken.checkVerificationToken(token, passwordEncoder);
+    }
 }
