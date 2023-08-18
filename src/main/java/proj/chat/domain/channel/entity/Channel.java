@@ -1,5 +1,6 @@
 package proj.chat.domain.channel.entity;
 
+import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -7,6 +8,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,7 +22,7 @@ import proj.chat.domain.member.entity.Member;
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@ToString(exclude = "password")
+@ToString(exclude = {"owner", "password"})
 public class Channel extends BaseEntity {
     
     @Id
@@ -37,17 +40,29 @@ public class Channel extends BaseEntity {
     
     private int maxCount;
     
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "member_id")
+    private Member owner;
+    
     @Column(nullable = false)
     private String password;
     
     @Builder
-    public Channel(Long id, String uuid, String name, int count, int maxCount, String password) {
+    public Channel(Long id, String uuid, String name, int count, int maxCount, Member owner, String password) {
         this.id = id;
         this.uuid = uuid;
         this.name = name;
         this.count = count;
         this.maxCount = maxCount;
+        this.owner = owner;
         this.password = password;
+    }
+    
+    /**
+     * 채널 생성자 등록
+     */
+    public void registerOwner(Member owner) {
+        this.owner = owner;
     }
     
     /**
