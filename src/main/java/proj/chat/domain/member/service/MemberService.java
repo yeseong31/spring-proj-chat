@@ -86,11 +86,11 @@ public class MemberService {
     /**
      * 사용자 존재 여부 확인
      *
-     * @param id 사용자 ID(인덱스)
+     * @param email 사용자 이메일
      * @return 사용자 존재 여부
      */
-    public boolean existsById(Long id) {
-        return memberRepository.existsById(id);
+    public boolean existsByEmail(String email) {
+        return memberRepository.existsByEmail(email);
     }
     
     /**

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import proj.chat.domain.channel.dto.ChannelMemberSearchDto;
 import proj.chat.domain.channel.dto.ChannelResponseDto;
 import proj.chat.domain.channel.dto.ChannelSaveRequestDto;
 import proj.chat.domain.channel.service.ChannelService;
@@ -35,7 +36,9 @@ public class ChannelController {
      * 채널 목록 조회
      */
     @GetMapping("/list")
-    public String list(@AuthenticationPrincipal User user, Model model) {
+    public String list(
+            @ModelAttribute("channelMemberSearch") ChannelMemberSearchDto searchDto,
+            @AuthenticationPrincipal User user, Model model) {
         
         // 로그인하지 않은 사용자인 경우
         if (user == null) {
@@ -68,18 +71,21 @@ public class ChannelController {
         
         // 로그인하지 않은 사용자인 경우
         if (user == null) {
-            log.info("[createChannel] 접근 권한이 없습니다.");
+            log.info("[create] 접근 권한이 없습니다.");
             return "redirect:" + redirectUrl;
         }
-        
-        // 사용자 이메일을 DTO에 저장
-        requestDto.setMemberEmail(user.getUsername());
+    
+        // 사용자 정보를 찾지 못한 경우
+        if (!memberService.existsByEmail(user.getUsername())) {
+            log.info("[enterForm] 회원가입을 하지 않은 사용자입니다");
+            return "redirect:/auth/signup";
+        }
         
         log.info("[create] 채널 이름={}", requestDto.getName());
         log.info("[create] 채널 비밀번호={}", requestDto.getPassword());
         log.info("[create] 채널 최대 인원={}", requestDto.getMaxCount());
         
-        String savedChannelUuid = channelService.save(requestDto);
+        String savedChannelUuid = channelService.save(requestDto, user.getUsername());
         
         redirectAttributes.addAttribute("uuid", savedChannelUuid);
         redirectAttributes.addAttribute("status", true);
@@ -105,7 +111,7 @@ public class ChannelController {
         MemberResponseDto findMemberDto = memberService.findByEmail(user.getUsername());
         if (findMemberDto == null) {
             log.info("[enterForm] 회원가입을 하지 않은 사용자입니다");
-            return "auth/signup";
+            return "redirect:/auth/signup";
         }
         
         // UUID 형식 확인
