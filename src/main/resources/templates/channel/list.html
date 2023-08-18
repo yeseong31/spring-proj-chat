@@ -16,7 +16,7 @@
     <!-- modal: create channel form -->
     <form action="list.html" th:action th:object="${channelSaveRequestDto}" method="post" style="text-align: left">
       <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}" style="margin-bottom: 10px">
-        채널 생성에 실패했습니다
+        <div th:text="${errorMessage}"></div>
       </div>
       <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
