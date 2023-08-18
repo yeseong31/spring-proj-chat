@@ -19,7 +19,8 @@ stompClient.onConnect = (frame) => {
   console.log('Path: ' + path);
 
   stompClient.subscribe(path, (greeting) => {
-    showGreeting(JSON.parse(greeting.body).content);
+    var body = JSON.parse(greeting.body);
+    showGreeting(body.content, body.memberUuid);
   });
 };
 
@@ -66,13 +67,14 @@ function sendMessage() {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const content = $("#content");
+  const memberUuid = $("#memberUuid").text();
 
   stompClient.publish({
     destination: "/pub/message",
     body: JSON.stringify({
-      'memberName': $("#memberName").val(),
       'content': content.val(),
       'channelUuid': urlParams.get('uuid'),
+      'memberUuid': memberUuid,
     })
   });
 
@@ -80,8 +82,24 @@ function sendMessage() {
 }
 
 // 메시지 출력
-function showGreeting(message) {
-  $("#greetings").append("<tr><td>" + message + "</td></tr>");
+function showGreeting(message, uuid) {
+  var time = new Date();
+  if (uuid === $("#memberUuid").text()) {  // 본인
+    message = "<div class=\"d-flex flex-row justify-content-end mb-4 pt-1\"><div>"
+        + "<p class=\"small p-2 me-3 mb-1 text-white rounded-3 bg-primary\">"
+        + message
+        + "</p><p class=\"small me-3 mb-3 rounded-3 text-muted d-flex justify-content-end\">"
+        + ('0' + time.getHours()).slice(-2) + ('0' + time.getMinutes()).slice(-2)
+        + "</p></div></div>"
+  } else {
+    message = "<div class=\"d-flex flex-row justify-content-start\"><div>"
+        + "<p class=\"small p-2 ms-3 mb-1 rounded-3\" style=\"background-color: #f5f6f7; color: black\">"
+        + message
+        + "</p><p class=\"small ms-3 mb-3 rounded-3 text-muted d-flex\">"
+        + ('0' + time.getHours()).slice(-2) + ":" + ('0' + time.getMinutes()).slice(-2)
+        + "</p></div></div>"
+  }
+  $("#greetings").append(message);
 }
 
 // 이벤트 바인딩
