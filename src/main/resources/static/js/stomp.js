@@ -89,7 +89,7 @@ function showGreeting(message, uuid) {
         + "<p class=\"small p-2 me-3 mb-1 text-white rounded-3 bg-primary\">"
         + message
         + "</p><p class=\"small me-3 mb-3 rounded-3 text-muted d-flex justify-content-end\">"
-        + ('0' + time.getHours()).slice(-2) + ('0' + time.getMinutes()).slice(-2)
+        + ('0' + time.getHours()).slice(-2) + ":" + ('0' + time.getMinutes()).slice(-2)
         + "</p></div></div>"
   } else {
     message = "<div class=\"d-flex flex-row justify-content-start\"><div>"
