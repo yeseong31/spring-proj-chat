@@ -10,10 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import proj.chat.domain.channel.dto.ChannelResponseDto;
 import proj.chat.domain.channel.dto.ChannelSaveRequestDto;
 import proj.chat.domain.channel.entity.Channel;
-import proj.chat.domain.member.entity.Member;
-import proj.chat.exception.DataNotFoundException;
 import proj.chat.domain.channel.repository.ChannelRepository;
 import proj.chat.domain.member.repository.MemberRepository;
+import proj.chat.exception.DataNotFoundException;
 
 @Slf4j
 @Service
@@ -43,8 +42,8 @@ public class ChannelService {
         
         // 채널 UUID 생성
         channel.createUUID();
-    
-        Member findMember = memberRepository.findByEmail(dto.getMemberEmail())
+        
+        memberRepository.findByEmail(dto.getMemberEmail())
                 .orElseThrow(() -> new DataNotFoundException("존재하지 않는 사용자입니다"));
         
         return channelRepository.save(channel).getUuid();
@@ -87,5 +86,15 @@ public class ChannelService {
                 .orElseThrow(() -> new DataNotFoundException("존재하지 않는 채널입니다"));
         
         return new ChannelResponseDto(findChannel);
+    }
+    
+    /**
+     * 채널 UUID로 채널 존재 여부 확인
+     *
+     * @param uuid 채널 UUID
+     * @return 채널 존재 여부
+     */
+    public boolean existsByUuid(String uuid) {
+        return channelRepository.existsByUuid(uuid);
     }
 }

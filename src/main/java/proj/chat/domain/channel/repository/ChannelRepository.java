@@ -9,4 +9,6 @@ import proj.chat.domain.channel.entity.Channel;
 public interface ChannelRepository extends JpaRepository<Channel, Long> {
     
     Optional<Channel> findByUuid(String uuid);
+    
+    boolean existsByUuid(String uuid);
 }
