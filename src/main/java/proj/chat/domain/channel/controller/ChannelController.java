@@ -21,7 +21,6 @@ import proj.chat.domain.channel.service.ChannelService;
 import proj.chat.domain.member.dto.MemberResponseDto;
 import proj.chat.domain.member.service.MemberService;
 import proj.chat.domain.message.dto.MessageDto;
-import proj.chat.domain.message.service.MessageService;
 
 @Slf4j
 @Controller
@@ -31,7 +30,6 @@ public class ChannelController {
     
     private final ChannelService channelService;
     private final MemberService memberService;
-    private final MessageService messageService;
     
     /**
      * 채널 목록 조회
@@ -63,6 +61,7 @@ public class ChannelController {
         
         if (bindingResult.hasErrors()) {
             log.info("[createChannel] errors={}", bindingResult);
+            model.addAttribute("errorMessage", "채널 생성에 실패했습니다");
             model.addAttribute("channels", channelService.findAll());
             return "channel/list";
         }
@@ -82,9 +81,10 @@ public class ChannelController {
         
         String savedChannelUuid = channelService.save(requestDto);
         
+        redirectAttributes.addAttribute("uuid", savedChannelUuid);
         redirectAttributes.addAttribute("status", true);
         
-        return "redirect:/channel?uuid=" + savedChannelUuid;
+        return "redirect:/channel";
     }
     
     /**
@@ -92,7 +92,8 @@ public class ChannelController {
      */
     @GetMapping
     public String enterForm(
-            @RequestParam("uuid") String uuid, @AuthenticationPrincipal User user, Model model) {
+            @RequestParam("uuid") String uuid, @AuthenticationPrincipal User user,
+            Model model, RedirectAttributes redirectAttributes) {
         
         // 로그인하지 않은 사용자인 경우
         if (user == null) {
@@ -113,14 +114,25 @@ public class ChannelController {
         
         if (!regex.matcher(uuid).matches()) {
             log.info("[enterForm] 유효하지 않은 UUID입니다");
-            model.addAttribute("channels", channelService.findAll());
-            model.addAttribute("channelSaveRequestDto", new ChannelSaveRequestDto());
+            redirectAttributes.addFlashAttribute("errorMessage", "채널 입장 오류");
             return "redirect:/channel/list";
         }
         
-        // TODO: 유효하지 않은 UUID를 넘겼을 때 channelService에서 사용자 정보를 조회하지 못하여
-        //  DataNotFoundException을 던지고, 이를 처리하지 못하는 것으로 인해 Whitelabel Error Page가 표시됨
+        // 채널이 존재하지 않는 경우
+        if (!channelService.existsByUuid(uuid)) {
+            log.info("[enterForm] 유효하지 않은 UUID입니다");
+            redirectAttributes.addFlashAttribute("errorMessage", "채널 입장 오류");
+            return "redirect:/channel/list";
+        }
+        
         ChannelResponseDto findChannelDto = channelService.findByUuid(uuid);
+        
+        // 채널 인원이 가득 찬 경우
+        if (findChannelDto.getCount() >= findChannelDto.getMaxCount()) {
+            log.info("[enterForm] 정원이 가득 찼습니다");
+            redirectAttributes.addFlashAttribute("errorMessage", "정원이 가득 찼습니다");
+            return "redirect:/channel/list";
+        }
         
         model.addAttribute("messageDto", new MessageDto());
         model.addAttribute("channelName", findChannelDto.getName());
