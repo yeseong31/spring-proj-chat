@@ -30,13 +30,16 @@ public class StompChatController {
     public void message(@Payload MessageDto message) {
         /*
         {
-            "memberName": "test1234",
+            "memberUuid": "a4c2eb10-0a4d-4880-adb4-24704d0d61f2",
             "channelUuid": "a4c2eb10-0a4d-4880-adb4-24704d0d61f2",
             "content": "hi"
         }
          */
         
-        log.info("[{}] {}", message.getChannelUuid().substring(0, 8), message.getContent());
+        log.info("[{}] {}: {}",
+                message.getChannelUuid().substring(0, 8),
+                message.getMemberUuid().substring(0, 8),
+                message.getContent());
         
         // 메시지 전달
         template.convertAndSend(

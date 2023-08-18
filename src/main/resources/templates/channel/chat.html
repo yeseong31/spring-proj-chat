@@ -27,6 +27,8 @@
       </nav>
     </div>
   </header>
+  
+  <div id="memberUuid" th:text="${memberUuid}" hidden></div>
 
   <!-- content -->
   <main class="px-3">
@@ -36,8 +38,6 @@
         Websocket relies on Javascript being enabled.
         Please enable Javascript and reload this page!</h2>
     </noscript>
-
-    <h4 id="memberName" th:text="${memberName}" hidden></h4>
 
     <div class="container py-5" data-bs-theme="dark">
       <div class="row d-flex justify-content-center">

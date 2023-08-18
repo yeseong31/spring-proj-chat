@@ -14,13 +14,13 @@ import proj.chat.domain.message.entity.Message;
 public class MessageDto {
     
     private String channelUuid;  // 채널 UUID
-    private String memberName;   // 메시지 송신자 이름
+    private String memberUuid;   // 메시지 송신자 UUID
     private String content;      // 메시지
     
     @Builder
     public MessageDto(Message entity) {
         this.channelUuid = entity.getChannel().getUuid();
-        this.memberName = entity.getMember().getName();
+        this.memberUuid = entity.getMember().getUuid();
         this.content = entity.getContent();
     }
     

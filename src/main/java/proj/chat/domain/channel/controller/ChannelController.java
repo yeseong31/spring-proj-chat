@@ -137,6 +137,9 @@ public class ChannelController {
         model.addAttribute("messageDto", new MessageDto());
         model.addAttribute("channelName", findChannelDto.getName());
         model.addAttribute("memberName", findMemberDto.getName());
+        model.addAttribute("memberUuid", findMemberDto.getUuid());
+    
+        log.info("model: {}", model);
         
         return "channel/chat";
     }
