@@ -11,6 +11,7 @@ import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 import proj.chat.domain.channel.entity.Channel;
+import proj.chat.domain.member.entity.Member;
 
 @Getter
 @Setter
@@ -28,7 +29,7 @@ public class ChannelSaveRequestDto {
     @NotEmpty(message = "비밀번호를 입력해주세요")
     private String password;
     
-    private String memberEmail;
+    private Member owner;
     
     @Range(min = 2, max = 20, message = "최대 인원은 2~20의 범위로 설정해 주세요")
     private int maxCount;
@@ -39,6 +40,7 @@ public class ChannelSaveRequestDto {
                 .password(password)
                 .count(0)
                 .maxCount(maxCount)
+                .owner(owner)
                 .build();
     }
     

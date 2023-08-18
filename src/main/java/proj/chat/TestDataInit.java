@@ -44,8 +44,7 @@ public class TestDataInit {
                     .maxCount(5)
                     .build();
     
-            dto.setMemberEmail("test" + i + "@test.com");
-            channelService.save(dto);
+            channelService.save(dto, "test" + i + "@test.com");
         }
     
         log.info("테스트용 채널 데이터 저장 완료");

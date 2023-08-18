@@ -31,7 +31,7 @@ public class ChannelService {
      * @return 채널 생성 이후에 부여되는 채널 ID(인덱스)
      */
     @Transactional
-    public String save(ChannelSaveRequestDto dto) {
+    public String save(ChannelSaveRequestDto dto, String memberEmail) {
         
         Channel channel = dto.dtoToEntity();
         
@@ -43,8 +43,9 @@ public class ChannelService {
         // 채널 UUID 생성
         channel.createUUID();
         
-        memberRepository.findByEmail(dto.getMemberEmail())
-                .orElseThrow(() -> new DataNotFoundException("존재하지 않는 사용자입니다"));
+        // 채널 생성자 정보 저장
+        channel.registerOwner(memberRepository.findByEmail(memberEmail)
+                .orElseThrow(() -> new DataNotFoundException("존재하지 않는 사용자입니다")));
         
         return channelRepository.save(channel).getUuid();
     }
@@ -58,20 +59,6 @@ public class ChannelService {
         return channelRepository.findAll().stream()
                 .map(ChannelResponseDto::new)
                 .collect(Collectors.toList());
-    }
-    
-    /**
-     * 채널 조회
-     *
-     * @param id 채널 ID(인덱스)
-     * @return 채널 정보가 담긴 DTO
-     */
-    public ChannelResponseDto findById(Long id) {
-        
-        Channel findChannel = channelRepository.findById(id)
-                .orElseThrow(() -> new DataNotFoundException("존재하지 않는 채널입니다"));
-        
-        return new ChannelResponseDto(findChannel);
     }
     
     /**
