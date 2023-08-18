@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import proj.chat.domain.channel.entity.Channel;
 
 @Transactional(readOnly = true)
-public interface ChannelRepository extends JpaRepository<Channel, Long> {
+public interface ChannelRepository extends JpaRepository<Channel, Long>, ChannelRepositoryCustom {
     
     Optional<Channel> findByUuid(String uuid);
     
