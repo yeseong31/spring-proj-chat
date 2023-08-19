@@ -3,6 +3,7 @@ package proj.chat.domain.member.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -156,6 +157,8 @@ public class MemberController {
         // 세션에 저장되어 있는 사용자 UUID 확인
         HttpSession session = request.getSession();
         String memberUuid = (String) session.getAttribute("uuid");
+        
+        Objects.requireNonNull(memberUuid);
         
         MemberResponseDto findMember = memberService.findByUuid(memberUuid);
         
