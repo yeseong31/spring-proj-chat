@@ -115,10 +115,7 @@ public class ChannelController {
         }
         
         // UUID 형식 확인
-        Pattern regex = Pattern.compile(
-                "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
-        
-        if (!regex.matcher(uuid).matches()) {
+        if (!isMatchUuid(uuid)) {
             log.info("[enterForm] 유효하지 않은 UUID입니다");
             redirectAttributes.addFlashAttribute("errorMessage", "채널 입장 오류");
             return "redirect:/channel/list";
@@ -148,5 +145,11 @@ public class ChannelController {
         log.info("model: {}", model);
         
         return "channel/chat";
+    }
+    
+    public static boolean isMatchUuid(String uuid) {
+        Pattern regex = Pattern.compile(
+                "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
+        return regex.matcher(uuid).matches();
     }
 }
