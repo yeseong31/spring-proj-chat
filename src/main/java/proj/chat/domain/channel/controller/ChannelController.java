@@ -40,8 +40,8 @@ public class ChannelController {
             @ModelAttribute("channelMemberSearch") ChannelMemberSearchDto searchDto,
             @AuthenticationPrincipal User user, Model model) {
         
-        // 로그인하지 않은 사용자인 경우
         if (user == null) {
+            
             log.info("[list] 로그인을 하지 않은 사용자입니다");
             return "auth/login";
         }
@@ -63,20 +63,22 @@ public class ChannelController {
             RedirectAttributes redirectAttributes) {
         
         if (bindingResult.hasErrors()) {
+            
             log.info("[createChannel] errors={}", bindingResult);
             model.addAttribute("errorMessage", "채널 생성에 실패했습니다");
             model.addAttribute("channels", channelService.findAll());
+            
             return "channel/list";
         }
         
-        // 로그인하지 않은 사용자인 경우
         if (user == null) {
+            
             log.info("[create] 접근 권한이 없습니다.");
             return "redirect:" + redirectUrl;
         }
     
-        // 사용자 정보를 찾지 못한 경우
         if (!memberService.existsByEmail(user.getUsername())) {
+            
             log.info("[enterForm] 회원가입을 하지 않은 사용자입니다");
             return "redirect:/auth/signup";
         }
@@ -98,40 +100,41 @@ public class ChannelController {
      */
     @GetMapping
     public String enterForm(
-            @RequestParam("uuid") String uuid, @AuthenticationPrincipal User user,
+            @RequestParam("uuid") String channelUuid, @AuthenticationPrincipal User user,
             Model model, RedirectAttributes redirectAttributes) {
         
-        // 로그인하지 않은 사용자인 경우
         if (user == null) {
+            
             log.info("[enterForm] 로그인을 하지 않은 사용자입니다");
             return "auth/login";
         }
         
-        // 사용자 정보를 찾지 못한 경우
         MemberResponseDto findMemberDto = memberService.findByEmail(user.getUsername());
+        
         if (findMemberDto == null) {
+            
             log.info("[enterForm] 회원가입을 하지 않은 사용자입니다");
             return "redirect:/auth/signup";
         }
         
-        // UUID 형식 확인
-        if (!isMatchUuid(uuid)) {
+        if (!isMatchUuid(channelUuid)) {
+            
             log.info("[enterForm] 유효하지 않은 UUID입니다");
             redirectAttributes.addFlashAttribute("errorMessage", "채널 입장 오류");
             return "redirect:/channel/list";
         }
         
-        // 채널이 존재하지 않는 경우
-        if (!channelService.existsByUuid(uuid)) {
+        if (!channelService.existsByUuid(channelUuid)) {
+            
             log.info("[enterForm] 유효하지 않은 UUID입니다");
             redirectAttributes.addFlashAttribute("errorMessage", "채널 입장 오류");
             return "redirect:/channel/list";
         }
         
-        ChannelResponseDto findChannelDto = channelService.findByUuid(uuid);
+        ChannelResponseDto findChannelDto = channelService.findByUuid(channelUuid);
         
-        // 채널 인원이 가득 찬 경우
         if (findChannelDto.getCount() >= findChannelDto.getMaxCount()) {
+            
             log.info("[enterForm] 정원이 가득 찼습니다");
             redirectAttributes.addFlashAttribute("errorMessage", "정원이 가득 찼습니다");
             return "redirect:/channel/list";
@@ -148,8 +151,10 @@ public class ChannelController {
     }
     
     public static boolean isMatchUuid(String uuid) {
+        
         Pattern regex = Pattern.compile(
                 "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
+        
         return regex.matcher(uuid).matches();
     }
 }

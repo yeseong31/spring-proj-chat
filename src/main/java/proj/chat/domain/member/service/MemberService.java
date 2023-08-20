@@ -1,5 +1,6 @@
 package proj.chat.domain.member.service;
 
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,11 +32,10 @@ public class MemberService {
     public Long save(MemberSaveRequestDto dto) {
         
         Member member = dto.dtoToEntity();
-        
-        // 비밀번호 암호화
+    
+        Objects.requireNonNull(member.getPassword());
         member.hashPassword(passwordEncoder);
         
-        // 사용자 UUID 생성
         member.createUUID();
         
         return memberRepository.save(member).getId();
@@ -101,10 +101,12 @@ public class MemberService {
      */
     @Transactional
     public Long update(Long id, MemberUpdateRequestDto requestDto) {
+        
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("존재하지 않는 회원입니다"));
     
         requestDto.setId(member.getId());
+        
         if (requestDto.getName() == null) {
             requestDto.setName(member.getName());
         }
@@ -117,6 +119,7 @@ public class MemberService {
         if (requestDto.getUuid() == null) {
             requestDto.setUuid(member.getUuid());
         }
+        
         requestDto.setStatus(true);
         
         memberRepository.save(requestDto.dtoToEntity());
@@ -131,6 +134,7 @@ public class MemberService {
      */
     @Transactional
     public Long delete(Long id) {
+        
         memberRepository.deleteById(id);
         return id;
     }

@@ -11,6 +11,7 @@ import proj.chat.domain.channel.dto.ChannelResponseDto;
 import proj.chat.domain.channel.dto.ChannelSaveRequestDto;
 import proj.chat.domain.channel.entity.Channel;
 import proj.chat.domain.channel.repository.ChannelRepository;
+import proj.chat.domain.member.entity.Member;
 import proj.chat.domain.member.repository.MemberRepository;
 import proj.chat.exception.DataNotFoundException;
 
@@ -33,19 +34,18 @@ public class ChannelService {
     @Transactional
     public String save(ChannelSaveRequestDto dto, String memberEmail) {
         
+        Member findMember = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(() -> new DataNotFoundException("존재하지 않는 사용자입니다"));
+        
         Channel channel = dto.dtoToEntity();
         
-        // 비밀번호가 설정되었다면 암호화
         if (dto.getPassword() != null) {
+            
             channel.hashPassword(passwordEncoder);
         }
         
-        // 채널 UUID 생성
         channel.createUUID();
-        
-        // 채널 생성자 정보 저장
-        channel.registerOwner(memberRepository.findByEmail(memberEmail)
-                .orElseThrow(() -> new DataNotFoundException("존재하지 않는 사용자입니다")));
+        channel.registerOwner(findMember);
         
         return channelRepository.save(channel).getUuid();
     }

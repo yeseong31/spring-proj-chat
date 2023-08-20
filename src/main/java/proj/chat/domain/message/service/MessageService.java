@@ -28,11 +28,9 @@ public class MessageService {
     @Transactional
     public Long save(MessageDto dto) {
         
-        // 채널 UUID가 전달되지 않은 경우
         Channel channel = channelRepository.findByUuid(dto.getChannelUuid())
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 채널 UUID입니다"));
         
-        // TODO: 메시지 저장 시 사용자 정보 포함
         Message message = Message.builder()
                 .content(dto.getContent())
                 .channel(channel)

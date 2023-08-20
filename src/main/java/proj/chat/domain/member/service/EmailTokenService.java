@@ -32,7 +32,7 @@ public class EmailTokenService {
     @Trace
     @Transactional
     public Long save(EmailVerificationRequestDto dto) {
-        // 사용자 정보 확인
+        
         Member findMember = memberRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new DataNotFoundException("존재하지 않는 회원입니다"));
     
@@ -42,7 +42,6 @@ public class EmailTokenService {
         log.info("email: {}", emailToken.getMember());
         log.info("token: {}", emailToken.getToken());
     
-        // 인증 코드 암호화
         emailToken.hashVerificationToken(passwordEncoder);
     
         log.info("token: {}", emailToken.getToken());
@@ -57,8 +56,10 @@ public class EmailTokenService {
      * @return 사용자 인증 정보를 담은 DTO
      */
     public EmailVerificationResponseDto findByMemberId(Long memberId) {
+        
         EmailToken findEmailToken = emailTokenRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new DataNotFoundException("인증 정보가 존재하지 않습니다"));
+        
         return new EmailVerificationResponseDto(findEmailToken);
     }
     
@@ -70,8 +71,10 @@ public class EmailTokenService {
      * @return 인증 토른 일치 여부
      */
     public boolean checkToken(Long memberId, String token) {
+        
         EmailToken findEmailToken = emailTokenRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new DataNotFoundException("인증 정보가 존재하지 않습니다"));
+        
         return findEmailToken.checkVerificationToken(token, passwordEncoder);
     }
 }

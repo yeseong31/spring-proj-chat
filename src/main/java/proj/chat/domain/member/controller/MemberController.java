@@ -42,15 +42,11 @@ public class MemberController {
     
     private final MemberSaveRequestDtoValidator memberSaveRequestDtoValidator;
     
-    // TODO: WebInitBinder를 적용한 뒤로 검증에 대한 테스트를 진행할 수 없는 문제가 있음
-    
     @InitBinder("memberSaveRequestDto")
     public void initBinder1(WebDataBinder webDataBinder) {
-        // memberSaveRequestDto 객체를 받을 때 자동으로 검증이 들어감
         log.info("init binder = {}", webDataBinder);
         webDataBinder.addValidators(memberSaveRequestDtoValidator);
     }
-    
     
     /**
      * 회원가입(GET)
@@ -69,20 +65,18 @@ public class MemberController {
             HttpServletRequest request) throws Exception {
         
         if (bindingResult.hasErrors()) {
+            
             log.info("[signup] errors={}", bindingResult);
             return "auth/signup";
         }
         
-        // 회원가입 진행
         Long savedId = memberService.save(requestDto);
         log.info("[signup] 회원가입 완료: ID={}", savedId);
         
-        // 이메일 인증 코드 발송 & 인증 정보 저장
         mailService.executor(requestDto.getEmail());
         
         MemberResponseDto findMember = memberService.findById(savedId);
         
-        // 세션에 사용자 UUID 저장
         HttpSession session = request.getSession();
         session.setAttribute("uuid", findMember.getUuid());
         
@@ -107,6 +101,7 @@ public class MemberController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         
         if (authentication != null) {
+            
             log.info("[logout] 로그아웃: email={}", authentication.getName());
             new SecurityContextLogoutHandler().logout(request, response, authentication);
         }
@@ -121,15 +116,19 @@ public class MemberController {
     public String emailVerificationForm(Model model, HttpServletRequest request) {
         
         HttpSession session = request.getSession();
-        String memberUuid = (String) session.getAttribute("uuid");
+        String sessionMemberUuid = (String) session.getAttribute("uuid");
         
-        if (memberUuid == null) {
+        if (sessionMemberUuid == null) {
+            
             log.info("[emailVerificationForm] 회원가입을 하지 않은 사용자입니다");
             model.addAttribute("memberSaveRequestDto", new MemberSaveRequestDto());
             return "auth/signup";
         }
-        
-        if (!memberService.findByUuid(memberUuid).getUuid().equals(memberUuid)) {
+    
+        String findMemberUuid = memberService.findByUuid(sessionMemberUuid).getUuid();
+    
+        if (!findMemberUuid.equals(sessionMemberUuid)) {
+            
             log.info("[emailVerificationForm] 올바르지 않은 사용자입니다");
             model.addAttribute("memberSaveRequestDto", new MemberSaveRequestDto());
             return "auth/signup";
@@ -150,35 +149,35 @@ public class MemberController {
             HttpServletRequest request) {
         
         if (bindingResult.hasErrors()) {
+            
             log.info("[emailVerification] errors={}", bindingResult);
             return "auth/email/verification";
         }
         
-        // 세션에 저장되어 있는 사용자 UUID 확인
         HttpSession session = request.getSession();
-        String memberUuid = (String) session.getAttribute("uuid");
+        String sessionMemberUuid = (String) session.getAttribute("uuid");
         
-        Objects.requireNonNull(memberUuid);
+        Objects.requireNonNull(sessionMemberUuid);
         
-        MemberResponseDto findMember = memberService.findByUuid(memberUuid);
-        
-        // 세션의 UUID가 사용자 UUID와 다른 경우
-        if (!findMember.getUuid().equals(memberUuid)) {
+        MemberResponseDto findMember = memberService.findByUuid(sessionMemberUuid);
+        String findMemberUuid = findMember.getUuid();
+    
+        if (!findMemberUuid.equals(sessionMemberUuid)) {
+            
             log.info("[emailVerificationForm] 올바르지 않은 사용자입니다");
             bindingResult.rejectValue("email", "invalid.email",
                     "올바르지 않은 사용자입니다");
             return "auth/signup";
         }
         
-        // 인증 정보가 생성되지 않은 경우
         if (!emailTokenService.checkToken(findMember.getId(), requestDto.getToken())) {
+            
             log.info("[emailVerificationForm] 인증 번호가 일치하지 않습니다");
-            bindingResult.rejectValue("token", "invalid.token",
-                    "인증 번호가 일치하지 않습니다");
+            bindingResult.rejectValue(
+                    "token", "invalid.token", "인증 번호가 일치하지 않습니다");
             return "auth/email/verification";
         }
         
-        // 사용자 활성화 및 저장
         MemberUpdateRequestDto updateDto = MemberUpdateRequestDto.builder()
                 .email(findMember.getEmail())
                 .status(true)
@@ -189,10 +188,8 @@ public class MemberController {
         log.info("[emailVerification] 이메일 인증 성공");
         log.info("[emailVerification] 사용자 활성화: ID={}", updatedId);
         
-        // 세션에 저장되어 있는 사용자 UUID 삭제
         session.removeAttribute("uuid");
         
-        // redirect 시 파라미터 전달
         redirectAttributes.addFlashAttribute("message", "인증 완료! 로그인을 진행해주세요");
         
         return "redirect:/auth/login";

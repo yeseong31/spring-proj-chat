@@ -26,7 +26,6 @@ import proj.chat.domain.message.dto.PrevMessageDto;
 @RequiredArgsConstructor
 public class WebSocketHandler extends TextWebSocketHandler {
     
-    // 기존 접속 사용자의 웹 소켓 세션 관리
     private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
     private final ObjectMapper objectMapper;
     
@@ -40,19 +39,15 @@ public class WebSocketHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message)
             throws Exception {
         
-        // 웹 소켓 클라이언트로부터 채팅 메시지(JSON)를 전달받음
         String payload = message.getPayload();
         log.info("[handleTextMessage] payload={}", payload);
         
-        // 전달받은 채팅 메시지를 채팅 메시지 객체로 변환 (JSON -> ChatDto)
         PrevMessageDto chatMessage = objectMapper.readValue(payload, PrevMessageDto.class);
         chatMessage.setType(TALK);
         chatMessage.setTime(LocalDateTime.now());
         
-        // 메시지를 받는 대상
         WebSocketSession receiver = sessions.get(chatMessage.getReceiver());
         
-        // 메시지를 받아야 하는 타겟 상대방 조회 후 메시지 전송
         if (receiver != null && receiver.isOpen()) {
             receiver.sendMessage(new TextMessage(objectMapper.writeValueAsString(chatMessage)));
         }
@@ -64,15 +59,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
      * @param session 접속한 세션
      */
     @Override
-    public void afterConnectionEstablished(WebSocketSession session)
-            throws Exception {
+    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         
-        // 세션에 사용자 저장
         String sessionId = session.getId();
         sessions.put(sessionId, session);
         log.info("[afterConnectionEstablished] ID={} 접속", sessionId);
         
-        // 입장 메시지 구성
         PrevMessageDto chatMessage = PrevMessageDto.builder()
                 .type(ENTER)
                 .message(sessionId + "님이 입장했습니다")
@@ -80,7 +72,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 .time(LocalDateTime.now())
                 .build();
         
-        // 본인을 제외한 나머지 세션에 입장 이벤트 전송
         sessions.values().forEach(s -> {
             if (!s.getId().equals(sessionId)) {
                 try {
@@ -102,12 +93,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status)
             throws Exception {
         
-        // 세션 저장소에서 연결이 끊긴 사용자 삭제
         String sessionId = session.getId();
         sessions.remove(sessionId);
         log.info("[afterConnectionClosed] ID={} 접속 해제", sessionId);
         
-        // 퇴장 메시지 구성
         PrevMessageDto chatMessage = PrevMessageDto.builder()
                 .type(LEAVE)
                 .message(sessionId + "님이 나갔습니다")
@@ -115,7 +104,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 .time(LocalDateTime.now())
                 .build();
         
-        // 본인을 제외한 나머지 세션에 퇴장 이벤트 전송
         sessions.values().forEach(s -> {
             try {
                 s.sendMessage(new TextMessage(objectMapper.writeValueAsString(chatMessage)));
