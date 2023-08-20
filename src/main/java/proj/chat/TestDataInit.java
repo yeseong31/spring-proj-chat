@@ -24,6 +24,16 @@ public class TestDataInit {
     public void init() {
         log.info("초기화 메서드 호출");
     
+        createTestUsers();
+        log.info("테스트용 사용자 데이터 저장 완료");
+    
+        createTestChannels();
+        log.info("테스트용 채널 데이터 저장 완료");
+        
+        log.info("초기화 메서드 종료");
+    }
+    
+    private void createTestUsers() {
         for (int i = 0; i < 20; i++) {
             MemberSaveRequestDto dto = MemberSaveRequestDto.builder()
                     .email("test" + i + "@test.com")
@@ -34,20 +44,17 @@ public class TestDataInit {
     
             memberService.save(dto);
         }
+    }
     
-        log.info("테스트용 사용자 데이터 저장 완료");
-        
+    private void createTestChannels() {
         for (int i = 0; i < 5; i++) {
             ChannelSaveRequestDto dto = ChannelSaveRequestDto.builder()
                     .name("channel" + i)
                     .password("!Test" + i)
                     .maxCount(5)
                     .build();
-    
+            
             channelService.save(dto, "test" + i + "@test.com");
         }
-    
-        log.info("테스트용 채널 데이터 저장 완료");
-        log.info("초기화 메서드 종료");
     }
 }
