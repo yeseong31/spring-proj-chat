@@ -30,24 +30,23 @@ public class AsyncMailService {
     @Trace
     @Async("executor")
     public void executor(String email) throws MessagingException, UnsupportedEncodingException {
-        // 인증 코드 생성
+        
         String token = createKey();
         
-        // 메일 내용 구성
         MimeMessage message = createMessage(email, token);
         
         try {
-            // 메일 전송
             emailSender.send(message);
             
-            // 인증 정보 저장
             EmailVerificationRequestDto emailVerificationRequestDto = EmailVerificationRequestDto.builder()
                     .email(email)
                     .token(token)
                     .build();
+            
             emailTokenService.save(emailVerificationRequestDto);
             
         } catch (MailException e) {
+            
             log.error("[executor] errors={}", e.getMessage());
             throw new IllegalArgumentException();
         }
@@ -66,9 +65,22 @@ public class AsyncMailService {
         log.info("[createMessage] 인증 코드: {}", token);
         
         MimeMessage message = emailSender.createMimeMessage();
-        message.addRecipients(RecipientType.TO, email);  // 보내는 대상
-        message.setSubject("이메일 인증 테스트");             // 제목
+        message.addRecipients(RecipientType.TO, email);
+        message.setSubject("이메일 인증 테스트");
+    
+        String msg = createMessageContent(token);
+    
+        message.setText(msg, "utf-8", "html");
+        message.setFrom(new InternetAddress("spring.mail.username", "ys31"));
         
+        return message;
+    }
+    
+    public static String createKey() {
+        return UUID.randomUUID().toString().substring(0, 8);
+    }
+    
+    private String createMessageContent(String token) {
         String msg = """
                     <div style='margin:20px;'>
                         <h1> 안녕하세요. </h1>
@@ -90,14 +102,6 @@ public class AsyncMailService {
                         </div>
                     </div>
                 """;
-        
-        message.setText(msg, "utf-8", "html");
-        message.setFrom(new InternetAddress("spring.mail.username", "ys31"));
-        
-        return message;
-    }
-    
-    public static String createKey() {
-        return UUID.randomUUID().toString().substring(0, 8);
+        return msg;
     }
 }
