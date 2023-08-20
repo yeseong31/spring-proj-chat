@@ -13,7 +13,9 @@ public class AuditConfig implements AuditorAware<String> {
     
     @Override
     public Optional<String> getCurrentAuditor() {
+        
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
         if (authentication == null || !authentication.isAuthenticated()) {
             log.info("[getCurrentAuditor] 사용자 정보를 찾을 수 없습니다");
             return Optional.empty();
@@ -21,6 +23,7 @@ public class AuditConfig implements AuditorAware<String> {
         
         String authenticationName = authentication.getName();
         log.info("[getCurrentAuditor] 사용자 정보={}", authenticationName);
+        
         return Optional.of(authenticationName);
     }
 }

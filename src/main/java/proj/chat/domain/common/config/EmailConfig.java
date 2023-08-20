@@ -44,6 +44,7 @@ public class EmailConfig {
     
     @Bean
     public JavaMailSender javaMailSender() {
+        
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         
         mailSender.setHost(host);
@@ -57,7 +58,9 @@ public class EmailConfig {
     }
     
     private Properties getMailProperties() {
+        
         Properties properties = new Properties();
+        
         properties.put("mail.smtp.auth", auth);
         properties.put("mail.smtp.starttls.enable", starttlsEnable);
         properties.put("mail.smtp.starttls.required", starttlsRequired);
