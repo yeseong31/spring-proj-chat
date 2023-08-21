@@ -13,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import proj.chat.domain.channel.dto.ChannelMemberSearchCond;
 import proj.chat.domain.channel.dto.ChannelResponseDto;
 import proj.chat.domain.channel.dto.ChannelSaveRequestDto;
 import proj.chat.domain.channel.entity.Channel;
@@ -61,19 +60,19 @@ public class ChannelService {
      * @return 채널 정보가 담긴 DTO 목록
      */
     public Page<ChannelResponseDto> findAll(String keyword, int page, int size) {
-    
+        
         Pageable pageable = PageRequest.of(page, size);
-    
+        
         List<ChannelResponseDto> result = channelRepository.findSearch(keyword).stream()
                 .map(ChannelResponseDto::new)
                 .sorted(Comparator.comparing(ChannelResponseDto::getCreatedDate).reversed())
                 .collect(Collectors.toList());
-    
+        
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), result.size());
-    
+        
         List<ChannelResponseDto> pageContent = result.subList(start, end);
-    
+        
         return new PageImpl<>(pageContent, pageable, result.size());
     }
     
@@ -99,5 +98,20 @@ public class ChannelService {
      */
     public boolean existsByUuid(String uuid) {
         return channelRepository.existsByUuid(uuid);
+    }
+    
+    /**
+     * 비밀번호 일치 여부 확인
+     *
+     * @param channelId 채널 ID(인덱스)
+     * @param password  비밀번호
+     * @return 비밀번호 일치 여부
+     */
+    public boolean checkPassword(Long channelId, String password) {
+        
+        Channel findChannel = channelRepository.findById(channelId)
+                .orElseThrow(() -> new DataNotFoundException("채널을 찾을 수 없습니다"));
+        
+        return findChannel.checkPassword(password, passwordEncoder);
     }
 }
