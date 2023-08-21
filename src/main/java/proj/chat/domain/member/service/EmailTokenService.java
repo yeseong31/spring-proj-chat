@@ -10,9 +10,9 @@ import proj.chat.domain.member.dto.EmailVerificationRequestDto;
 import proj.chat.domain.member.dto.EmailVerificationResponseDto;
 import proj.chat.domain.member.entity.EmailToken;
 import proj.chat.domain.member.entity.Member;
-import proj.chat.exception.DataNotFoundException;
 import proj.chat.domain.member.repository.EmailTokenRepository;
 import proj.chat.domain.member.repository.MemberRepository;
+import proj.chat.exception.DataNotFoundException;
 
 @Slf4j
 @Service
@@ -26,6 +26,7 @@ public class EmailTokenService {
     
     /**
      * 이메일 인증 정보 저장
+     *
      * @param dto 이메일 인증 정보를 담은 DTO
      * @return 인증 정보 저장 이후에 부여되는 ID(인덱스)
      */
@@ -35,15 +36,15 @@ public class EmailTokenService {
         
         Member findMember = memberRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new DataNotFoundException("존재하지 않는 회원입니다"));
-    
+        
         EmailToken emailToken = dto.dtoToEntity();
         emailToken.registerMember(findMember);
         
         log.info("email: {}", emailToken.getMember());
         log.info("token: {}", emailToken.getToken());
-    
+        
         emailToken.hashVerificationToken(passwordEncoder);
-    
+        
         log.info("token: {}", emailToken.getToken());
         
         return emailTokenRepository.save(emailToken).getId();
@@ -67,8 +68,8 @@ public class EmailTokenService {
      * 인증 토큰 일치 여부 확인
      *
      * @param memberId 인증 정보를 가지는 사용자 ID(인덱스)
-     * @param token 토큰 정보
-     * @return 인증 토른 일치 여부
+     * @param token    토큰 정보
+     * @return 인증 토큰 일치 여부
      */
     public boolean checkToken(Long memberId, String token) {
         
