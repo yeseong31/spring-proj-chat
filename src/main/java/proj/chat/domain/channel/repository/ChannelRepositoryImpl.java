@@ -8,8 +8,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import proj.chat.domain.channel.dto.ChannelMemberSearchDto;
-import proj.chat.domain.channel.dto.QChannelMemberSearchDto;
+import proj.chat.domain.channel.dto.ChannelMemberSearchCond;
+import proj.chat.domain.channel.entity.Channel;
 
 @RequiredArgsConstructor
 public class ChannelRepositoryImpl implements ChannelRepositoryCustom {
@@ -19,32 +19,24 @@ public class ChannelRepositoryImpl implements ChannelRepositoryCustom {
     /**
      * 복잡한 페이징 - 데이터 조회 쿼리와 전체 카운트 쿼리를 분리
      *
-     * @param dto 검색 조건 DTO
-     * @return 채널 목록(+페이징)
+     * @param cond 검색 조건
+     * @return 채널 목록(+페이징/검색)
      */
     @Override
-    public List<ChannelMemberSearchDto> searchChannels(ChannelMemberSearchDto dto) {
+    public List<Channel> findSearch(ChannelMemberSearchCond cond) {
         
         return query
-                .select(new QChannelMemberSearchDto(
-                        member.name,
-                        channel.name
-                ))
+                .select(channel)
                 .from(channel)
                 .leftJoin(channel.owner, member)
                 .where(
-                        memberNameEq(dto.getMemberName()),
-                        channelNameEq(dto.getChannelName())
+                        channelNameContains(cond.getKeyword())
                 )
+                .limit(1000)
                 .fetch();
     }
     
-    private BooleanExpression memberNameEq(String memberName) {
-        return hasText(memberName) ? member.name.eq(memberName) : null;
+    private BooleanExpression channelNameContains(String channelName) {
+        return hasText(channelName) ? channel.name.contains(channelName) : null;
     }
-    
-    private BooleanExpression channelNameEq(String channelName) {
-        return hasText(channelName) ? channel.name.eq(channelName) : null;
-    }
-    
 }

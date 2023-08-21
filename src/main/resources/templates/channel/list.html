@@ -14,7 +14,7 @@
   <div class="container">
     <h2>채널 목록</h2>
     <!-- modal: create channel form -->
-    <form action="list.html" th:action th:object="${channelSaveRequestDto}" method="post" style="text-align: left">
+    <form action="list.html" th:action="@{/channel/create}" th:object="${channelSaveRequestDto}" method="post" style="text-align: left">
       <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}" style="margin-bottom: 10px">
         <div th:text="${errorMessage}"></div>
       </div>
@@ -61,9 +61,14 @@
     <div class="d-grid gap-2 d-flex justify-content-end btn-snippet" style="margin-bottom: 10px">
       <!-- search -->
       <div class="col-auto">
-        <label>
-          <input class="form-control" type="text" placeholder="검색 내용을 입력해주세요">
-        </label>
+        <form th:action="@{/channel/list}" th:object="${channelMemberSearchCond}" class="form-inline">
+          <div class="input-group">
+            <input type="text" class="form-control" th:field="*{keyword}" placeholder="채널 이름 검색">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" type="submit">검색</button>
+            </div>
+          </div>
+        </form>
       </div>
       <!-- refresh button -->
       <button type="button" class="btn btn-secondary" onclick="window.location.reload()">
@@ -120,18 +125,18 @@
       <ul class="pagination justify-content-center">
         <!-- prev -->
         <li class="page-item" th:classappend="${!channels.hasPrevious} ? 'disabled'">
-          <a class="page-link" th:href="@{|?page=${channels.number - 1}|}" tabindex="-1">이전</a>
+          <a class="page-link" th:href="@{|?page=${channels.number - 1}&keyword=${keyword}|}" tabindex="-1">이전</a>
         </li>
         <!-- pages -->
         <li th:each="page: ${#numbers.sequence(1, channels.totalPages)}"
             th:if="${page - 1 >= channels.number - 5 and page - 1 <= channels.number + 5}"
             th:classappend="${page - 1 == channels.number} ? 'active'"
             class="page-item">
-          <a th:text="${page}" class="page-link" th:href="@{|?page=${page - 1}|}"></a>
+          <a th:text="${page}" class="page-link" th:href="@{|?page=${page - 1}&keyword=${keyword}|}"></a>
         </li>
         <!-- next -->
         <li class="page-item" th:classappend="${!channels.hasNext} ? 'disabled'">
-          <a class="page-link" th:href="@{|?page=${channels.number + 1}|}" >다음</a>
+          <a class="page-link" th:href="@{|?page=${channels.number + 1}&keyword=${keyword}|}" >다음</a>
         </li>
       </ul>
     </nav>

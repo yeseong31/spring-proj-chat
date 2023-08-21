@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import proj.chat.domain.channel.dto.ChannelMemberSearchCond;
 import proj.chat.domain.channel.dto.ChannelResponseDto;
 import proj.chat.domain.channel.dto.ChannelSaveRequestDto;
 import proj.chat.domain.channel.entity.Channel;
@@ -55,25 +56,25 @@ public class ChannelService {
     }
     
     /**
-     * 채널 목록 조회 (+페이징)
+     * 채널 목록 조회 (+페이징/검색)
      *
      * @return 채널 정보가 담긴 DTO 목록
      */
-    public Page<ChannelResponseDto> findAll(int page, int size) {
-        
+    public Page<ChannelResponseDto> findAll(ChannelMemberSearchCond cond, int page, int size) {
+    
         Pageable pageable = PageRequest.of(page, size);
-        
-        List<ChannelResponseDto> channelResponseDtos = channelRepository.findAll().stream()
+    
+        List<ChannelResponseDto> result = channelRepository.findSearch(cond).stream()
                 .map(ChannelResponseDto::new)
                 .sorted(Comparator.comparing(ChannelResponseDto::getCreatedDate).reversed())
                 .collect(Collectors.toList());
-        
+    
         int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), channelResponseDtos.size());
-        
-        List<ChannelResponseDto> pageContent = channelResponseDtos.subList(start, end);
-        
-        return new PageImpl<>(pageContent, pageable, channelResponseDtos.size());
+        int end = Math.min((start + pageable.getPageSize()), result.size());
+    
+        List<ChannelResponseDto> pageContent = result.subList(start, end);
+    
+        return new PageImpl<>(pageContent, pageable, result.size());
     }
     
     /**

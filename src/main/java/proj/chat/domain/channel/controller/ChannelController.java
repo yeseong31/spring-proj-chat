@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import proj.chat.domain.channel.dto.ChannelMemberSearchDto;
+import proj.chat.domain.channel.dto.ChannelMemberSearchCond;
 import proj.chat.domain.channel.dto.ChannelResponseDto;
 import proj.chat.domain.channel.dto.ChannelSaveRequestDto;
 import proj.chat.domain.channel.service.ChannelService;
@@ -36,16 +36,18 @@ public class ChannelController {
     private static final int PAGE_SIZE = 10;
     
     /**
-     * 채널 목록 조회
+     * 채널 목록 조회 (+검색)
      */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/list")
     public String list(
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @ModelAttribute("channelMemberSearch") ChannelMemberSearchDto searchDto, Model model) {
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @ModelAttribute("channelMemberSearchCond") ChannelMemberSearchCond cond, Model model) {
         
-        model.addAttribute("channels", channelService.findAll(page, PAGE_SIZE));
+        model.addAttribute("channels", channelService.findAll(cond, page, PAGE_SIZE));
         model.addAttribute("channelSaveRequestDto", new ChannelSaveRequestDto());
+        model.addAttribute("keyword", keyword);
         return "channel/list";
     }
     
@@ -53,7 +55,7 @@ public class ChannelController {
      * 채널 생성
      */
     @PreAuthorize("isAuthenticated()")
-    @PostMapping("/list")
+    @PostMapping("/create")
     public String create(@Validated @ModelAttribute ChannelSaveRequestDto requestDto,
             BindingResult bindingResult, Model model, @AuthenticationPrincipal User user,
             RedirectAttributes redirectAttributes) {
@@ -62,7 +64,8 @@ public class ChannelController {
             
             log.info("[createChannel] errors={}", bindingResult);
             model.addAttribute("errorMessage", "채널 생성에 실패했습니다");
-            model.addAttribute("channels", channelService.findAll(0, 10));
+            model.addAttribute("channelMemberSearchCond", new ChannelMemberSearchCond());
+            model.addAttribute("channels", channelService.findAll(new ChannelMemberSearchCond(), 0, 10));
             
             return "channel/list";
         }
