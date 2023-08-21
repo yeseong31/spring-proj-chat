@@ -13,7 +13,7 @@ import org.hibernate.validator.constraints.Length;
 @NoArgsConstructor
 public class ChannelEnterRequestDto {
     
-    private String channelUuid;
+    private String channelId;
     
     @Length(min = 4, max = 16, message = "비밀번호는 4~16자여야 합니다")
     @NotEmpty(message = "비밀번호를 입력해 주세요")
