@@ -1,5 +1,6 @@
 package proj.chat.domain.channel.service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -59,10 +60,12 @@ public class ChannelService {
      * @return 채널 정보가 담긴 DTO 목록
      */
     public Page<ChannelResponseDto> findAll(int page, int size) {
+        
         Pageable pageable = PageRequest.of(page, size);
         
         List<ChannelResponseDto> channelResponseDtos = channelRepository.findAll().stream()
                 .map(ChannelResponseDto::new)
+                .sorted(Comparator.comparing(ChannelResponseDto::getCreatedDate).reversed())
                 .collect(Collectors.toList());
         
         int start = (int) pageable.getOffset();
