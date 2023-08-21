@@ -30,7 +30,7 @@ public class Channel extends BaseEntity {
     @Column(name = "channel_id")
     private Long id;
     
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String uuid;
     
     @Column(nullable = false)
