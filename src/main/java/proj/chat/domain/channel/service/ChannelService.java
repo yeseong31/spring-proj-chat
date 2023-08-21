@@ -5,6 +5,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +43,7 @@ public class ChannelService {
                 .orElseThrow(() -> new DataNotFoundException("존재하지 않는 사용자입니다"));
         
         Channel channel = dto.dtoToEntity();
-    
+        
         Objects.requireNonNull(channel.getPassword());
         channel.hashPassword(passwordEncoder);
         
@@ -50,14 +54,23 @@ public class ChannelService {
     }
     
     /**
-     * 채널 목록 조회
+     * 채널 목록 조회 (+페이징)
      *
      * @return 채널 정보가 담긴 DTO 목록
      */
-    public List<ChannelResponseDto> findAll() {
-        return channelRepository.findAll().stream()
+    public Page<ChannelResponseDto> findAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        
+        List<ChannelResponseDto> channelResponseDtos = channelRepository.findAll().stream()
                 .map(ChannelResponseDto::new)
                 .collect(Collectors.toList());
+        
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), channelResponseDtos.size());
+        
+        List<ChannelResponseDto> pageContent = channelResponseDtos.subList(start, end);
+        
+        return new PageImpl<>(pageContent, pageable, channelResponseDtos.size());
     }
     
     /**

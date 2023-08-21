@@ -33,15 +33,18 @@ public class ChannelController {
     private final ChannelService channelService;
     private final MemberService memberService;
     
+    private static final int PAGE_SIZE = 10;
+    
     /**
      * 채널 목록 조회
      */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/list")
     public String list(
+            @RequestParam(value = "page", defaultValue = "0") int page,
             @ModelAttribute("channelMemberSearch") ChannelMemberSearchDto searchDto, Model model) {
         
-        model.addAttribute("channels", channelService.findAll());
+        model.addAttribute("channels", channelService.findAll(page, PAGE_SIZE));
         model.addAttribute("channelSaveRequestDto", new ChannelSaveRequestDto());
         return "channel/list";
     }
@@ -59,7 +62,7 @@ public class ChannelController {
             
             log.info("[createChannel] errors={}", bindingResult);
             model.addAttribute("errorMessage", "채널 생성에 실패했습니다");
-            model.addAttribute("channels", channelService.findAll());
+            model.addAttribute("channels", channelService.findAll(0, 10));
             
             return "channel/list";
         }
