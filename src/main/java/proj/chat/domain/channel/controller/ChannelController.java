@@ -1,5 +1,6 @@
 package proj.chat.domain.channel.controller;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import proj.chat.domain.channel.dto.ChannelEnterRequestDto;
 import proj.chat.domain.channel.dto.ChannelMemberSearchCond;
 import proj.chat.domain.channel.dto.ChannelResponseDto;
 import proj.chat.domain.channel.dto.ChannelSaveRequestDto;
@@ -42,12 +44,11 @@ public class ChannelController {
     @GetMapping("/list")
     public String list(
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "keyword", required = false) String keyword,
             @ModelAttribute("channelMemberSearchCond") ChannelMemberSearchCond cond, Model model) {
         
-        model.addAttribute("channels", channelService.findAll(cond, page, PAGE_SIZE));
+        model.addAttribute("channels", channelService.findAll(cond.getKeyword(), page, PAGE_SIZE));
         model.addAttribute("channelSaveRequestDto", new ChannelSaveRequestDto());
-        model.addAttribute("keyword", keyword);
+        model.addAttribute("channelEnterRequestDto", new ChannelEnterRequestDto());
         return "channel/list";
     }
     
@@ -62,10 +63,11 @@ public class ChannelController {
         
         if (bindingResult.hasErrors()) {
             
-            log.info("[createChannel] errors={}", bindingResult);
+            log.info("[create] errors={}", bindingResult);
             model.addAttribute("errorMessage", "채널 생성에 실패했습니다");
             model.addAttribute("channelMemberSearchCond", new ChannelMemberSearchCond());
-            model.addAttribute("channels", channelService.findAll(new ChannelMemberSearchCond(), 0, 10));
+            model.addAttribute("channelEnterRequestDto", new ChannelEnterRequestDto());
+            model.addAttribute("channels", channelService.findAll(null, 0, 10));
             
             return "channel/list";
         }
@@ -73,7 +75,7 @@ public class ChannelController {
         log.info("[create] 채널 이름={}", requestDto.getName());
         log.info("[create] 채널 비밀번호={}", requestDto.getPassword());
         log.info("[create] 채널 최대 인원={}", requestDto.getMaxCount());
-    
+        
         String savedChannelUuid = channelService.save(requestDto, user.getUsername());
         
         redirectAttributes.addAttribute("uuid", savedChannelUuid);
@@ -86,34 +88,60 @@ public class ChannelController {
      * 채널 입장
      */
     @PreAuthorize("isAuthenticated()")
-    @GetMapping
-    public String enterForm(@RequestParam("uuid") String channelUuid,
-            @AuthenticationPrincipal User user, Model model,
+    @PostMapping("/enter")
+    public String enter(
+            @Validated @ModelAttribute ChannelEnterRequestDto requestDto,
+            BindingResult bindingResult, Model model, @AuthenticationPrincipal User user,
             RedirectAttributes redirectAttributes) {
         
-        MemberResponseDto findMemberDto = memberService.findByEmail(user.getUsername());
-        
-        if (findMemberDto == null) {
+        if (bindingResult.hasErrors()) {
             
-            log.info("[enterForm] 회원가입을 하지 않은 사용자입니다");
-            return "redirect:/auth/signup";
+            log.info("[enter] errors={}", bindingResult);
+            model.addAttribute("errorMessage", "채널 입장에 실패했습니다");
+            model.addAttribute("channelSaveRequestDto", new ChannelSaveRequestDto());
+            model.addAttribute("channelMemberSearchCond", new ChannelMemberSearchCond());
+            model.addAttribute("channels", channelService.findAll(null, 0, 10));
+            
+            return "channel/list";
         }
         
-        if (!isMatchUuid(channelUuid)) {
+        Long channelId = Long.valueOf(requestDto.getChannelId());
+        String password = requestDto.getPassword();
+        
+        log.info("[enter] 채널 ID={}", channelId);
+        log.info("[enter] 채널 비밀번호={}", requestDto.getPassword());
+        
+        Objects.requireNonNull(requestDto);
+        Objects.requireNonNull(channelId);
+        Objects.requireNonNull(password);
+    
+        ChannelResponseDto findChannelDto = channelService.findById(channelId);
+    
+        if (findChannelDto == null) {
             
-            log.info("[enterForm] 유효하지 않은 UUID입니다");
-            redirectAttributes.addFlashAttribute("errorMessage", "채널 입장 오류");
-            return "redirect:/channel/list";
+            log.info("[enter] 오류로 인해 채널 입장에 실패했습니다");
+            bindingResult.rejectValue(
+                    "channelId", "invalid.channelId", "오류로 인해 채널 입장에 실패했습니다");
+            
+            model.addAttribute("errorMessage", "채널 입장에 실패했습니다");
+            model.addAttribute("channelSaveRequestDto", new ChannelSaveRequestDto());
+            model.addAttribute("channelMemberSearchCond", new ChannelMemberSearchCond());
+            model.addAttribute("channels", channelService.findAll(null, 0, 10));
+            return "channel/list";
         }
         
-        if (!channelService.existsByUuid(channelUuid)) {
+        if (!channelService.checkPassword(findChannelDto.getId(), password)) {
             
-            log.info("[enterForm] 유효하지 않은 UUID입니다");
-            redirectAttributes.addFlashAttribute("errorMessage", "채널 입장 오류");
-            return "redirect:/channel/list";
+            log.info("[enter] 비밀번호가 일치하지 않습니다");
+            bindingResult.rejectValue(
+                    "password", "invalid.password", "비밀번호가 일치하지 않습니다");
+            
+            model.addAttribute("errorMessage", "채널 입장에 실패했습니다");
+            model.addAttribute("channelSaveRequestDto", new ChannelSaveRequestDto());
+            model.addAttribute("channelMemberSearchCond", new ChannelMemberSearchCond());
+            model.addAttribute("channels", channelService.findAll(null, 0, 10));
+            return "channel/list";
         }
-        
-        ChannelResponseDto findChannelDto = channelService.findByUuid(channelUuid);
         
         if (findChannelDto.getCount() >= findChannelDto.getMaxCount()) {
             
@@ -122,11 +150,13 @@ public class ChannelController {
             return "redirect:/channel/list";
         }
         
+        MemberResponseDto findMemberDto = memberService.findByEmail(user.getUsername());
+        
         model.addAttribute("messageDto", new MessageDto());
         model.addAttribute("channelName", findChannelDto.getName());
         model.addAttribute("memberName", findMemberDto.getName());
         model.addAttribute("memberUuid", findMemberDto.getUuid());
-    
+        
         log.info("model: {}", model);
         
         return "channel/chat";
