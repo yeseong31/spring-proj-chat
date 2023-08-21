@@ -10,8 +10,8 @@ import proj.chat.domain.member.dto.MemberResponseDto;
 import proj.chat.domain.member.dto.MemberSaveRequestDto;
 import proj.chat.domain.member.dto.MemberUpdateRequestDto;
 import proj.chat.domain.member.entity.Member;
-import proj.chat.exception.DataNotFoundException;
 import proj.chat.domain.member.repository.MemberRepository;
+import proj.chat.exception.DataNotFoundException;
 
 @Slf4j
 @Service
@@ -32,7 +32,7 @@ public class MemberService {
     public Long save(MemberSaveRequestDto dto) {
         
         Member member = dto.dtoToEntity();
-    
+        
         Objects.requireNonNull(member.getPassword());
         member.hashPassword(passwordEncoder);
         
@@ -95,7 +95,8 @@ public class MemberService {
     
     /**
      * 사용자 수정
-     * @param id 사용자 ID(인덱스)
+     *
+     * @param id         사용자 ID(인덱스)
      * @param requestDto 사용자 정보가 담긴 DTO
      * @return 사용자 ID(인덱스)
      */
@@ -104,7 +105,7 @@ public class MemberService {
         
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("존재하지 않는 회원입니다"));
-    
+        
         requestDto.setId(member.getId());
         
         if (requestDto.getName() == null) {
@@ -129,6 +130,7 @@ public class MemberService {
     
     /**
      * 사용자 삭제
+     *
      * @param id 사용자 ID(인덱스)
      * @return 사용자 ID(인덱스)
      */
