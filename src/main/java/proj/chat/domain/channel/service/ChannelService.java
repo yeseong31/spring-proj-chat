@@ -77,6 +77,20 @@ public class ChannelService {
     }
     
     /**
+     * 채널 ID로 조회
+     *
+     * @param id 채널 ID(인덱스)
+     * @return 채널 정보가 담긴 DTO
+     */
+    public ChannelResponseDto findById(Long id) {
+    
+        Channel findChannel = channelRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("존재하지 않는 채널입니다"));
+    
+        return new ChannelResponseDto(findChannel);
+    }
+    
+    /**
      * 채널 UUID로 조회
      *
      * @param uuid 채널 UUID
