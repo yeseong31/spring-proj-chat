@@ -3,6 +3,7 @@ package proj.chat.domain.channel.controller;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -35,16 +36,10 @@ public class ChannelController {
     /**
      * 채널 목록 조회
      */
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/list")
     public String list(
-            @ModelAttribute("channelMemberSearch") ChannelMemberSearchDto searchDto,
-            @AuthenticationPrincipal User user, Model model) {
-        
-        if (user == null) {
-            
-            log.info("[list] 로그인을 하지 않은 사용자입니다");
-            return "auth/login";
-        }
+            @ModelAttribute("channelMemberSearch") ChannelMemberSearchDto searchDto, Model model) {
         
         model.addAttribute("channels", channelService.findAll());
         model.addAttribute("channelSaveRequestDto", new ChannelSaveRequestDto());
@@ -54,12 +49,10 @@ public class ChannelController {
     /**
      * 채널 생성
      */
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/list")
-    public String create(
-            @Validated @ModelAttribute ChannelSaveRequestDto requestDto,
-            BindingResult bindingResult, Model model,
-            @AuthenticationPrincipal User user,
-            @RequestParam(defaultValue = "/") String redirectUrl,
+    public String create(@Validated @ModelAttribute ChannelSaveRequestDto requestDto,
+            BindingResult bindingResult, Model model, @AuthenticationPrincipal User user,
             RedirectAttributes redirectAttributes) {
         
         if (bindingResult.hasErrors()) {
@@ -69,12 +62,6 @@ public class ChannelController {
             model.addAttribute("channels", channelService.findAll());
             
             return "channel/list";
-        }
-        
-        if (user == null) {
-            
-            log.info("[create] 접근 권한이 없습니다.");
-            return "redirect:" + redirectUrl;
         }
         
         log.info("[create] 채널 이름={}", requestDto.getName());
@@ -92,16 +79,11 @@ public class ChannelController {
     /**
      * 채널 입장
      */
+    @PreAuthorize("isAuthenticated()")
     @GetMapping
-    public String enterForm(
-            @RequestParam("uuid") String channelUuid, @AuthenticationPrincipal User user,
-            Model model, RedirectAttributes redirectAttributes) {
-        
-        if (user == null) {
-            
-            log.info("[enterForm] 로그인을 하지 않은 사용자입니다");
-            return "auth/login";
-        }
+    public String enterForm(@RequestParam("uuid") String channelUuid,
+            @AuthenticationPrincipal User user, Model model,
+            RedirectAttributes redirectAttributes) {
         
         MemberResponseDto findMemberDto = memberService.findByEmail(user.getUsername());
         
