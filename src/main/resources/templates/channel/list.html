@@ -125,18 +125,18 @@
       <ul class="pagination justify-content-center">
         <!-- prev -->
         <li class="page-item" th:classappend="${!channels.hasPrevious} ? 'disabled'">
-          <a class="page-link" th:href="@{|?page=${channels.number - 1}&keyword=${keyword}|}" tabindex="-1">이전</a>
+          <a class="page-link" th:href="@{|?page=${channels.number - 1}|}" tabindex="-1">이전</a>
         </li>
         <!-- pages -->
         <li th:each="page: ${#numbers.sequence(1, channels.totalPages)}"
             th:if="${page - 1 >= channels.number - 5 and page - 1 <= channels.number + 5}"
             th:classappend="${page - 1 == channels.number} ? 'active'"
             class="page-item">
-          <a th:text="${page}" class="page-link" th:href="@{|?page=${page - 1}&keyword=${keyword}|}"></a>
+          <a th:text="${page}" class="page-link" th:href="@{|?page=${page - 1}|}"></a>
         </li>
         <!-- next -->
         <li class="page-item" th:classappend="${!channels.hasNext} ? 'disabled'">
-          <a class="page-link" th:href="@{|?page=${channels.number + 1}&keyword=${keyword}|}" >다음</a>
+          <a class="page-link" th:href="@{|?page=${channels.number + 1}|}" >다음</a>
         </li>
       </ul>
     </nav>

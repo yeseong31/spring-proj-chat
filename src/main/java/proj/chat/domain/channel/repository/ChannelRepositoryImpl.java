@@ -8,7 +8,6 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import proj.chat.domain.channel.dto.ChannelMemberSearchCond;
 import proj.chat.domain.channel.entity.Channel;
 
 @RequiredArgsConstructor
@@ -19,18 +18,18 @@ public class ChannelRepositoryImpl implements ChannelRepositoryCustom {
     /**
      * 복잡한 페이징 - 데이터 조회 쿼리와 전체 카운트 쿼리를 분리
      *
-     * @param cond 검색 조건
+     * @param keyword 검색 조건(키워드)
      * @return 채널 목록(+페이징/검색)
      */
     @Override
-    public List<Channel> findSearch(ChannelMemberSearchCond cond) {
+    public List<Channel> findSearch(String keyword) {
         
         return query
                 .select(channel)
                 .from(channel)
                 .leftJoin(channel.owner, member)
                 .where(
-                        channelNameContains(cond.getKeyword())
+                        channelNameContains(keyword)
                 )
                 .limit(1000)
                 .fetch();

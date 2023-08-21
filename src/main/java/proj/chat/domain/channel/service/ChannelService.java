@@ -60,11 +60,11 @@ public class ChannelService {
      *
      * @return 채널 정보가 담긴 DTO 목록
      */
-    public Page<ChannelResponseDto> findAll(ChannelMemberSearchCond cond, int page, int size) {
+    public Page<ChannelResponseDto> findAll(String keyword, int page, int size) {
     
         Pageable pageable = PageRequest.of(page, size);
     
-        List<ChannelResponseDto> result = channelRepository.findSearch(cond).stream()
+        List<ChannelResponseDto> result = channelRepository.findSearch(keyword).stream()
                 .map(ChannelResponseDto::new)
                 .sorted(Comparator.comparing(ChannelResponseDto::getCreatedDate).reversed())
                 .collect(Collectors.toList());
