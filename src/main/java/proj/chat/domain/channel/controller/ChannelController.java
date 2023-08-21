@@ -76,17 +76,11 @@ public class ChannelController {
             log.info("[create] 접근 권한이 없습니다.");
             return "redirect:" + redirectUrl;
         }
-    
-        if (!memberService.existsByEmail(user.getUsername())) {
-            
-            log.info("[enterForm] 회원가입을 하지 않은 사용자입니다");
-            return "redirect:/auth/signup";
-        }
         
         log.info("[create] 채널 이름={}", requestDto.getName());
         log.info("[create] 채널 비밀번호={}", requestDto.getPassword());
         log.info("[create] 채널 최대 인원={}", requestDto.getMaxCount());
-        
+    
         String savedChannelUuid = channelService.save(requestDto, user.getUsername());
         
         redirectAttributes.addAttribute("uuid", savedChannelUuid);
