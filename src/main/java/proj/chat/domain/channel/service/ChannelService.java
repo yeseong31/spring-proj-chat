@@ -1,6 +1,7 @@
 package proj.chat.domain.channel.service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,11 +39,9 @@ public class ChannelService {
                 .orElseThrow(() -> new DataNotFoundException("존재하지 않는 사용자입니다"));
         
         Channel channel = dto.dtoToEntity();
-        
-        if (dto.getPassword() != null) {
-            
-            channel.hashPassword(passwordEncoder);
-        }
+    
+        Objects.requireNonNull(channel.getPassword());
+        channel.hashPassword(passwordEncoder);
         
         channel.createUUID();
         channel.registerOwner(findMember);
