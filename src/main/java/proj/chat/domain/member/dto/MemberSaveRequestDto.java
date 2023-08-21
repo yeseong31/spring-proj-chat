@@ -19,7 +19,7 @@ import proj.chat.domain.member.entity.Member;
 public class MemberSaveRequestDto {
 
     @NotBlank(message = "이름을 입력해주세요")
-    @Length(min = 3, max = 20)
+    @Length(min = 3, max = 20, message = "이름은 길이가 3~20 사이여야 합니다")
     @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-z0-9_-]{3,20}$",
             message = "엉어, 숫자, 한글, 언더바(_), 대시(-)만 입력할 수 있습니다")
     private String name;
@@ -29,8 +29,10 @@ public class MemberSaveRequestDto {
     private String email;
     
     @Length(min = 4, max = 16, message = "비밀번호는 4~16자여야 합니다")
-    @NotEmpty(message = "비밀번호를 입력해주세요")
+    @NotEmpty(message = "비밀번호는 필수 항목입니다")
     private String password;
+    
+    @NotEmpty(message = "비밀번호 확인은 필수 항목입니다")
     private String matchingPassword;
     
     public Member dtoToEntity() {
