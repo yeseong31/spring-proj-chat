@@ -7,13 +7,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import proj.chat.domain.member.dto.MemberSaveRequestDto;
-import proj.chat.domain.member.repository.MemberRepository;
 
 @Component
 @RequiredArgsConstructor
 public class MemberSaveRequestDtoValidator implements Validator {
-    
-    private final MemberRepository memberRepository;
     
     @Override
     public boolean supports(Class<?> clazz) {
@@ -24,12 +21,6 @@ public class MemberSaveRequestDtoValidator implements Validator {
     public void validate(Object target, Errors errors) {
         
         MemberSaveRequestDto dto = (MemberSaveRequestDto) target;
-        
-        if (memberRepository.existsByEmail(dto.getEmail())) {
-            
-            errors.rejectValue("email", "invalid.email",
-                    new Object[]{dto.getEmail()}, "이미 사용 중인 이메일입니다");
-        }
         
         String regex = "[a-z0-9]+@[a-z]+\\.[a-z]{2,3}";
         Pattern p = Pattern.compile(regex);

@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpSession;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -62,7 +63,7 @@ public class MemberController {
     @PostMapping("/signup")
     public String signup(
             @Validated @ModelAttribute MemberSaveRequestDto requestDto, BindingResult bindingResult,
-            HttpServletRequest request) throws Exception {
+            HttpServletRequest request) {
         
         if (bindingResult.hasErrors()) {
             
@@ -70,15 +71,24 @@ public class MemberController {
             return "auth/signup";
         }
         
-        Long savedId = memberService.save(requestDto);
-        log.info("[signup] 회원가입 완료: ID={}", savedId);
-        
-        mailService.executor(requestDto.getEmail());
-        
-        MemberResponseDto findMember = memberService.findById(savedId);
-        
-        HttpSession session = request.getSession();
-        session.setAttribute("uuid", findMember.getUuid());
+        try {
+            Long savedId = memberService.save(requestDto);
+            log.info("[signup] 회원가입 완료: ID={}", savedId);
+            
+            mailService.executor(requestDto.getEmail());
+            
+            MemberResponseDto findMember = memberService.findById(savedId);
+            
+            HttpSession session = request.getSession();
+            session.setAttribute("uuid", findMember.getUuid());
+        } catch (DataIntegrityViolationException e) {
+            bindingResult.rejectValue("email", "duplicate.email",
+                    "이미 등록된 사용자입니다");
+            return "auth/signup";
+        } catch (Exception e) {
+            bindingResult.reject("signupFailed", "회원가입에 실패했습니다");
+            return "auth/signup";
+        }
         
         return "redirect:/auth/email/verification";
     }
@@ -124,9 +134,9 @@ public class MemberController {
             model.addAttribute("memberSaveRequestDto", new MemberSaveRequestDto());
             return "auth/signup";
         }
-    
+        
         String findMemberUuid = memberService.findByUuid(sessionMemberUuid).getUuid();
-    
+        
         if (!findMemberUuid.equals(sessionMemberUuid)) {
             
             log.info("[emailVerificationForm] 올바르지 않은 사용자입니다");
@@ -161,7 +171,7 @@ public class MemberController {
         
         MemberResponseDto findMember = memberService.findByUuid(sessionMemberUuid);
         String findMemberUuid = findMember.getUuid();
-    
+        
         if (!findMemberUuid.equals(sessionMemberUuid)) {
             
             log.info("[emailVerificationForm] 올바르지 않은 사용자입니다");
