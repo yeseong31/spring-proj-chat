@@ -1,7 +1,6 @@
 package proj.chat.domain.channel.controller;
 
 import java.util.Objects;
-import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -58,17 +57,11 @@ public class ChannelController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
     public String create(@Validated @ModelAttribute ChannelSaveRequestDto requestDto,
-            BindingResult bindingResult, Model model, @AuthenticationPrincipal User user,
-            RedirectAttributes redirectAttributes) {
+            BindingResult bindingResult, Model model, @AuthenticationPrincipal User user) {
         
         if (bindingResult.hasErrors()) {
-            
-            log.info("[create] errors={}", bindingResult);
-            model.addAttribute("errorMessage", "채널 생성에 실패했습니다");
-            model.addAttribute("channelMemberSearchCond", new ChannelMemberSearchCond());
-            model.addAttribute("channelEnterRequestDto", new ChannelEnterRequestDto());
-            model.addAttribute("channels", channelService.findAll(null, 0, 10));
-            
+    
+            controlChannelError(model, "채널 생성에 실패했습니다");
             return "channel/list";
         }
         
@@ -77,9 +70,6 @@ public class ChannelController {
         log.info("[create] 채널 최대 인원={}", requestDto.getMaxCount());
         
         String savedChannelUuid = channelService.save(requestDto, user.getUsername());
-        
-        redirectAttributes.addAttribute("uuid", savedChannelUuid);
-        redirectAttributes.addAttribute("status", true);
     
         MemberResponseDto findMemberDto = memberService.findByEmail(user.getUsername());
     
@@ -106,10 +96,7 @@ public class ChannelController {
         if (bindingResult.hasErrors()) {
             
             log.info("[enter] errors={}", bindingResult);
-            model.addAttribute("errorMessage", "채널 입장에 실패했습니다");
-            model.addAttribute("channelSaveRequestDto", new ChannelSaveRequestDto());
-            model.addAttribute("channelMemberSearchCond", new ChannelMemberSearchCond());
-            model.addAttribute("channels", channelService.findAll(null, 0, 10));
+            controlChannelError(model, "채널 입장에 실패했습니다");
             
             return "channel/list";
         }
@@ -128,34 +115,27 @@ public class ChannelController {
     
         if (findChannelDto == null) {
             
-            log.info("[enter] 오류로 인해 채널 입장에 실패했습니다");
+            controlChannelError(model, "채널 입장에 실패했습니다");
             bindingResult.rejectValue(
-                    "channelId", "invalid.channelId", "오류로 인해 채널 입장에 실패했습니다");
+                    "channelId", "invalid.channelId", "채널 입장에 실패했습니다");
             
-            model.addAttribute("errorMessage", "채널 입장에 실패했습니다");
-            model.addAttribute("channelSaveRequestDto", new ChannelSaveRequestDto());
-            model.addAttribute("channelMemberSearchCond", new ChannelMemberSearchCond());
-            model.addAttribute("channels", channelService.findAll(null, 0, 10));
             return "channel/list";
         }
         
         if (!channelService.checkPassword(findChannelDto.getId(), password)) {
-            
-            log.info("[enter] 비밀번호가 일치하지 않습니다");
+    
+            controlChannelError(model, "비밀번호가 일치하지 않습니다.");
             bindingResult.rejectValue(
-                    "password", "invalid.password", "비밀번호가 일치하지 않습니다");
+                    "password", "invalid.password", "비밀번호가 일치하지 않습니다.");
             
-            model.addAttribute("errorMessage", "채널 입장에 실패했습니다");
-            model.addAttribute("channelSaveRequestDto", new ChannelSaveRequestDto());
-            model.addAttribute("channelMemberSearchCond", new ChannelMemberSearchCond());
-            model.addAttribute("channels", channelService.findAll(null, 0, 10));
             return "channel/list";
         }
         
         if (findChannelDto.getCount() >= findChannelDto.getMaxCount()) {
-            
-            log.info("[enterForm] 정원이 가득 찼습니다");
+    
+            controlChannelError(model, "정원이 가득 찼습니다");
             redirectAttributes.addFlashAttribute("errorMessage", "정원이 가득 찼습니다");
+            
             return "redirect:/channel/list";
         }
         
@@ -172,11 +152,12 @@ public class ChannelController {
         return "channel/chat";
     }
     
-    public static boolean isMatchUuid(String uuid) {
+    
+    private void controlChannelError(Model model, String errorMessage) {
         
-        Pattern regex = Pattern.compile(
-                "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
-        
-        return regex.matcher(uuid).matches();
+        model.addAttribute("errorMessage", errorMessage);
+        model.addAttribute("channelSaveRequestDto", new ChannelSaveRequestDto());
+        model.addAttribute("channelMemberSearchCond", new ChannelMemberSearchCond());
+        model.addAttribute("channels", channelService.findAll(null, 0, 10));
     }
 }
