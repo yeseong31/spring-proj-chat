@@ -8,6 +8,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import proj.chat.domain.message.dto.MessageDto;
 
@@ -22,6 +23,17 @@ import proj.chat.domain.message.dto.MessageDto;
 public class StompChatController {
     
     private final SimpMessageSendingOperations template;  // 특정 브로커로 메시지 전달
+    
+    /**
+     * 채팅방 입장 시 EventListener를 통해 사용자 입장 확인
+     */
+    @EventListener
+    public void webSocketConnectListener(SessionConnectEvent event) {
+    
+        log.info("[Connect] event={}", event);
+        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+        log.info("[Connect] headAccessor={}", headerAccessor);
+    }
     
     /**
      * 메시지 송신
