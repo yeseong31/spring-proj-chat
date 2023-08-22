@@ -25,7 +25,7 @@
               <h1 class="modal-title fs-5" id="exampleModalLabel">채널 생성</h1>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-              <div class="modal-body">
+            <div class="modal-body">
               <!-- errors -->
               <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}" style="margin-bottom: 10px">
                 <div th:each="err : ${#fields.allErrors()}" th:text="${err}"></div>
