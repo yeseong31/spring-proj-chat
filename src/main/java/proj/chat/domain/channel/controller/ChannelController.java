@@ -10,7 +10,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +23,7 @@ import proj.chat.domain.channel.dto.ChannelMemberSearchCond;
 import proj.chat.domain.channel.dto.ChannelResponseDto;
 import proj.chat.domain.channel.dto.ChannelSaveRequestDto;
 import proj.chat.domain.channel.service.ChannelService;
+import proj.chat.domain.channel.validator.ChannelEnterRequestDtoValidator;
 import proj.chat.domain.member.dto.MemberResponseDto;
 import proj.chat.domain.member.service.MemberService;
 import proj.chat.domain.message.dto.MessageDto;
@@ -35,6 +38,14 @@ public class ChannelController {
     private final MemberService memberService;
     
     private static final int PAGE_SIZE = 10;
+    
+    private final ChannelEnterRequestDtoValidator channelEnterRequestDtoValidator;
+    
+    @InitBinder("ChannelEnterRequestDto")
+    public void initBinder(WebDataBinder webDataBinder) {
+        log.info("init binder = {}", webDataBinder);
+        webDataBinder.addValidators(channelEnterRequestDtoValidator);
+    }
     
     /**
      * 채널 목록 조회 (+검색)
