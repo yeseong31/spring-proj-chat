@@ -1,5 +1,7 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout (title, content, link)"
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:fragment="layout (title, content, link)"
       class="h-100" data-bs-theme="auto" lang="en">
 <head>
   <meta charset="utf-8">
@@ -24,6 +26,16 @@
         <a class="nav-link fw-bold py-1 px-0 active" aria-current="page" href="#" th:href="@{/home}">Home</a>
         <a class="nav-link fw-bold py-1 px-0" href="#">Features</a>
         <a class="nav-link fw-bold py-1 px-0" href="#">Contact</a>
+        
+        <div class="dropdown" style="margin-left: 17px" sec:authorize="hasRole('ROLE_MEMBER')">
+          <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-offset="0,10">
+            <b>마이페이지</b>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" th:href="@{/auth/logout}">로그아웃</a></li>
+          </ul>
+        </div>
+        
       </nav>
     </div>
   </header>
