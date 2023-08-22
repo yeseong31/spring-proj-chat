@@ -80,17 +80,26 @@ public class ChannelController {
         
         redirectAttributes.addAttribute("uuid", savedChannelUuid);
         redirectAttributes.addAttribute("status", true);
+    
+        MemberResponseDto findMemberDto = memberService.findByEmail(user.getUsername());
+    
+        model.addAttribute("messageDto", new MessageDto());
+        model.addAttribute("channelName", requestDto.getName());
+        model.addAttribute("channelUuid", savedChannelUuid);
+        model.addAttribute("memberName", findMemberDto.getName());
+        model.addAttribute("memberUuid", findMemberDto.getUuid());
+    
+        log.info("model: {}", model);
         
-        return "redirect:/channel";
+        return "channel/chat";
     }
     
     /**
-     * 채널 입장
+     * 채널 입장 (비밀번호 입력)
      */
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/enter")
-    public String enter(
-            @Validated @ModelAttribute ChannelEnterRequestDto requestDto,
+    public String enter(@Validated @ModelAttribute ChannelEnterRequestDto requestDto,
             BindingResult bindingResult, Model model, @AuthenticationPrincipal User user,
             RedirectAttributes redirectAttributes) {
         
@@ -154,6 +163,7 @@ public class ChannelController {
         
         model.addAttribute("messageDto", new MessageDto());
         model.addAttribute("channelName", findChannelDto.getName());
+        model.addAttribute("channelUuid", findChannelDto.getUuid());
         model.addAttribute("memberName", findMemberDto.getName());
         model.addAttribute("memberUuid", findMemberDto.getUuid());
         

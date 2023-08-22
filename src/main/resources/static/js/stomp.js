@@ -11,7 +11,7 @@ const stompClient = new StompJs.Client({
 stompClient.onConnect = (frame) => {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-  const path = '/sub/channel/' + urlParams.get('uuid');
+  const path = '/sub/channel/' + $("#channelUuid").text();
 
   setConnected(true);
 
@@ -73,7 +73,7 @@ function sendMessage() {
     destination: "/pub/message",
     body: JSON.stringify({
       'content': content.val(),
-      'channelUuid': urlParams.get('uuid'),
+      'channelUuid': $("#channelUuid").text(),
       'memberUuid': memberUuid,
     })
   });
@@ -83,7 +83,7 @@ function sendMessage() {
 
 // 메시지 출력
 function showGreeting(message, uuid) {
-  var time = new Date();
+  const time = new Date();
   if (uuid === $("#memberUuid").text()) {  // 본인
     message = "<div class=\"d-flex flex-row justify-content-end mb-4 pt-1\"><div>"
         + "<p class=\"small p-2 me-3 mb-1 text-white rounded-3 bg-primary\">"
