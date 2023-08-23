@@ -43,6 +43,11 @@ public class MemberController {
     
     private final MemberSaveRequestDtoValidator memberSaveRequestDtoValidator;
     
+    /**
+     * 회원가입 요청 DTO 검증을 수행한다.
+     *
+     * @param webDataBinder MemberSaveRequestDto가 요청에 포함되면 이를 validator와 연결
+     */
     @InitBinder("memberSaveRequestDto")
     public void initBinder1(WebDataBinder webDataBinder) {
         log.info("init binder = {}", webDataBinder);
@@ -50,7 +55,10 @@ public class MemberController {
     }
     
     /**
-     * 회원가입(GET)
+     * 회원가입 페이지로 이동한다.
+     *
+     * @param memberSaveRequestDto 사용자 정보를 담을 DTO
+     * @return 회원가입 페이지 HTML 이름
      */
     @GetMapping("/signup")
     public String signupForm(@ModelAttribute MemberSaveRequestDto memberSaveRequestDto) {
@@ -58,7 +66,12 @@ public class MemberController {
     }
     
     /**
-     * 회원가입(POST)
+     * 회원가입을 수행한다.
+     *
+     * @param requestDto    생성하고자 하는 사용자 정보가 포함된 DTO
+     * @param bindingResult 검증 내용에 대한 오류 내용을 보관하는 객체
+     * @param request       하나의 HTTP 요청 정보를 담는 객체
+     * @return 이메일 인증 페이지 HTML 이름; 회원가입에 실패하면 회원가입 페이지 HTML 이름
      */
     @PostMapping("/signup")
     public String signup(
@@ -94,7 +107,10 @@ public class MemberController {
     }
     
     /**
-     * 로그인(GET)
+     * 로그인 페이지로 이동한다.
+     *
+     * @param loginRequestDto 로그인 정보를 담을 DTO
+     * @return 로그인 페이지 HTML 이름
      */
     @GetMapping("/login")
     public String loginForm(
@@ -104,7 +120,11 @@ public class MemberController {
     }
     
     /**
-     * 로그아웃
+     * 로그아웃을 진행한다.
+     *
+     * @param request  하나의 HTTP 요청 정보를 담는 객체
+     * @param response 하나의 HTTP 응답 정보를 담는 객체
+     * @return 홈페이지 HTML 이름
      */
     @GetMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response) {
@@ -120,7 +140,11 @@ public class MemberController {
     }
     
     /**
-     * 이메일 인증(GET)
+     * 이메일 인증 페이지로 이동한다.
+     *
+     * @param model   결과 응답에 필요한 DTO 및 채널 목록을 담는 객체
+     * @param request 하나의 HTTP 요청 정보를 담는 객체
+     * @return 이메일 인증 페이지 HTML 이름; 이메일 인증 페이지 이동 실패 시 회원가입 페이지 HTML 이름
      */
     @GetMapping("/email/verification")
     public String emailVerificationForm(Model model, HttpServletRequest request) {
@@ -150,7 +174,13 @@ public class MemberController {
     }
     
     /**
-     * 이메일 인증(POST)
+     * 이메일 인증 코드를 입력받아 사용자 인증을 완료한다.
+     *
+     * @param requestDto         이메일 인증 정보가 포함된 DTO
+     * @param bindingResult      검증 내용에 대한 오류 내용을 보관하는 객체
+     * @param redirectAttributes 리다이렉트 응답 시 정보를 담는 객체
+     * @param request            하나의 HTTP 요청 정보를 담는 객체
+     * @return 로그인 페이지 HTML 이름; 이메일 인증 실패 시 이메일 인증 페이지 HTML 이름
      */
     @PostMapping("/email/verification")
     public String emailVerification(

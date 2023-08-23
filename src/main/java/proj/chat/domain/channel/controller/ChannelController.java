@@ -41,6 +41,11 @@ public class ChannelController {
     
     private final ChannelEnterRequestDtoValidator channelEnterRequestDtoValidator;
     
+    /**
+     * 채널 입장 요청 DTO 검증을 수행한다.
+     *
+     * @param webDataBinder ChannelEnterRequestDto가 요청에 포함되면 이를 validator와 연결
+     */
     @InitBinder("ChannelEnterRequestDto")
     public void initBinder(WebDataBinder webDataBinder) {
         log.info("init binder = {}", webDataBinder);
@@ -48,7 +53,14 @@ public class ChannelController {
     }
     
     /**
-     * 채널 목록 조회 (+검색)
+     * 검색어를 포함하여 채널 목록을 찾는다.
+     *
+     * @param page  조회할 페이지
+     *              기본 0
+     * @param cond  검색어를 포함하는 condition
+     *              null 허용
+     * @param model 결과 응답에 필요한 DTO 및 채널 목록을 담는 객체
+     * @return 채널 목록 페이지 HTML 이름
      */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/list")
@@ -63,7 +75,14 @@ public class ChannelController {
     }
     
     /**
-     * 채널 생성
+     * 채널을 생성한다.
+     *
+     * @param requestDto    생성하고자 하는 채널 정보가 포함된 DTO
+     * @param bindingResult 검증 내용에 대한 오류 내용을 보관하는 객체
+     * @param model         결과 응답에 필요한 DTO 및 채널/사용자 정보를 담는 객체
+     * @param user          로그인 한 사용자 정보
+     *                      null이면 로그인하지 않은 사용자
+     * @return 채팅 페이지 HTML 이름; 채널 생성에 실패하면 채널 목록 페이지 HTML 이름
      */
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
@@ -71,7 +90,7 @@ public class ChannelController {
             BindingResult bindingResult, Model model, @AuthenticationPrincipal User user) {
         
         if (bindingResult.hasErrors()) {
-    
+            
             controlChannelError(model, "채널 생성에 실패했습니다");
             return "channel/list";
         }
@@ -81,22 +100,30 @@ public class ChannelController {
         log.info("[create] 채널 최대 인원={}", requestDto.getMaxCount());
         
         String savedChannelUuid = channelService.save(requestDto, user.getUsername());
-    
+        
         MemberResponseDto findMemberDto = memberService.findByEmail(user.getUsername());
-    
+        
         model.addAttribute("messageDto", new MessageDto());
         model.addAttribute("channelName", requestDto.getName());
         model.addAttribute("channelUuid", savedChannelUuid);
         model.addAttribute("memberName", findMemberDto.getName());
         model.addAttribute("memberUuid", findMemberDto.getUuid());
-    
+        
         log.info("model: {}", model);
         
         return "channel/chat";
     }
     
     /**
-     * 채널 입장 (비밀번호 입력)
+     * 비밀번호를 입력하여 채널에 입장한다.
+     *
+     * @param requestDto         입장하고자 하는 채널의 정보가 담긴 DTO
+     * @param bindingResult      검증 내용에 대한 오류 내용을 보관하는 객체
+     * @param model              결과 응답에 필요한 DTO 및 채널/사용자 정보를 담는 객체
+     * @param user               로그인 한 사용자 정보
+     *                           null이면 로그인하지 않은 사용자
+     * @param redirectAttributes 리다이렉트 응답 시 정보를 담는 객체
+     * @return 채팅 페이지 HTML 이름; 채널 입장에 실패하면 채널 목록 페이지 HTML 이름
      */
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/enter")
@@ -121,9 +148,9 @@ public class ChannelController {
         Objects.requireNonNull(requestDto);
         Objects.requireNonNull(channelId);
         Objects.requireNonNull(password);
-    
+        
         ChannelResponseDto findChannelDto = channelService.findById(channelId);
-    
+        
         if (findChannelDto == null) {
             
             controlChannelError(model, "채널 입장에 실패했습니다");
@@ -134,7 +161,7 @@ public class ChannelController {
         }
         
         if (!channelService.checkPassword(findChannelDto.getId(), password)) {
-    
+            
             controlChannelError(model, "비밀번호가 일치하지 않습니다.");
             bindingResult.rejectValue(
                     "password", "invalid.password", "비밀번호가 일치하지 않습니다.");
@@ -143,7 +170,7 @@ public class ChannelController {
         }
         
         if (findChannelDto.getCount() >= findChannelDto.getMaxCount()) {
-    
+            
             controlChannelError(model, "정원이 가득 찼습니다");
             redirectAttributes.addFlashAttribute("errorMessage", "정원이 가득 찼습니다");
             
@@ -163,7 +190,12 @@ public class ChannelController {
         return "channel/chat";
     }
     
-    
+    /**
+     * 채널 생성 및 입장 오류 시 model에 정보를 담는다.
+     *
+     * @param model        결과 응답에 필요한 정보를 담을 객체
+     * @param errorMessage 오류 메시지
+     */
     private void controlChannelError(Model model, String errorMessage) {
         
         model.addAttribute("errorMessage", errorMessage);

@@ -32,7 +32,7 @@ public class ChannelService {
     private final PasswordEncoder passwordEncoder;
     
     /**
-     * 채널 생성
+     * 채널 정보를 받아 채널을 생성한다.
      *
      * @param dto 채널 정보가 담긴 DTO
      * @return 채널 생성 이후에 부여되는 채널 ID(인덱스)
@@ -55,9 +55,12 @@ public class ChannelService {
     }
     
     /**
-     * 채널 목록 조회 (+페이징/검색)
+     * 채널 목록을 조회한다.
      *
-     * @return 채널 정보가 담긴 DTO 목록
+     * @param keyword 검색할 채널 이름
+     * @param page    현제 페이지
+     * @param size    페이지 목록 크기
+     * @return 페이징 처리된 채널 목록
      */
     public Page<ChannelResponseDto> findAll(String keyword, int page, int size) {
         
@@ -77,45 +80,21 @@ public class ChannelService {
     }
     
     /**
-     * 채널 ID로 조회
+     * ID(인덱스)로 채널을 조회한다.
      *
      * @param id 채널 ID(인덱스)
      * @return 채널 정보가 담긴 DTO
      */
     public ChannelResponseDto findById(Long id) {
-    
+        
         Channel findChannel = channelRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("존재하지 않는 채널입니다"));
-    
-        return new ChannelResponseDto(findChannel);
-    }
-    
-    /**
-     * 채널 UUID로 조회
-     *
-     * @param uuid 채널 UUID
-     * @return 채널 정보가 담긴 DTO
-     */
-    public ChannelResponseDto findByUuid(String uuid) {
-        
-        Channel findChannel = channelRepository.findByUuid(uuid)
-                .orElseThrow(() -> new DataNotFoundException("존재하지 않는 채널입니다"));
         
         return new ChannelResponseDto(findChannel);
     }
     
     /**
-     * 채널 UUID로 채널 존재 여부 확인
-     *
-     * @param uuid 채널 UUID
-     * @return 채널 존재 여부
-     */
-    public boolean existsByUuid(String uuid) {
-        return channelRepository.existsByUuid(uuid);
-    }
-    
-    /**
-     * 비밀번호 일치 여부 확인
+     * 비밀번호 일치 여부를 확인한다.
      *
      * @param channelId 채널 ID(인덱스)
      * @param password  비밀번호

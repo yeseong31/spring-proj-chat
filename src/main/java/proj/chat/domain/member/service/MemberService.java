@@ -23,7 +23,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     
     /**
-     * 사용자 저장(회원가입)
+     * 회원가입을 진행한다.
      *
      * @param dto 회원정보가 담긴 DTO
      * @return 회원가입 이후에 부여되는 사용자 ID(인덱스)
@@ -42,7 +42,7 @@ public class MemberService {
     }
     
     /**
-     * 사용자 조회
+     * ID(인덱스)로 사용자를 조회한다.
      *
      * @param id 사용자 ID(인덱스)
      * @return 사용자 정보가 담긴 DTO
@@ -56,7 +56,7 @@ public class MemberService {
     }
     
     /**
-     * 사용자 이메일로 조회
+     * 이메일로 사용자를 조회한다.
      *
      * @param email 사용자 이메일
      * @return 사용자 정보가 담긴 DTO
@@ -70,7 +70,7 @@ public class MemberService {
     }
     
     /**
-     * 사용자 UUID로 조회
+     * UUID로 사용자를 조회한다.
      *
      * @param uuid 사용자 이메일
      * @return 사용자 정보가 담긴 DTO
@@ -84,17 +84,7 @@ public class MemberService {
     }
     
     /**
-     * 사용자 존재 여부 확인
-     *
-     * @param email 사용자 이메일
-     * @return 사용자 존재 여부
-     */
-    public boolean existsByEmail(String email) {
-        return memberRepository.existsByEmail(email);
-    }
-    
-    /**
-     * 사용자 수정
+     * 사용자 정보를 수정한다.
      *
      * @param id         사용자 ID(인덱스)
      * @param requestDto 사용자 정보가 담긴 DTO
@@ -129,7 +119,7 @@ public class MemberService {
     }
     
     /**
-     * 사용자 삭제
+     * 사용자 정보를 삭제한다.
      *
      * @param id 사용자 ID(인덱스)
      * @return 사용자 ID(인덱스)

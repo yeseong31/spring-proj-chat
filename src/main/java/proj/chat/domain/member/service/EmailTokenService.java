@@ -25,7 +25,7 @@ public class EmailTokenService {
     private final PasswordEncoder passwordEncoder;
     
     /**
-     * 이메일 인증 정보 저장
+     * 이메일 인증 정보를 저장한다.
      *
      * @param dto 이메일 인증 정보를 담은 DTO
      * @return 인증 정보 저장 이후에 부여되는 ID(인덱스)
@@ -45,13 +45,11 @@ public class EmailTokenService {
         
         emailToken.hashVerificationToken(passwordEncoder);
         
-        log.info("token: {}", emailToken.getToken());
-        
         return emailTokenRepository.save(emailToken).getId();
     }
     
     /**
-     * 이메일 인증 정보 조회
+     * 이메일 인증 정보를 조회한다.
      *
      * @param memberId 조회하고자 하는 사용자 ID(인덱스)
      * @return 사용자 인증 정보를 담은 DTO
@@ -65,7 +63,7 @@ public class EmailTokenService {
     }
     
     /**
-     * 인증 토큰 일치 여부 확인
+     * 인증 토큰 일치 여부를 확인한다.
      *
      * @param memberId 인증 정보를 가지는 사용자 ID(인덱스)
      * @param token    토큰 정보
