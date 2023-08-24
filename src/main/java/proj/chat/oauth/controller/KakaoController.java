@@ -1,7 +1,6 @@
 package proj.chat.oauth.controller;
 
 import java.io.IOException;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
@@ -11,6 +10,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import proj.chat.domain.member.dto.MemberSaveRequestDto;
+import proj.chat.domain.member.dto.MemberUpdateRequestDto;
+import proj.chat.domain.member.service.MemberService;
 import proj.chat.oauth.service.KakaoService;
 
 @Slf4j
@@ -20,6 +22,7 @@ import proj.chat.oauth.service.KakaoService;
 public class KakaoController {
     
     private final KakaoService kakaoService;
+    private final MemberService memberService;
     
     @Value("${KAKAO_REST_API_KEY}")
     private String KAKAO_CLIENT_ID;
@@ -39,7 +42,7 @@ public class KakaoController {
     /**
      * 카카오 계정으로 로그인하는 사용자의 정보를 얻는다.
      *
-     * @param code 인가 코드
+     * @param code  인가 코드
      * @param model 결과 응답에 필요한 정보를 담을 객체
      * @return TODO 로그인을 완료한 사용자는 채널 목록으로 이동
      */
@@ -50,11 +53,16 @@ public class KakaoController {
         log.info("[getClientInfo] code={}", code);
         
         String accessToken = kakaoService.getKakaoToken(code);
-        Map<String, Object> userInfo = kakaoService.getUserInfo(accessToken);
+        MemberSaveRequestDto requestDto = kakaoService.getUserInfo(accessToken);
+        Long savedId = memberService.save(requestDto);
+        memberService.update(savedId, MemberUpdateRequestDto.builder()
+                .email(requestDto.getEmail())
+                .fromSocial(true)
+                .status(true)
+                .build());
         
         model.addAttribute("code", code);
         model.addAttribute("accessToken", accessToken);
-        model.addAttribute("userInfo", userInfo);
         
         return "auth/kakao";
     }
@@ -88,9 +96,9 @@ public class KakaoController {
         String kakaoLogoutUrl = KAKAO_LOGOUT_URL
                 + "?client_id=" + KAKAO_CLIENT_ID
                 + "&logout_redirect_uri=" + KAKAO_LOGOUT_REDIRECT_URL;
-    
+        
         log.info("[kakaoLogout] kakaoLogoutUrl={}", kakaoLogoutUrl);
-    
+        
         return "redirect:" + kakaoLogoutUrl;
     }
 }

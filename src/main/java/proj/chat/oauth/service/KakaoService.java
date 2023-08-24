@@ -15,6 +15,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import proj.chat.domain.member.dto.MemberSaveRequestDto;
 
 @Slf4j
 @Service
@@ -72,7 +73,7 @@ public class KakaoService {
      * @param accessToken 액세스 토큰
      * @return 사용자 정보; ID(인덱스), 이름, 이메일
      */
-    public Map<String, Object> getUserInfo(String accessToken) throws IOException, ParseException {
+    public MemberSaveRequestDto getUserInfo(String accessToken) throws IOException, ParseException {
         
         Map<String, Object> resultMap = new ConcurrentHashMap<>();
         
@@ -99,7 +100,12 @@ public class KakaoService {
         resultMap.put("nickname", nickname);
         resultMap.put("email", email);
         
-        return resultMap;
+        log.info("[getUserInfo] resultMap={}", resultMap);
+    
+        return MemberSaveRequestDto.builder()
+                .email(email)
+                .name(nickname)
+                .build();
     }
     
     /**
