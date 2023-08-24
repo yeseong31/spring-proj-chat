@@ -220,6 +220,7 @@ public class MemberController {
         
         MemberUpdateRequestDto updateDto = MemberUpdateRequestDto.builder()
                 .email(findMember.getEmail())
+                .fromSocial(false)
                 .status(true)
                 .build();
         

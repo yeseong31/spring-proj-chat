@@ -23,6 +23,8 @@ public class MemberUpdateRequestDto {
     
     private String password;
     
+    private boolean fromSocial;
+    
     private boolean status;
     
     
@@ -33,6 +35,7 @@ public class MemberUpdateRequestDto {
                 .uuid(uuid)
                 .email(email)
                 .password(password)
+                .fromSocial(fromSocial)
                 .status(status)
                 .build();
     }
@@ -40,13 +43,14 @@ public class MemberUpdateRequestDto {
     @Builder
     public MemberUpdateRequestDto(
             Long id, String name, String uuid, String email,
-            String password, String matchingPassword, boolean status) {
+            String password, boolean fromSocial, boolean status) {
         
         this.id = id;
         this.name = name;
         this.uuid = uuid;
         this.email = email;
         this.password = password;
+        this.fromSocial = fromSocial;
         this.status = status;
     }
 }

@@ -110,7 +110,8 @@ public class MemberService {
         if (requestDto.getUuid() == null) {
             requestDto.setUuid(member.getUuid());
         }
-        
+    
+        requestDto.setFromSocial(requestDto.isFromSocial());
         requestDto.setStatus(true);
         
         memberRepository.save(requestDto.dtoToEntity());
