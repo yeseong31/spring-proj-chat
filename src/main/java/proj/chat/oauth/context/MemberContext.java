@@ -18,6 +18,8 @@ public class MemberContext extends User implements OAuth2User {
     private Map<String, Object> attributes;
     private String userNameAttributeName;
     
+    // TODO 카카오 로그인 + Spring Security
+    
     public MemberContext(Member member, List<GrantedAuthority> authorities) {
         super(member.getName(), member.getPassword(), authorities);
         this.id = member.getId();

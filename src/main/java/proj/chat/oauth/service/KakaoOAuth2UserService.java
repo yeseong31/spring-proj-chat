@@ -33,6 +33,8 @@ public class KakaoOAuth2UserService extends DefaultOAuth2UserService {
     private final MemberRepository memberRepository;
     private final HttpSession httpSession;
     
+    // TODO 카카오 로그인 + Spring Security
+    
     @Override
     @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
