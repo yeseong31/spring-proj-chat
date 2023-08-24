@@ -88,7 +88,7 @@ public class RabbitConfig {
      */
     @Bean
     public RabbitTemplate rabbitTemplate() {
-    
+        
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory());
         rabbitTemplate.setMessageConverter(jsonMessageConverter());
         rabbitTemplate.setRoutingKey(CHAT_QUEUE_NAME);
@@ -110,7 +110,7 @@ public class RabbitConfig {
     }
     
     private Jackson2JsonMessageConverter jsonMessageConverter() {
-    
+        
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
         objectMapper.registerModule(dateTimeModule());

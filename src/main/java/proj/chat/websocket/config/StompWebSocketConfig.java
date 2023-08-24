@@ -39,7 +39,7 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
         
         // registry.enableSimpleBroker("/sub");
         registry.enableStompBrokerRelay(
-                "/queue", "/topic", "/exchange", "/amq/queue")
+                        "/queue", "/topic", "/exchange", "/amq/queue")
                 .setRelayPort(STOMP_CLIENT_PORT)
                 .setRelayHost(RABBITMQ_HOST)
                 .setClientPasscode(RABBITMQ_PASSWORD)

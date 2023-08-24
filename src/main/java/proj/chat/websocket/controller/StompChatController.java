@@ -29,7 +29,7 @@ public class StompChatController {
      */
     @EventListener
     public void webSocketConnectListener(SessionConnectEvent event) {
-    
+        
         log.info("[Connect] event={}", event);
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         log.info("[Connect] headAccessor={}", headerAccessor);
