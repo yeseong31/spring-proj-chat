@@ -38,6 +38,13 @@ spring:
             userInfoUri: ${KAKAO_GET_USER_INFO_URL}
             userNameAttribute: id
 
+  rabbitmq:
+    stream:
+      username: ${RABBITMQ_USERNAME}
+      password: ${RABBITMQ_PASSWORD}
+      host: ${RABBITMQ_HOST}
+      port: ${RABBITMQ_PORT}
+
 logging:
   level:
     org:
