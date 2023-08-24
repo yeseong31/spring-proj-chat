@@ -8,7 +8,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
-
     properties:
       hibernate:
         format_sql: true
@@ -17,6 +16,27 @@ spring:
 
   profiles:
     active: local
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            clientId: ${KAKAO_REST_API_KEY}
+            clientAuthenticationMethod: post
+            authorizationGrantType: authorization_code
+            redirectUri: ${KAKAO_REDIRECT_URL}
+            scope:
+              - profile_nickname
+              - account_email
+            clientName: Kakao
+
+        provider:
+          kakao:
+            authorizationUri: ${KAKAO_AUTHORIZE_URL}
+            tokenUri: ${KAKAO_RENEW_TOKEN_URL}
+            userInfoUri: ${KAKAO_GET_USER_INFO_URL}
+            userNameAttribute: id
 
 logging:
   level:
