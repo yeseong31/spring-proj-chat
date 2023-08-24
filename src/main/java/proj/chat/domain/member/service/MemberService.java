@@ -1,6 +1,5 @@
 package proj.chat.domain.member.service;
 
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,8 +32,9 @@ public class MemberService {
         
         Member member = dto.dtoToEntity();
         
-        Objects.requireNonNull(member.getPassword());
-        member.hashPassword(passwordEncoder);
+        if (dto.getPassword() != null) {
+            member.hashPassword(passwordEncoder);
+        }
         
         member.createUUID();
         
