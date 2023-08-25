@@ -59,7 +59,7 @@
   const chatRoomId = [[${chatRoomId}]];
   const nickname = [[${nickname}]];
 
-  const sockJS = new SockJS("/ws-stomp");
+  const sockJS = new SockJS("/ws-rabbit");
   const stomp = Stomp.over(sockJS);
 
   stomp.heartbeat.outgoing = 0; // RabbitMQ에선 heartbeat 안먹힌다고 함
