@@ -36,6 +36,7 @@
 
 <h1>CHAT ROOM</h1>
 <h2 th:text="'Room UUID. ' + ${channelUuid}"></h2>
+<h2 th:text="'Member UUID. ' + ${memberUuid}"></h2>
 <h2 th:text="'Nickname = ' + ${memberName}"></h2>
 
 <form>
@@ -58,6 +59,7 @@
 
   const channelUuid = [[${channelUuid}]];
   const memberName = [[${memberName}]];
+  const memberUuid = [[${memberUuid}]];
 
   const sockJS = new SockJS("/ws-rabbit");
   const stomp = Stomp.over(sockJS);
@@ -84,10 +86,12 @@
 
       const payload = JSON.parse(content.body);
 
-      let className = payload.nickname === memberName ? 'mine' : 'yours';
+      console.log("payload = ", payload);
+
+      let className = payload.memberName === memberName ? 'mine' : 'yours';
 
       const html = `<div class="${className}">
-                        <div class="memberName">${payload.nickname}</div>
+                        <div class="memberName">${payload.memberName}</div>
                         <div class="message">${payload.message}</div>
                     </div>`
 
@@ -101,7 +105,8 @@
 
     //입장 메세지 전송
     stomp.send(`/pub/chat.enter.${channelUuid}`, {}, JSON.stringify({
-      memberId: 1,
+      channelUuid: channelUuid,
+      memberUuid: memberUuid,
       memberName: memberName
     }));
 
@@ -116,7 +121,8 @@
 
     stomp.send(`/pub/chat.message.${channelUuid}`, {}, JSON.stringify({
       message: message,
-      memberId: 1,
+      channelUuid: channelUuid,
+      memberUuid: memberUuid,
       memberName: memberName
     }));
   });
