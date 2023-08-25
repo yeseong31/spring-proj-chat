@@ -1,8 +1,8 @@
 package proj.chat.repository.channel;
 
 import static org.springframework.util.StringUtils.hasText;
-import static proj.chat.domain.channel.entity.QChannel.channel;
-import static proj.chat.domain.member.entity.QMember.member;
+import static proj.chat.entity.QChannel.channel;
+import static proj.chat.entity.QMember.member;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
