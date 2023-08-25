@@ -25,7 +25,7 @@ public class StompRabbitController {
     @MessageMapping("chat.enter.{channelUuid}")
     public void enter(MessageDto messageDto, @DestinationVariable String channelUuid) {
         
-        messageDto.setMessage("입장했습니다");
+        messageDto.setMessage(messageDto.getMemberName() + "님이 입장했습니다");
         messageDto.setCreatedDate(LocalDateTime.now());
         
         // exchange
