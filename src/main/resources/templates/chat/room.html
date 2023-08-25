@@ -35,8 +35,8 @@
 <body>
 
 <h1>CHAT ROOM</h1>
-<h2 th:text="'Room No. ' + ${chatRoomId}"></h2>
-<h2 th:text="'Nickname = ' + ${nickname}"></h2>
+<h2 th:text="'Room UUID. ' + ${channelUuid}"></h2>
+<h2 th:text="'Nickname = ' + ${memberName}"></h2>
 
 <form>
   <input type="text" id="message">
@@ -56,8 +56,8 @@
   const messageContent = document.querySelector('#message');
   const btnSend = document.querySelector('.btn-send');
 
-  const chatRoomId = [[${chatRoomId}]];
-  const nickname = [[${nickname}]];
+  const channelUuid = [[${channelUuid}]];
+  const memberName = [[${memberName}]];
 
   const sockJS = new SockJS("/ws-rabbit");
   const stomp = Stomp.over(sockJS);
@@ -80,14 +80,14 @@
     console.log('STOMP Connected');
 
     /* subscribe 설정에 따라 rabbit의 Exchange, Queue가 상당히 많이 바뀜 */
-    stomp.subscribe(`/topic/room.${chatRoomId}`, function (content) {
+    stomp.subscribe(`/topic/room.${channelUuid}`, function (content) {
 
       const payload = JSON.parse(content.body);
 
-      let className = payload.nickname === nickname ? 'mine' : 'yours';
+      let className = payload.nickname === memberName ? 'mine' : 'yours';
 
       const html = `<div class="${className}">
-                        <div class="nickname">${payload.nickname}</div>
+                        <div class="memberName">${payload.nickname}</div>
                         <div class="message">${payload.message}</div>
                     </div>`
 
@@ -100,9 +100,9 @@
     }, {'auto-delete': true, 'durable': false, 'exclusive': false});
 
     //입장 메세지 전송
-    stomp.send(`/pub/chat.enter.${chatRoomId}`, {}, JSON.stringify({
+    stomp.send(`/pub/chat.enter.${channelUuid}`, {}, JSON.stringify({
       memberId: 1,
-      nickname: nickname
+      memberName: memberName
     }));
 
   }, onError, '/');
@@ -114,10 +114,10 @@
     const message = messageContent.value;
     messageContent.value = '';
 
-    stomp.send(`/pub/chat.message.${chatRoomId}`, {}, JSON.stringify({
+    stomp.send(`/pub/chat.message.${channelUuid}`, {}, JSON.stringify({
       message: message,
       memberId: 1,
-      nickname: nickname
+      memberName: memberName
     }));
   });
 </script>

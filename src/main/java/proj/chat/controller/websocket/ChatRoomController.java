@@ -15,10 +15,10 @@ public class ChatRoomController {
     }
     
     @GetMapping(value = "/room")
-    public String getRoom(Long chatRoomId, String nickname, Model model){
+    public String getRoom(Long channelUuid, String memberName, Model model){
         
-        model.addAttribute("chatRoomId", chatRoomId);
-        model.addAttribute("nickname", nickname);
+        model.addAttribute("channelUuid", channelUuid);
+        model.addAttribute("memberName", memberName);
         
         return "chat/room";
     }

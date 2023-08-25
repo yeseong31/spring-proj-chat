@@ -22,38 +22,38 @@ public class StompRabbitController {
     /**
      * 채팅방 입장 이벤트
      */
-    @MessageMapping("chat.enter.{chatRoomId}")
-    public void enter(ChatDto chat, @DestinationVariable String chatRoomId) {
+    @MessageMapping("chat.enter.{channelUuid}")
+    public void enter(ChatDto chat, @DestinationVariable String channelUuid) {
         
         chat.setMessage("입장했습니다");
         chat.setRegDate(LocalDateTime.now());
         
         // exchange
-        // template.convertAndSend(CHAT_EXCHANGE_NAME, "room." + chatRoomId, chat);
+        // template.convertAndSend(CHAT_EXCHANGE_NAME, "room." + channelUuid, chat);
         
         // queue
-        template.convertAndSend("room." + chatRoomId, chat);
+        // template.convertAndSend("room." + channelUuid, chat);
         
         // topic
-        template.convertAndSend("amq.topic", "room." + chatRoomId, chat);
+        template.convertAndSend("amq.topic", "room." + channelUuid, chat);
     }
     
     /**
      * 메시지 전송
      */
-    @MessageMapping("chat.message.{chatRoomId}")
-    public void send(ChatDto chat, @DestinationVariable String chatRoomId) {
+    @MessageMapping("chat.message.{channelUuid}")
+    public void send(ChatDto chat, @DestinationVariable String channelUuid) {
         
         chat.setRegDate(LocalDateTime.now());
         
         // exchange
-        // template.convertAndSend(CHAT_EXCHANGE_NAME, "room." + chatRoomId, chat);
+        // template.convertAndSend(CHAT_EXCHANGE_NAME, "room." + channelUuid, chat);
         
         // queue
-        // template.convertAndSend("room." + chatRoomId, chat);
+        // template.convertAndSend("room." + channelUuid, chat);
         
         // topic
-        template.convertAndSend("amq.topic", "room." + chatRoomId, chat);
+        template.convertAndSend("amq.topic", "room." + channelUuid, chat);
     }
     
     /**
