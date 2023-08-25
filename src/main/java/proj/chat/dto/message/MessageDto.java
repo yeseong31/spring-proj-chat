@@ -1,34 +1,28 @@
 package proj.chat.dto.message;
 
-import lombok.Builder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import proj.chat.entity.Message;
 
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 public class MessageDto {
     
-    private String channelUuid;  // 채널 UUID
-    private String memberUuid;   // 메시지 송신자 UUID
-    private String content;      // 메시지
+    private String channelUuid;
+    private String memberUuid;
+    private String memberName;
+    private String message;
     
-    @Builder
-    public MessageDto(Message entity) {
-        this.channelUuid = entity.getChannel().getUuid();
-        this.memberUuid = entity.getMember().getUuid();
-        this.content = entity.getContent();
-    }
-    
-    public Message dtoToEntity() {
-        return Message.builder()
-                .content(content)
-                .build();
-    }
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private LocalDateTime createdDate;
 }
 
 /*
@@ -38,7 +32,9 @@ public class MessageDto {
 {
 "memberName": "test1234",
 "channelId": "a4c2eb10-0a4d-4880-adb4-24704d0d61f2",
-"content": "hi"
+"memberUuid": "a4c2eb10-0a4d-4880-adb4-24704d0d61f2",
+"content": "hello",
+"createdDate": [2023, 8, 25, 15, 24, 8, 805344500]
 }
 
  */
