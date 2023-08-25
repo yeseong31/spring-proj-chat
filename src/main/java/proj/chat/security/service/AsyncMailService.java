@@ -13,8 +13,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import proj.chat.aop.annotation.Trace;
-import proj.chat.domain.member.service.EmailTokenService;
-import proj.chat.domain.member.dto.EmailVerificationRequestDto;
+import proj.chat.service.EmailTokenService;
+import proj.chat.dto.email.EmailVerificationRequestDto;
 
 /**
  * 비동기 task를 관리하는 클래스

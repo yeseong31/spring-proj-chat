@@ -8,7 +8,7 @@ import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import proj.chat.domain.member.entity.Member;
+import proj.chat.entity.Member;
 
 @Getter
 public class MemberContext extends User implements OAuth2User {
