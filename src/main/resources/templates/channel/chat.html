@@ -57,53 +57,21 @@
             <div class="card-body overflow-auto"
                  style="display:flex; flex-direction: column-reverse; overflow-y:auto">
 
-              <!-- 상대방 -->
-<!--              <div class="d-flex flex-row justify-content-start">-->
-<!--                <div>-->
-<!--                  <p class="small p-2 ms-3 mb-1 rounded-3"-->
-<!--                     style="background-color: #f5f6f7; color: black">Hi</p>-->
-<!--                  <p class="small p-2 ms-3 mb-1 rounded-3"-->
-<!--                     style="background-color: #f5f6f7; color: black">How are you ...???</p>-->
-<!--                  <p class="small p-2 ms-3 mb-1 rounded-3"-->
-<!--                     style="background-color: #f5f6f7; color: black">What are you doing tomorrow?-->
-<!--                    Can we come up a bar?</p>-->
-<!--                  <p class="small ms-3 mb-3 rounded-3 text-muted d-flex">23:58</p>-->
-<!--                </div>-->
-<!--              </div>-->
-
-              <!-- 구분선(Today) -->
-<!--              <div class="divider align-items-center mb-4">-->
-<!--                <p class="text-center mx-3 mb-0" style="color: #a2aab7;">Today</p>-->
-<!--              </div>-->
-
-              <!-- 본인 -->
-<!--              <div class="d-flex flex-row justify-content-end mb-4 pt-1">-->
-<!--                <div>-->
-<!--                  <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">Hi, I'm good.</p>-->
-<!--                  <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">How are you-->
-<!--                    doing?</p>-->
-<!--                  <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">Long time no see!-->
-<!--                    Tomorrow office. will be free on sunday.</p>-->
-<!--                  <p class="small me-3 mb-3 rounded-3 text-muted d-flex justify-content-end">-->
-<!--                    00:06</p>-->
-<!--                </div>-->
-<!--              </div>-->
-
               <!-- chat list -->
-              <table id="conversation" class="table table-striped">
-                <tbody id="greetings">
+              <div class="chats">
+                <div class="mine">
 
-                </tbody>
-              </table>
+                </div>
+              </div>
 
             </div><!-- end Card Body -->
 
-            <form class="form-inline" th:action="@{/pub/message}">
+            <form class="form-inline">
               <div class="card-footer text-muted d-flex justify-content-start align-items-center p-3">
                 <div class="input-group">
-                  <label for="content"></label>
-                  <input type="text" id="content" class="form-control" placeholder="메시지를 입력해 주세요">
-                  <button id="send" class="btn btn-secondary" type="submit">전송</button>
+                  <label for="message"></label>
+                  <input type="text" id="message" class="form-control" placeholder="메시지를 입력해 주세요">
+                  <button id="send" class="btn btn-secondary btn-send" type="submit">전송</button>
                 </div>
               </div>
             </form>
@@ -121,8 +89,99 @@
   </footer>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
-<script th:src="@{/js/stomp.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script th:inline="javascript">
+  const chats = document.querySelector('.chats');
+  const messageContent = document.querySelector('#message');
+  const btnSend = document.querySelector('.btn-send');
+
+  const channelUuid = [[${channelUuid}]];
+  const memberName = [[${memberName}]];
+  const memberUuid = [[${memberUuid}]];
+
+  const sockJS = new SockJS("/ws-rabbit");
+  const stomp = Stomp.over(sockJS);
+
+  stomp.heartbeat.outgoing = 0; // RabbitMQ에선 heartbeat 안먹힌다고 함
+  stomp.heartbeat.incoming = 0; // RabbitMQ에선 heartbeat 안먹힌다고 함
+
+  function onError(e) {
+    console.log("STOMP ERROR", e);
+  }
+
+  function onDebug(m) {
+    console.log("STOMP DEBUG", m);
+  }
+
+  stomp.debug = onDebug;
+
+  stomp.connect('guest', 'guest', function (frame) {
+
+    console.log('STOMP Connected');
+
+    /* subscribe 설정에 따라 rabbit의 Exchange, Queue가 상당히 많이 바뀜 */
+    stomp.subscribe(`/topic/room.${channelUuid}`, function (content) {
+
+      const payload = JSON.parse(content.body);
+
+      console.log("payload = ", payload);
+
+      let className = payload.memberName === memberName ? 'mine' : 'yours';
+      let html = ''
+
+      let today = new Date();
+      let hours = today.getHours(); // 시
+      let minutes = today.getMinutes();  // 분
+
+      if (className === 'mine') {
+        html = `<div class="d-flex flex-row justify-content-end pt-1 ${className}">
+                  <div>
+                    <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary message">${payload.message}</p>
+                    <p class="small me-3 mb-3 rounded-3 text-muted d-flex justify-content-end">${hours + ':' + minutes}</p>
+                  </div>
+                </div>`
+      } else {
+        html = `<div class="d-flex flex-row justify-content-start ${className}">
+                  <div>
+                    <p class="small p-2 ms-3 mb-1 rounded-3 message"
+                       style="background-color: #f5f6f7; color: black">${payload.message}</p>
+                    <p class="small ms-3 mb-3 rounded-3 text-muted d-flex">${hours + ':' + minutes}</p>
+                  </div>
+                </div>`
+      }
+
+      chats.insertAdjacentHTML('beforeend', html);
+
+      // 밑의 인자는 Queue 생성 시 주는 옵션
+      // auto-delete : Consumer가 없으면 스스로 삭제되는 Queue
+      // durable : 서버와 연결이 끊겨도 메세지를 저장하고 있음
+      // exclusive : 동일한 이름의 Queue 생길 수 있음
+    }, {'auto-delete': true, 'durable': false, 'exclusive': false});
+
+    //입장 메세지 전송
+    stomp.send(`/pub/chat.enter.${channelUuid}`, {}, JSON.stringify({
+      channelUuid: channelUuid,
+      memberUuid: memberUuid,
+      memberName: memberName
+    }));
+
+  }, onError, '/');
+
+  //메세지 전송 버튼 click
+  btnSend.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    const message = messageContent.value;
+    messageContent.value = '';
+
+    stomp.send(`/pub/chat.message.${channelUuid}`, {}, JSON.stringify({
+      message: message,
+      channelUuid: channelUuid,
+      memberUuid: memberUuid,
+      memberName: memberName
+    }));
+  });
+</script>
 </body>
 </html>
