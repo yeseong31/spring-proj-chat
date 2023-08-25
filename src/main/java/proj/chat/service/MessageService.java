@@ -32,7 +32,7 @@ public class MessageService {
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 채널 UUID입니다"));
         
         Message message = Message.builder()
-                .content(dto.getContent())
+                .content(dto.getMessage())
                 .channel(channel)
                 .build();
         

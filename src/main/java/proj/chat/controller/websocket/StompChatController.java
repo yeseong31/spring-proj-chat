@@ -51,7 +51,7 @@ public class StompChatController {
         log.info("[{}] {}: {}",
                 message.getChannelUuid().substring(0, 8),
                 message.getMemberUuid().substring(0, 8),
-                message.getContent());
+                message.getMessage());
         
         // 메시지 전달
         template.convertAndSend(
