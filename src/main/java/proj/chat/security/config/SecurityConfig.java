@@ -35,6 +35,7 @@ public class SecurityConfig {
                         .usernameParameter("email")
                         .passwordParameter("password")
                         .defaultSuccessUrl("/channel/list", true)
+                        .failureUrl("/auth/login")
                         .permitAll()
                 )
                 .logout(logout -> logout
