@@ -1,8 +1,10 @@
 package proj.chat.controller;
 
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.io.UnsupportedEncodingException;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -98,7 +100,7 @@ public class MemberController {
             bindingResult.rejectValue("email", "duplicate.email",
                     "이미 등록된 사용자입니다");
             return "auth/signup";
-        } catch (Exception e) {
+        } catch (MessagingException | UnsupportedEncodingException e) {
             bindingResult.reject("signupFailed", "회원가입에 실패했습니다");
             return "auth/signup";
         }

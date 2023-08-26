@@ -16,25 +16,20 @@ public class LogTraceAspect {
     private final LogTrace logTrace;
     
     @Around("@annotation(proj.chat.aop.annotation.Trace)")
-    public Object execute(ProceedingJoinPoint joinPoint) throws Throwable {
-        TraceStatus status = null;
+    public Object execute(ProceedingJoinPoint joinPoint) {
+        TraceStatus status;
         
-//        log.info("target={}", joinPoint.getTarget());           // 실제 호출 대상
-//        log.info("getArgs={}", joinPoint.getArgs());            // 전달인자
-//        log.info("getSignature={}", joinPoint.getSignature());  // join point 시그니처
+        String message = joinPoint.getSignature().toShortString();
+        status = logTrace.begin(message);
         
+        Object result = null;
         try {
-            String message = joinPoint.getSignature().toShortString();
-            status = logTrace.begin(message);
-            
-            // 로직 호출
-            Object result = joinPoint.proceed();
-            
-            logTrace.end(status);
-            return result;
-        } catch (Exception e) {
-            logTrace.exception(status, e);
-            throw e;
+            result = joinPoint.proceed();
+        } catch (Throwable e) {
+            log.info("[ERROR] log trace execute error");
         }
+    
+        logTrace.end(status);
+        return result;
     }
 }
