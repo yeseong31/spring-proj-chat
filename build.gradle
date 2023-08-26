@@ -65,6 +65,9 @@ dependencies {
 	// RabbitMQ
 	implementation 'org.springframework.boot:spring-boot-starter-amqp:2.6.4'
 
+	// MongoDB
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+
 	// json
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.1'
 
