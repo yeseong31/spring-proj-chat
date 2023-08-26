@@ -42,7 +42,9 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         "/queue", "/topic", "/exchange", "/amq/queue")
                 .setRelayPort(STOMP_CLIENT_PORT)
                 .setRelayHost(RABBITMQ_HOST)
+                .setClientLogin(RABBITMQ_USERNAME)
                 .setClientPasscode(RABBITMQ_PASSWORD)
-                .setClientLogin(RABBITMQ_USERNAME);
+                .setSystemLogin(RABBITMQ_USERNAME)
+                .setSystemPasscode(RABBITMQ_PASSWORD);
     }
 }
