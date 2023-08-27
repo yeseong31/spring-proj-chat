@@ -27,13 +27,11 @@ import proj.chat.oauth.context.MemberContext;
  * <li>super.loadUser() 메서드를 통해 Kakao Access Token으로 User 정보를 조히한다.</li>
  */
 @Slf4j
-@Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class KakaoOAuth2UserService extends DefaultOAuth2UserService {
     
     private final MemberRepository memberRepository;
-    private final HttpSession httpSession;
     
     // TODO 카카오 로그인 + Spring Security
     
