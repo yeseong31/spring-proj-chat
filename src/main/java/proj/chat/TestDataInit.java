@@ -1,6 +1,7 @@
 package proj.chat;
 
 import static proj.chat.domain.entity.FromSocial.NONE;
+import static proj.chat.domain.entity.MemberRole.MEMBER;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +44,7 @@ public class TestDataInit {
                     .password("!Test" + i)
                     .matchingPassword("!Test" + i)
                     .fromSocial(NONE)
+                    .role(MEMBER)
                     .build();
             
             memberService.save(dto);

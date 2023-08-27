@@ -12,6 +12,7 @@ import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 import proj.chat.domain.entity.FromSocial;
 import proj.chat.domain.entity.Member;
+import proj.chat.domain.entity.MemberRole;
 
 @Getter
 @Setter
@@ -38,23 +39,27 @@ public class MemberSaveRequestDto {
     
     private FromSocial fromSocial;
     
+    private MemberRole role;
+    
     public Member dtoToEntity() {
         return Member.builder()
                 .name(name)
                 .email(email)
                 .password(password)
                 .fromSocial(fromSocial)
+                .role(role)
                 .build();
     }
     
     @Builder
     public MemberSaveRequestDto(String name, String email, String password,
-            String matchingPassword, FromSocial fromSocial) {
+            String matchingPassword, FromSocial fromSocial, MemberRole role) {
         
         this.name = name;
         this.email = email;
         this.password = password;
         this.matchingPassword = matchingPassword;
         this.fromSocial = fromSocial;
+        this.role = role;
     }
 }

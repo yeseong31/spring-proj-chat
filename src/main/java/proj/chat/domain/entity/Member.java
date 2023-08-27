@@ -41,12 +41,15 @@ public class Member extends BaseTimeEntity {
     @Enumerated(STRING)
     private FromSocial fromSocial;
     
+    @Enumerated(STRING)
+    private MemberRole role;
+    
     @Column(columnDefinition = "boolean default false")
     private boolean status;
     
     @Builder
     public Member(Long id, String name, String uuid, String email,
-            String password, FromSocial fromSocial, boolean status) {
+            String password, FromSocial fromSocial, MemberRole role, boolean status) {
         
         this.id = id;
         this.name = name;
@@ -54,6 +57,7 @@ public class Member extends BaseTimeEntity {
         this.email = email;
         this.password = password;
         this.fromSocial = fromSocial;
+        this.role = role;
         this.status = status;
     }
     

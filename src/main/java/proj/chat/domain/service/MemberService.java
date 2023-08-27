@@ -1,5 +1,7 @@
 package proj.chat.domain.service;
 
+import static proj.chat.domain.entity.MemberRole.*;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,6 +11,7 @@ import proj.chat.domain.dto.member.MemberResponseDto;
 import proj.chat.domain.dto.member.MemberSaveRequestDto;
 import proj.chat.domain.dto.member.MemberUpdateRequestDto;
 import proj.chat.domain.entity.Member;
+import proj.chat.domain.entity.MemberRole;
 import proj.chat.domain.repository.MemberRepository;
 import proj.chat.common.exception.DataNotFoundException;
 
@@ -29,6 +32,8 @@ public class MemberService {
      */
     @Transactional
     public Long save(MemberSaveRequestDto dto) {
+        
+        dto.setRole(MEMBER);
         
         Member member = dto.dtoToEntity();
         
@@ -109,6 +114,9 @@ public class MemberService {
         }
         if (requestDto.getUuid() == null) {
             requestDto.setUuid(member.getUuid());
+        }
+        if (requestDto.getRole() == null) {
+            requestDto.setRole(member.getRole());
         }
     
         requestDto.setFromSocial(requestDto.getFromSocial());

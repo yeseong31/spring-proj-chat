@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 import proj.chat.domain.entity.FromSocial;
 import proj.chat.domain.entity.Member;
+import proj.chat.domain.entity.MemberRole;
 
 @Getter
 @Setter
@@ -26,6 +27,8 @@ public class MemberUpdateRequestDto {
     
     private FromSocial fromSocial;
     
+    private MemberRole role;
+    
     private boolean status;
     
     
@@ -37,6 +40,7 @@ public class MemberUpdateRequestDto {
                 .email(email)
                 .password(password)
                 .fromSocial(fromSocial)
+                .role(role)
                 .status(status)
                 .build();
     }
@@ -44,7 +48,7 @@ public class MemberUpdateRequestDto {
     @Builder
     public MemberUpdateRequestDto(
             Long id, String name, String uuid, String email,
-            String password, FromSocial fromSocial, boolean status) {
+            String password, FromSocial fromSocial, MemberRole role, boolean status) {
         
         this.id = id;
         this.name = name;
@@ -52,6 +56,7 @@ public class MemberUpdateRequestDto {
         this.email = email;
         this.password = password;
         this.fromSocial = fromSocial;
+        this.role = role;
         this.status = status;
     }
 }
