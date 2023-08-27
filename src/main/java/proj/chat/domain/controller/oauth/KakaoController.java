@@ -12,8 +12,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import proj.chat.domain.dto.channel.ChannelEnterRequestDto;
+import proj.chat.domain.dto.channel.ChannelMemberSearchCond;
+import proj.chat.domain.dto.channel.ChannelSaveRequestDto;
 import proj.chat.domain.dto.member.MemberSaveRequestDto;
 import proj.chat.domain.dto.member.MemberUpdateRequestDto;
+import proj.chat.domain.service.ChannelService;
 import proj.chat.domain.service.MemberService;
 import proj.chat.oauth.service.KakaoService;
 
@@ -25,6 +29,7 @@ public class KakaoController {
     
     private final KakaoService kakaoService;
     private final MemberService memberService;
+    private final ChannelService channelService;
     
     @Value("${KAKAO_REST_API_KEY}")
     private String KAKAO_CLIENT_ID;
@@ -65,8 +70,12 @@ public class KakaoController {
         
         model.addAttribute("code", code);
         model.addAttribute("accessToken", accessToken);
+        model.addAttribute("channels", channelService.findAll(null, 0, 10));
+        model.addAttribute("channelMemberSearchCond", new ChannelMemberSearchCond());
+        model.addAttribute("channelSaveRequestDto", new ChannelSaveRequestDto());
+        model.addAttribute("channelEnterRequestDto", new ChannelEnterRequestDto());
         
-        return "auth/kakao";
+        return "channel/list";
     }
     
     /**
