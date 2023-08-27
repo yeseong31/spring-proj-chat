@@ -2,21 +2,30 @@ package proj.chat.security.auth;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import proj.chat.domain.entity.Member;
 
 @Getter
 @ToString
-@RequiredArgsConstructor
-public class PrincipalDetails implements UserDetails {
+public class PrincipalDetails implements UserDetails, OAuth2User {
     
     private final Member member;
+    private Map<String, Object> attributes;
     
-    @Override
+    public PrincipalDetails(Member member) {
+        this.member = member;
+    }
+    
+    public PrincipalDetails(Member member, Map<String, Object> attributes) {
+        this.member = member;
+        this.attributes = attributes;
+    }
+    
     public Collection<? extends GrantedAuthority> getAuthorities() {
         
         Collection<GrantedAuthority> collect = new ArrayList<>();
@@ -52,5 +61,10 @@ public class PrincipalDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+    
+    @Override
+    public String getName() {
+        return attributes.get("sub").toString();
     }
 }
