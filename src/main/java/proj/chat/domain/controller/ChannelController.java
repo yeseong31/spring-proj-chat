@@ -4,6 +4,7 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -22,11 +23,12 @@ import proj.chat.domain.dto.channel.ChannelEnterRequestDto;
 import proj.chat.domain.dto.channel.ChannelMemberSearchCond;
 import proj.chat.domain.dto.channel.ChannelResponseDto;
 import proj.chat.domain.dto.channel.ChannelSaveRequestDto;
-import proj.chat.domain.service.ChannelService;
-import proj.chat.validator.ChannelEnterRequestDtoValidator;
 import proj.chat.domain.dto.member.MemberResponseDto;
-import proj.chat.domain.service.MemberService;
 import proj.chat.domain.dto.message.MessageDto;
+import proj.chat.domain.service.ChannelService;
+import proj.chat.domain.service.MemberService;
+import proj.chat.security.auth.CustomUserDetails;
+import proj.chat.validator.ChannelEnterRequestDtoValidator;
 
 @Slf4j
 @Controller
@@ -120,15 +122,14 @@ public class ChannelController {
      * @param requestDto         입장하고자 하는 채널의 정보가 담긴 DTO
      * @param bindingResult      검증 내용에 대한 오류 내용을 보관하는 객체
      * @param model              결과 응답에 필요한 DTO 및 채널/사용자 정보를 담는 객체
-     * @param user               로그인 한 사용자 정보
-     *                           null이면 로그인하지 않은 사용자
+     * @param authentication     인증 정보
      * @param redirectAttributes 리다이렉트 응답 시 정보를 담는 객체
      * @return 채팅 페이지 HTML 이름; 채널 입장에 실패하면 채널 목록 페이지 HTML 이름
      */
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/enter")
     public String enter(@Validated @ModelAttribute ChannelEnterRequestDto requestDto,
-            BindingResult bindingResult, Model model, @AuthenticationPrincipal User user,
+            BindingResult bindingResult, Model model, Authentication authentication,
             RedirectAttributes redirectAttributes) {
         
         if (bindingResult.hasErrors()) {
@@ -177,7 +178,18 @@ public class ChannelController {
             return "redirect:/channel/list";
         }
         
-        MemberResponseDto findMemberDto = memberService.findByEmail(user.getUsername());
+        CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+        
+        MemberResponseDto findMemberDto = memberService.findByEmail(principal.getMember().getEmail());
+    
+        if (findMemberDto == null) {
+        
+            controlChannelError(model, "채널 입장에 실패했습니다");
+            bindingResult.rejectValue(
+                    "channelId", "invalid.channelId", "채널 입장에 실패했습니다");
+    
+            return "/";
+        }
         
         model.addAttribute("messageDto", new MessageDto());
         model.addAttribute("channelName", findChannelDto.getName());
