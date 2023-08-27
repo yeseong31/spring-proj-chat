@@ -2,7 +2,6 @@ package proj.chat.security.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,15 +16,18 @@ import proj.chat.domain.service.MemberService;
 
 @Component
 @RequiredArgsConstructor
-public class CustomUserDetailsService implements UserDetailsService {
+public class PrincipalDetailsService implements UserDetailsService {
     
     private final MemberService memberService;
     
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        
         MemberResponseDto dto = memberService.findByEmail(email);
     
-        Objects.requireNonNull(dto);
+        if (dto == null) {
+            return null;
+        }
     
         List<GrantedAuthority> authorityList = new ArrayList<>();
         if (dto.getName().equals("admin")) {
