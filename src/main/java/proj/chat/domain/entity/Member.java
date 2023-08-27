@@ -87,4 +87,15 @@ public class Member extends BaseTimeEntity {
     public boolean checkPassword(String plainPassword, PasswordEncoder passwordEncoder) {
         return passwordEncoder.matches(plainPassword, password);
     }
+    
+    /**
+     * 사용자 정보 업데이트
+     *
+     * @param name 수정할 이름
+     * @return 사용자(Member)
+     */
+    public Member update(String name) {
+        this.name = name;
+        return this;
+    }
 }
