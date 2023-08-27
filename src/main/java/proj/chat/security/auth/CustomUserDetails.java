@@ -12,16 +12,16 @@ import proj.chat.domain.entity.Member;
 
 @Getter
 @ToString
-public class PrincipalDetails implements UserDetails, OAuth2User {
+public class CustomUserDetails implements UserDetails, OAuth2User {
     
     private final Member member;
     private Map<String, Object> attributes;
     
-    public PrincipalDetails(Member member) {
+    public CustomUserDetails(Member member) {
         this.member = member;
     }
     
-    public PrincipalDetails(Member member, Map<String, Object> attributes) {
+    public CustomUserDetails(Member member, Map<String, Object> attributes) {
         this.member = member;
         this.attributes = attributes;
     }
