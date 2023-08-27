@@ -21,6 +21,13 @@ spring:
     oauth2:
       client:
         registration:
+          google:
+            clientId: ${GOOGLE_CLIENT_ID}
+            clientSecret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - profile
+              - email
+
           kakao:
             clientId: ${KAKAO_REST_API_KEY}
             clientAuthenticationMethod: post
