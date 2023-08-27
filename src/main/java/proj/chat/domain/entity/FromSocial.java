@@ -7,8 +7,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum FromSocial {
     
-    KAKAO("KAKAO"),
-    NONE("NONE");
+    GOOGLE("google"),
+    KAKAO("kakao"),
+    NONE("none");
     
     private final String value;
 }
