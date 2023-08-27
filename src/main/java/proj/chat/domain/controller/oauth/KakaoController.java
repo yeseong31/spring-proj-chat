@@ -1,5 +1,7 @@
 package proj.chat.domain.controller.oauth;
 
+import static proj.chat.domain.entity.FromSocial.KAKAO;
+
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +59,7 @@ public class KakaoController {
         Long savedId = memberService.save(requestDto);
         memberService.update(savedId, MemberUpdateRequestDto.builder()
                 .email(requestDto.getEmail())
-                .fromSocial(true)
+                .fromSocial(KAKAO)
                 .status(true)
                 .build());
         

@@ -1,10 +1,12 @@
 package proj.chat.domain.entity;
 
+import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import java.util.UUID;
@@ -36,15 +38,15 @@ public class Member extends BaseTimeEntity {
     
     private String password;
     
-    @Column(columnDefinition = "boolean default false")
-    private boolean fromSocial;
+    @Enumerated(STRING)
+    private FromSocial fromSocial;
     
     @Column(columnDefinition = "boolean default false")
     private boolean status;
     
     @Builder
     public Member(Long id, String name, String uuid, String email,
-            String password, boolean fromSocial, boolean status) {
+            String password, FromSocial fromSocial, boolean status) {
         
         this.id = id;
         this.name = name;

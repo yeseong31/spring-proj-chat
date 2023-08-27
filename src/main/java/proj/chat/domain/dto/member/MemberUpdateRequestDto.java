@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import proj.chat.domain.entity.FromSocial;
 import proj.chat.domain.entity.Member;
 
 @Getter
@@ -23,7 +24,7 @@ public class MemberUpdateRequestDto {
     
     private String password;
     
-    private boolean fromSocial;
+    private FromSocial fromSocial;
     
     private boolean status;
     
@@ -43,7 +44,7 @@ public class MemberUpdateRequestDto {
     @Builder
     public MemberUpdateRequestDto(
             Long id, String name, String uuid, String email,
-            String password, boolean fromSocial, boolean status) {
+            String password, FromSocial fromSocial, boolean status) {
         
         this.id = id;
         this.name = name;

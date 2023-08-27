@@ -1,5 +1,7 @@
 package proj.chat.oauth.service;
 
+import static proj.chat.domain.entity.FromSocial.NONE;
+
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +16,10 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import proj.chat.domain.entity.Member;
-import proj.chat.domain.repository.MemberRepository;
 import proj.chat.common.exception.DataNotFoundException;
 import proj.chat.common.exception.OAuthTypeMatchNotFoundException;
+import proj.chat.domain.entity.Member;
+import proj.chat.domain.repository.MemberRepository;
 import proj.chat.oauth.context.MemberContext;
 
 /**
@@ -45,7 +47,7 @@ public class KakaoOAuth2UserService extends DefaultOAuth2UserService {
                 .getUserInfoEndpoint()
                 .getUserNameAttributeName();
         Map<String, Object> attributes = oAuth2User.getAttributes();
-    
+        
         log.info("[loadUser] attributes={}", attributes);
         
         String oAuthId = oAuth2User.getName();
@@ -77,7 +79,7 @@ public class KakaoOAuth2UserService extends DefaultOAuth2UserService {
                             .email(email)
                             .name(nickname)
                             .password("")
-                            .fromSocial(true)
+                            .fromSocial(NONE)
                             .status(true)
                             .build();
                     

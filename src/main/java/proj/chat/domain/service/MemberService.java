@@ -111,7 +111,7 @@ public class MemberService {
             requestDto.setUuid(member.getUuid());
         }
     
-        requestDto.setFromSocial(requestDto.isFromSocial());
+        requestDto.setFromSocial(requestDto.getFromSocial());
         requestDto.setStatus(true);
         
         memberRepository.save(requestDto.dtoToEntity());

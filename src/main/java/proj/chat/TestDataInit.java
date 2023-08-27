@@ -1,5 +1,7 @@
 package proj.chat;
 
+import static proj.chat.domain.entity.FromSocial.NONE;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -7,8 +9,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import proj.chat.domain.dto.channel.ChannelSaveRequestDto;
-import proj.chat.domain.service.ChannelService;
 import proj.chat.domain.dto.member.MemberSaveRequestDto;
+import proj.chat.domain.service.ChannelService;
 import proj.chat.domain.service.MemberService;
 
 @Slf4j
@@ -40,6 +42,7 @@ public class TestDataInit {
                     .name("name" + i)
                     .password("!Test" + i)
                     .matchingPassword("!Test" + i)
+                    .fromSocial(NONE)
                     .build();
             
             memberService.save(dto);

@@ -1,5 +1,7 @@
 package proj.chat.domain.controller;
 
+import static proj.chat.domain.entity.FromSocial.NONE;
+
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -30,8 +32,8 @@ import proj.chat.domain.dto.member.MemberSaveRequestDto;
 import proj.chat.domain.dto.member.MemberUpdateRequestDto;
 import proj.chat.domain.service.EmailTokenService;
 import proj.chat.domain.service.MemberService;
-import proj.chat.validator.MemberSaveRequestDtoValidator;
 import proj.chat.security.service.AsyncMailService;
+import proj.chat.validator.MemberSaveRequestDtoValidator;
 
 @Slf4j
 @Controller
@@ -222,7 +224,7 @@ public class MemberController {
         
         MemberUpdateRequestDto updateDto = MemberUpdateRequestDto.builder()
                 .email(findMember.getEmail())
-                .fromSocial(false)
+                .fromSocial(NONE)
                 .status(true)
                 .build();
         

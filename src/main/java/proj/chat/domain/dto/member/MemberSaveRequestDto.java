@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
+import proj.chat.domain.entity.FromSocial;
 import proj.chat.domain.entity.Member;
 
 @Getter
@@ -35,21 +36,25 @@ public class MemberSaveRequestDto {
     @NotEmpty(message = "비밀번호 확인은 필수 항목입니다")
     private String matchingPassword;
     
+    private FromSocial fromSocial;
+    
     public Member dtoToEntity() {
         return Member.builder()
                 .name(name)
                 .email(email)
                 .password(password)
+                .fromSocial(fromSocial)
                 .build();
     }
     
     @Builder
-    public MemberSaveRequestDto(
-            String name, String email, String password, String matchingPassword) {
+    public MemberSaveRequestDto(String name, String email, String password,
+            String matchingPassword, FromSocial fromSocial) {
         
         this.name = name;
         this.email = email;
         this.password = password;
         this.matchingPassword = matchingPassword;
+        this.fromSocial = fromSocial;
     }
 }
