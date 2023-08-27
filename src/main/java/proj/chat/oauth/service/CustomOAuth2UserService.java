@@ -1,9 +1,10 @@
 package proj.chat.oauth.service;
 
 import static proj.chat.domain.entity.FromSocial.GOOGLE;
-import static proj.chat.domain.entity.FromSocial.NONE;
+import static proj.chat.domain.entity.FromSocial.KAKAO;
 import static proj.chat.domain.entity.MemberRole.MEMBER;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,9 @@ import proj.chat.domain.entity.FromSocial;
 import proj.chat.domain.entity.Member;
 import proj.chat.domain.repository.MemberRepository;
 import proj.chat.oauth.dto.OAuthAttributes;
+import proj.chat.oauth.userinfo.GoogleUserInfo;
+import proj.chat.oauth.userinfo.KakaoUserInfo;
+import proj.chat.oauth.userinfo.OAuth2UserInfo;
 import proj.chat.security.auth.CustomUserDetails;
 
 @Slf4j
@@ -32,22 +36,30 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         
         String provider = userRequest.getClientRegistration().getRegistrationId();
-        String providerId = oAuth2User.getAttribute("sub");
         
+        OAuth2UserInfo oAuth2UserInfo = null;
+        if (provider.equals("google")) {
+            oAuth2UserInfo = new GoogleUserInfo(oAuth2User.getAttributes());
+        } else if (provider.equals("kakao")) {
+            oAuth2UserInfo = new KakaoUserInfo(oAuth2User.getAttributes());
+        }
+        
+        String providerId = Objects.requireNonNull(oAuth2UserInfo).getProviderId();
         String memberName = provider + "_" + providerId;
+        
         String uuid = UUID.randomUUID().toString();
-        String email = oAuth2User.getAttribute("email");
+        String email = oAuth2UserInfo.getEmail();
         
         Optional<Member> findMember = memberRepository.findByName(memberName);
         if (findMember.isPresent()) {
-            return new CustomUserDetails(findMember.get(), oAuth2User.getAttributes());
+            return new CustomUserDetails(findMember.get(), oAuth2UserInfo);
         }
         
         FromSocial fromSocial;
         if (provider.equals("google")) {
             fromSocial = GOOGLE;
         } else {
-            fromSocial = NONE;
+            fromSocial = KAKAO;
         }
         
         Member member = Member.builder()
@@ -58,10 +70,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .fromSocial(fromSocial)
                 .status(true)
                 .build();
-    
+        
         memberRepository.save(member);
         
-        return new CustomUserDetails(member, oAuth2User.getAttributes());
+        return new CustomUserDetails(member, oAuth2UserInfo);
     }
     
     private Member saveOrUpdate(OAuthAttributes attributes) {
