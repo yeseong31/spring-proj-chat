@@ -6,10 +6,10 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import proj.chat.dto.channel.ChannelSaveRequestDto;
-import proj.chat.service.ChannelService;
-import proj.chat.dto.member.MemberSaveRequestDto;
-import proj.chat.service.MemberService;
+import proj.chat.domain.dto.channel.ChannelSaveRequestDto;
+import proj.chat.domain.service.ChannelService;
+import proj.chat.domain.dto.member.MemberSaveRequestDto;
+import proj.chat.domain.service.MemberService;
 
 @Slf4j
 @Component

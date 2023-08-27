@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import proj.chat.dto.channel.ChannelEnterRequestDto;
+import proj.chat.domain.dto.channel.ChannelEnterRequestDto;
 
 @Component
 @RequiredArgsConstructor

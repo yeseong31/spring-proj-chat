@@ -1,8 +1,8 @@
 package proj.chat.websocket.handler;
 
-import static proj.chat.entity.MessageType.ENTER;
-import static proj.chat.entity.MessageType.LEAVE;
-import static proj.chat.entity.MessageType.TALK;
+import static proj.chat.domain.entity.MessageType.ENTER;
+import static proj.chat.domain.entity.MessageType.LEAVE;
+import static proj.chat.domain.entity.MessageType.TALK;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -16,7 +16,7 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import proj.chat.dto.message.PrevMessageDto;
+import proj.chat.domain.dto.message.PrevMessageDto;
 
 /**
  * 웹 서버가 1대인 경우에만 정상적으로 동작하는 WebSocket 핸들러 클래스

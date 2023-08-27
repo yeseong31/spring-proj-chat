@@ -15,7 +15,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import proj.chat.dto.member.MemberSaveRequestDto;
+import proj.chat.domain.dto.member.MemberSaveRequestDto;
 
 @Slf4j
 @Service

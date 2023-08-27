@@ -11,9 +11,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-import proj.chat.dto.member.MemberResponseDto;
-import proj.chat.entity.MemberRole;
-import proj.chat.service.MemberService;
+import proj.chat.domain.dto.member.MemberResponseDto;
+import proj.chat.domain.entity.MemberRole;
+import proj.chat.domain.service.MemberService;
 
 @Component
 @RequiredArgsConstructor

@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import proj.chat.dto.member.MemberSaveRequestDto;
+import proj.chat.domain.dto.member.MemberSaveRequestDto;
 
 @Component
 @RequiredArgsConstructor

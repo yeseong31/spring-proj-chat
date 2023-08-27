@@ -14,10 +14,10 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import proj.chat.entity.Member;
-import proj.chat.repository.MemberRepository;
-import proj.chat.exception.DataNotFoundException;
-import proj.chat.exception.OAuthTypeMatchNotFoundException;
+import proj.chat.domain.entity.Member;
+import proj.chat.domain.repository.MemberRepository;
+import proj.chat.common.exception.DataNotFoundException;
+import proj.chat.common.exception.OAuthTypeMatchNotFoundException;
 import proj.chat.oauth.context.MemberContext;
 
 /**
