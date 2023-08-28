@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import proj.chat.common.exception.MalformedMessageException;
 import proj.chat.domain.dto.message.MessageDto;
 import proj.chat.domain.entity.Channel;
 import proj.chat.domain.entity.Message;
@@ -27,9 +28,12 @@ public class MessageService {
      */
     @Transactional
     public Long save(MessageDto dto) {
+    
+        String channelUuid = dto.getChannelUuid();
         
         Channel channel = channelRepository.findByUuid(dto.getChannelUuid())
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 채널 UUID입니다"));
+                .orElseThrow(() -> new MalformedMessageException(
+                        String.format("%s는 잘못된 채널 UUID입니다", channelUuid), channelUuid));
         
         Message message = Message.builder()
                 .content(dto.getMessage())
