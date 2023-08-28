@@ -163,10 +163,10 @@ public class KakaoService {
      */
     private void writeBufferedURL(HttpURLConnection conn, String url) throws IOException {
         
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
-        bw.write(url);
-        bw.flush();
-        bw.close();
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()))) {
+            bw.write(url);
+            bw.flush();
+        }
     }
     
     /**
@@ -180,11 +180,11 @@ public class KakaoService {
         String line;
         StringBuilder result = new StringBuilder();
         
-        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        while ((line = br.readLine()) != null) {
-            result.append(line);
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+            while ((line = br.readLine()) != null) {
+                result.append(line);
+            }
         }
-        br.close();
         
         return String.valueOf(result);
     }
