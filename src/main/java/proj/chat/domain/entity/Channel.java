@@ -95,7 +95,8 @@ public class Channel extends BaseEntity {
      */
     public void increaseCount() {
         if (count == maxCount) {
-            throw new IllegalStateException("정원이 가득 찼습니다");
+            throw new IllegalStateException(
+                    String.format("채널 [%s]의 정원이 가득 찼습니다", uuid));
         }
         count += 1;
     }
@@ -105,7 +106,8 @@ public class Channel extends BaseEntity {
      */
     public void decreaseCount() {
         if (count == 0) {
-            throw new IllegalStateException("빈 방입니다");
+            throw new IllegalStateException(
+                    String.format("채널 [%s]는 빈 방입니다", uuid));
         }
         count -= 1;
     }

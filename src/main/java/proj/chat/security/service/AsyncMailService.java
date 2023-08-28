@@ -48,7 +48,8 @@ public class AsyncMailService {
         } catch (MailException e) {
             
             log.error("[executor] errors={}", e.getMessage());
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(
+                    String.format("이메일 %s로의 인증 번호 전송이 실패했습니다.", email));
         }
     }
     

@@ -56,7 +56,8 @@ public class KakaoOAuth2UserService extends DefaultOAuth2UserService {
                 toUpperCase();
         
         if (!"KAKAO".equals(oAuthType)) {
-            throw new OAuthTypeMatchNotFoundException("OAuth 타입을 찾을 수 없습니다");
+            throw new OAuthTypeMatchNotFoundException(
+                    String.format("OAuth의 타입이 \"KAKAO\"와 일치하지 않습니다: oAuthType=%s", oAuthType));
         }
         
         if (isNew(oAuthType, oAuthId)) {
