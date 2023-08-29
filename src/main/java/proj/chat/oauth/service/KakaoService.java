@@ -7,15 +7,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import proj.chat.domain.dto.member.MemberSaveRequestDto;
 
 @Slf4j
 @Service
@@ -42,9 +39,7 @@ public class KakaoService {
      * @param code 인가 코드
      * @return 액세스 토큰
      */
-    public String getKakaoToken(String code) throws IOException, ParseException {
-        
-        String accessToken;
+    public JSONObject getKakaoToken(String code) throws IOException, ParseException {
         
         HttpURLConnection conn = getConnection(KAKAO_RENEW_TOKEN_URL);
         conn.setRequestMethod("POST");
@@ -60,11 +55,7 @@ public class KakaoService {
         String result = readBuffer(conn);
         log.info("[getKakaoToken] result={}", result);
         
-        JSONObject obj = getJsonObject(result);
-        accessToken = obj.get("access_token").toString();
-        log.info("[getKakaoToken] accessToken={}", accessToken);
-        
-        return accessToken;
+        return getJsonObject(result);
     }
     
     /**
@@ -73,9 +64,7 @@ public class KakaoService {
      * @param accessToken 액세스 토큰
      * @return 사용자 정보; ID(인덱스), 이름, 이메일
      */
-    public MemberSaveRequestDto getUserInfo(String accessToken) throws IOException, ParseException {
-        
-        Map<String, Object> resultMap = new ConcurrentHashMap<>();
+    public JSONObject getUserInfo(String accessToken) throws IOException, ParseException {
         
         HttpURLConnection conn = getConnection(KAKAO_GET_USER_INFO_URL);
         conn.setRequestProperty("Authorization", "Bearer " + accessToken);
@@ -88,24 +77,7 @@ public class KakaoService {
         String result = readBuffer(conn);
         log.info("[getUserInfo] result={}", result);
         
-        JSONObject obj = getJsonObject(result);
-        JSONObject properties = (JSONObject) obj.get("properties");
-        JSONObject kakaoAccount = (JSONObject) obj.get("kakao_account");
-        
-        String id = obj.get("id").toString();
-        String nickname = properties.get("nickname").toString();
-        String email = kakaoAccount.get("email").toString();
-        
-        resultMap.put("id", id);
-        resultMap.put("nickname", nickname);
-        resultMap.put("email", email);
-        
-        log.info("[getUserInfo] resultMap={}", resultMap);
-    
-        return MemberSaveRequestDto.builder()
-                .email(email)
-                .name(nickname)
-                .build();
+        return getJsonObject(result);
     }
     
     /**
@@ -159,11 +131,12 @@ public class KakaoService {
      * 버퍼에 URL 정보를 쓴다.
      *
      * @param conn 호스트와 연결된 커넥션
-     * @param url 대상 URL
+     * @param url  대상 URL
      */
     private void writeBufferedURL(HttpURLConnection conn, String url) throws IOException {
         
-        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()))) {
+        try (BufferedWriter bw = new BufferedWriter(
+                new OutputStreamWriter(conn.getOutputStream()))) {
             bw.write(url);
             bw.flush();
         }
