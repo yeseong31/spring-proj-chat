@@ -57,10 +57,10 @@ spring:
             userNameAttribute: id
 
           naver:
-            authorization-uri: ${NAVER_AUTHORIZE_URL}
-            token-uri: ${NAVER_RENEW_TOKEN_URL}
-            user-info-uri: ${NAVER_GET_USER_INFO_URL}
-            user-name-attribute: response
+            authorizationUri: ${NAVER_AUTHORIZE_URL}
+            tokenUri: ${NAVER_RENEW_TOKEN_URL}
+            userInfoUri: ${NAVER_GET_USER_INFO_URL}
+            userNameAttribute: response
 
   rabbitmq:
     stream:
