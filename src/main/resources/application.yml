@@ -39,12 +39,28 @@ spring:
               - account_email
             clientName: Kakao
 
+          naver:
+            clientId: ${NAVER_CLIENT_ID}
+            clientSecret: ${NAVER_CLIENT_SECRET}
+            authorizationGrantType: authorization_code
+            redirectUri: ${NAVER_REDIRECT_URL}
+            scope:
+              - name
+              - email
+            clientName: Naver
+
         provider:
           kakao:
             authorizationUri: ${KAKAO_AUTHORIZE_URL}
             tokenUri: ${KAKAO_RENEW_TOKEN_URL}
             userInfoUri: ${KAKAO_GET_USER_INFO_URL}
             userNameAttribute: id
+
+          naver:
+            authorization-uri: ${NAVER_AUTHORIZE_URL}
+            token-uri: ${NAVER_RENEW_TOKEN_URL}
+            user-info-uri: ${NAVER_GET_USER_INFO_URL}
+            user-name-attribute: response
 
   rabbitmq:
     stream:
