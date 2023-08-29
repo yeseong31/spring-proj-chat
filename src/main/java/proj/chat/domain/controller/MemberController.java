@@ -179,8 +179,9 @@ public class MemberController {
      * @param request            하나의 HTTP 요청 정보를 담는 객체
      * @return 로그인 페이지 HTML 이름; 이메일 인증 실패 시 이메일 인증 페이지 HTML 이름
      */
-    @PostMapping("/email/verification")
+    @PostMapping("/email/verification/{sessionMemberUuid}")
     public String emailVerification(
+            @PathVariable("sessionMemberUuid") String sessionMemberUuid,
             @Validated @ModelAttribute EmailVerificationRequestDto requestDto,
             BindingResult bindingResult, RedirectAttributes redirectAttributes,
             HttpServletRequest request) {
@@ -190,9 +191,6 @@ public class MemberController {
             log.info("[emailVerification] errors={}", bindingResult);
             return "auth/email/verification";
         }
-        
-        HttpSession session = request.getSession();
-        String sessionMemberUuid = (String) session.getAttribute("uuid");
         
         Objects.requireNonNull(sessionMemberUuid);
         
@@ -225,8 +223,6 @@ public class MemberController {
         
         log.info("[emailVerification] 이메일 인증 성공");
         log.info("[emailVerification] 사용자 활성화: ID={}", updatedId);
-        
-        session.removeAttribute("uuid");
         
         redirectAttributes.addFlashAttribute("message", "인증 완료! 로그인을 진행해주세요");
         
