@@ -62,10 +62,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             }
             case "naver" -> {
                 log.info("[loadUser] Naver 로그인");
-                oAuth2UserInfo = new NaverUserInfo(oAuth2User.getAttributes());
+                oAuth2UserInfo = new NaverUserInfo((Map) oAuth2User.getAttributes().get("response"));
             }
         }
-        
+    
         String providerId = Objects.requireNonNull(oAuth2UserInfo).getProviderId();
         String memberName = oAuth2UserInfo.getName();
         
