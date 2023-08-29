@@ -2,6 +2,8 @@ package proj.chat.oauth.service;
 
 import static proj.chat.domain.entity.FromSocial.GOOGLE;
 import static proj.chat.domain.entity.FromSocial.KAKAO;
+import static proj.chat.domain.entity.FromSocial.NAVER;
+import static proj.chat.domain.entity.FromSocial.NONE;
 import static proj.chat.domain.entity.MemberRole.MEMBER;
 
 import java.util.Map;
@@ -21,6 +23,7 @@ import proj.chat.domain.repository.MemberRepository;
 import proj.chat.oauth.dto.OAuthAttributes;
 import proj.chat.oauth.userinfo.GoogleUserInfo;
 import proj.chat.oauth.userinfo.KakaoUserInfo;
+import proj.chat.oauth.userinfo.NaverUserInfo;
 import proj.chat.oauth.userinfo.OAuth2UserInfo;
 import proj.chat.security.auth.CustomUserDetails;
 
@@ -48,13 +51,19 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 attributes, userNameAttributeName);
         
         OAuth2UserInfo oAuth2UserInfo = null;
-        if (provider.equals("google")) {
-            log.info("[loadUser] Google 로그인");
-            oAuth2UserInfo = new GoogleUserInfo(oAuth2User.getAttributes());
-            
-        } else if (provider.equals("kakao")) {
-            log.info("[loadUser] Kakao 로그인");
-            oAuth2UserInfo = new KakaoUserInfo(oAuth2User.getAttributes());
+        switch (provider) {
+            case "google" -> {
+                log.info("[loadUser] Google 로그인");
+                oAuth2UserInfo = new GoogleUserInfo(oAuth2User.getAttributes());
+            }
+            case "kakao" -> {
+                log.info("[loadUser] Kakao 로그인");
+                oAuth2UserInfo = new KakaoUserInfo(oAuth2User.getAttributes());
+            }
+            case "naver" -> {
+                log.info("[loadUser] Naver 로그인");
+                oAuth2UserInfo = new NaverUserInfo(oAuth2User.getAttributes());
+            }
         }
         
         String providerId = Objects.requireNonNull(oAuth2UserInfo).getProviderId();
@@ -71,13 +80,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             return new CustomUserDetails(findMember.get(), oAuth2UserInfo);
         }
         
-        FromSocial fromSocial;
-        if (provider.equals("google")) {
-            fromSocial = GOOGLE;
-        } else {
-            fromSocial = KAKAO;
+        FromSocial fromSocial = NONE;
+        switch (provider) {
+            case "google" -> fromSocial = GOOGLE;
+            case "kakao" -> fromSocial = KAKAO;
+            case "naver" -> fromSocial = NAVER;
         }
-        
+    
         Member member = Member.builder()
                 .name(memberName)
                 .uuid(uuid)

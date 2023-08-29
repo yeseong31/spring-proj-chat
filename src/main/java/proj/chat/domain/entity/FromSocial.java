@@ -9,6 +9,7 @@ public enum FromSocial {
     
     GOOGLE("google"),
     KAKAO("kakao"),
+    NAVER("naver"),
     NONE("none");
     
     private final String value;
