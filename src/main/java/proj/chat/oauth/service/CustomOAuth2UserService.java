@@ -4,6 +4,7 @@ import static proj.chat.domain.entity.FromSocial.GOOGLE;
 import static proj.chat.domain.entity.FromSocial.KAKAO;
 import static proj.chat.domain.entity.MemberRole.MEMBER;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -37,18 +38,33 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         
         String provider = userRequest.getClientRegistration().getRegistrationId();
         
+        Map<String, Object> attributes = oAuth2User.getAttributes();
+        String userNameAttributeName = userRequest.getClientRegistration()
+                .getProviderDetails()
+                .getUserInfoEndpoint()
+                .getUserNameAttributeName();
+        
+        log.info("[loadUser] attributes={}, userNameAttributeName={}",
+                attributes, userNameAttributeName);
+        
         OAuth2UserInfo oAuth2UserInfo = null;
         if (provider.equals("google")) {
+            log.info("[loadUser] Google 로그인");
             oAuth2UserInfo = new GoogleUserInfo(oAuth2User.getAttributes());
+            
         } else if (provider.equals("kakao")) {
+            log.info("[loadUser] Kakao 로그인");
             oAuth2UserInfo = new KakaoUserInfo(oAuth2User.getAttributes());
         }
         
         String providerId = Objects.requireNonNull(oAuth2UserInfo).getProviderId();
-        String memberName = provider + "_" + providerId;
+        String memberName = oAuth2UserInfo.getName();
         
         String uuid = UUID.randomUUID().toString();
         String email = oAuth2UserInfo.getEmail();
+        
+        log.info("[loadUser] providerId={}, memberName={}, uuid={}, email={}",
+                providerId, memberName, uuid, email);
         
         Optional<Member> findMember = memberRepository.findByName(memberName);
         if (findMember.isPresent()) {
