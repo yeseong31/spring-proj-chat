@@ -22,6 +22,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -74,13 +75,11 @@ public class MemberController {
      *
      * @param requestDto    생성하고자 하는 사용자 정보가 포함된 DTO
      * @param bindingResult 검증 내용에 대한 오류 내용을 보관하는 객체
-     * @param request       하나의 HTTP 요청 정보를 담는 객체
      * @return 이메일 인증 페이지 HTML 이름; 회원가입에 실패하면 회원가입 페이지 HTML 이름
      */
     @PostMapping("/signup")
     public String signup(
-            @Validated @ModelAttribute MemberSaveRequestDto requestDto, BindingResult bindingResult,
-            HttpServletRequest request) {
+            @Validated @ModelAttribute MemberSaveRequestDto requestDto, BindingResult bindingResult) {
         
         if (bindingResult.hasErrors()) {
             
@@ -96,8 +95,7 @@ public class MemberController {
             
             MemberResponseDto findMember = memberService.findById(savedId);
             
-            HttpSession session = request.getSession();
-            session.setAttribute("uuid", findMember.getUuid());
+            return "redirect:/auth/email/verification/" + findMember.getUuid();
         } catch (DataIntegrityViolationException e) {
             bindingResult.rejectValue("email", "duplicate.email",
                     "이미 등록된 사용자입니다");
@@ -106,8 +104,6 @@ public class MemberController {
             bindingResult.reject("signupFailed", "회원가입에 실패했습니다");
             return "auth/signup";
         }
-        
-        return "redirect:/auth/email/verification";
     }
     
     /**
@@ -147,14 +143,11 @@ public class MemberController {
      * 이메일 인증 페이지로 이동한다.
      *
      * @param model   결과 응답에 필요한 DTO 및 채널 목록을 담는 객체
-     * @param request 하나의 HTTP 요청 정보를 담는 객체
      * @return 이메일 인증 페이지 HTML 이름; 이메일 인증 페이지 이동 실패 시 회원가입 페이지 HTML 이름
      */
-    @GetMapping("/email/verification")
-    public String emailVerificationForm(Model model, HttpServletRequest request) {
-        
-        HttpSession session = request.getSession();
-        String sessionMemberUuid = (String) session.getAttribute("uuid");
+    @GetMapping("/email/verification/{sessionMemberUuid}")
+    public String emailVerificationForm(Model model,
+            @PathVariable("sessionMemberUuid") String sessionMemberUuid) {
         
         if (sessionMemberUuid == null) {
             
