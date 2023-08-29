@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -27,11 +28,15 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         
         http
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-                        .requestMatchers("/", "/home", "/image/**", "/css/**", "/js/**",
-                                "/auth/login", "/auth/signup", "/auth/email/verification",
-                                "/ws-chat", "/ws-stomp", "/ws-rabbit", "/oauth/**").permitAll()
+                        .requestMatchers("/", "/home").permitAll()
+                        .requestMatchers("/image/**", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/auth/login", "/auth/signup",
+                                "/auth/email/verification/*").permitAll()
+                        .requestMatchers("/oauth/**").permitAll()
+                        .requestMatchers("/ws-rabbit").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
