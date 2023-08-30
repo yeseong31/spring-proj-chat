@@ -39,7 +39,7 @@ public class ChannelController {
     private final ChannelService channelService;
     private final MemberService memberService;
     
-    private static final int PAGE_SIZE = 10;
+    public static final int PAGE_SIZE = 10;
     
     private final ChannelEnterRequestDtoValidator channelEnterRequestDtoValidator;
     
