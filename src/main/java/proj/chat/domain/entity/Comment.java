@@ -46,7 +46,13 @@ public class Comment extends BaseEntity {
     private final List<VoterComment> voterComments = new ArrayList<>();
     
     @Builder
-    public Comment(String content) {
+    public Comment(String content, Post post, Member member) {
+        this.content = content;
+        this.post = post;
+        this.member = member;
+    }
+    
+    public void update(String content) {
         this.content = content;
     }
 }
