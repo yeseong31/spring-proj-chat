@@ -1,7 +1,7 @@
 version: "3"
 services:
   rabbitmq:
-    image: rabbitmq_custom
+    image: yeseong31/spring-chat-repo
     container_name: rabbitmq_chat
     ports:
       - "15672:15672"
