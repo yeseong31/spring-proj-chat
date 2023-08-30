@@ -12,6 +12,8 @@ import proj.chat.domain.entity.Post;
 @NoArgsConstructor
 public class CommentSaveRequestDto {
     
+    private Long postId;
+    
     @NotBlank(message = "내용을 입력해주세요")
     private String content;
     
