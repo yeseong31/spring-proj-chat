@@ -30,6 +30,9 @@ public class Post extends BaseEntity {
     @Column(name = "post_id")
     private Long id;
     
+    @Column(nullable = false)
+    private String title;
+    
     private String content;
     
     @ManyToOne(fetch = LAZY)
@@ -40,8 +43,9 @@ public class Post extends BaseEntity {
     private final List<VoterPost> voterPosts = new ArrayList<>();
     
     @Builder
-    public Post(Long id, String content, Member member) {
+    public Post(Long id, String title, String content, Member member) {
         this.id = id;
+        this.title = title;
         this.content = content;
         this.member = member;
     }
