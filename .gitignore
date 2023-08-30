@@ -7,7 +7,7 @@ build/
 
 lib/
 **/src/main/generated/
-env.properties
+.env.properties
 src/main/resources/static/image/**
 spy.log
 
