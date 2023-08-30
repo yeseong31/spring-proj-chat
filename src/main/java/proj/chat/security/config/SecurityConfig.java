@@ -1,7 +1,6 @@
 package proj.chat.security.config;
 
 import jakarta.servlet.DispatcherType;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +13,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import proj.chat.oauth.service.CustomOAuth2UserService;
 
 @Configuration
@@ -57,10 +57,8 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/auth/logout")
-                        .logoutSuccessUrl("/")
-                        .logoutSuccessHandler((request, response, authentication)
-                                -> response.setStatus(HttpServletResponse.SC_OK))
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout"))
+                        .logoutSuccessUrl("/auth/login")
                         .invalidateHttpSession(true).deleteCookies("JSESSIONID")
                 );
         
