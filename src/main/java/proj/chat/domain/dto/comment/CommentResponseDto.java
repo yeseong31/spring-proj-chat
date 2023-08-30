@@ -1,5 +1,6 @@
 package proj.chat.domain.dto.comment;
 
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import proj.chat.domain.entity.Comment;
@@ -13,6 +14,7 @@ public class CommentResponseDto {
     private Long memberId;
     private String memberName;
     private Long postId;
+    private LocalDateTime createdDate;
     
     public CommentResponseDto(Comment entity) {
         this.id = entity.getId();
@@ -20,5 +22,6 @@ public class CommentResponseDto {
         this.memberId = entity.getMember().getId();
         this.memberName = entity.getMember().getName();
         this.postId = entity.getPost().getId();
+        this.createdDate = entity.getCreatedDate();
     }
 }
