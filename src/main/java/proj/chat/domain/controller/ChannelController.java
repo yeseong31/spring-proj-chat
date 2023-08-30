@@ -89,7 +89,7 @@ public class ChannelController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
     public String create(@Validated @ModelAttribute ChannelSaveRequestDto requestDto,
-            BindingResult bindingResult, Model model, @AuthenticationPrincipal User user) {
+            BindingResult bindingResult, Model model, Authentication authentication) {
         
         if (bindingResult.hasErrors()) {
             
@@ -100,10 +100,14 @@ public class ChannelController {
         log.info("[create] 채널 이름={}", requestDto.getName());
         log.info("[create] 채널 비밀번호={}", requestDto.getPassword());
         log.info("[create] 채널 최대 인원={}", requestDto.getMaxCount());
+    
+        CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+    
+        log.info("[create] principal={}", principal);
         
-        String savedChannelUuid = channelService.save(requestDto, user.getUsername());
+        String savedChannelUuid = channelService.save(requestDto, principal.getMember().getEmail());
         
-        MemberResponseDto findMemberDto = memberService.findByEmail(user.getUsername());
+        MemberResponseDto findMemberDto = memberService.findByEmail(principal.getMember().getEmail());
         
         model.addAttribute("messageDto", new MessageDto());
         model.addAttribute("channelName", requestDto.getName());
