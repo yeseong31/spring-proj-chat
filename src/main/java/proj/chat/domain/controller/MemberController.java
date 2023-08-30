@@ -3,17 +3,11 @@ package proj.chat.domain.controller;
 import static proj.chat.domain.entity.FromSocial.NONE;
 
 import jakarta.mail.MessagingException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -79,7 +73,8 @@ public class MemberController {
      */
     @PostMapping("/signup")
     public String signup(
-            @Validated @ModelAttribute MemberSaveRequestDto requestDto, BindingResult bindingResult) {
+            @Validated @ModelAttribute MemberSaveRequestDto requestDto,
+            BindingResult bindingResult) {
         
         if (bindingResult.hasErrors()) {
             
@@ -122,7 +117,7 @@ public class MemberController {
     /**
      * 이메일 인증 페이지로 이동한다.
      *
-     * @param model   결과 응답에 필요한 DTO 및 채널 목록을 담는 객체
+     * @param model 결과 응답에 필요한 DTO 및 채널 목록을 담는 객체
      * @return 이메일 인증 페이지 HTML 이름; 이메일 인증 페이지 이동 실패 시 회원가입 페이지 HTML 이름
      */
     @GetMapping("/email/verification/{sessionMemberUuid}")
@@ -156,15 +151,13 @@ public class MemberController {
      * @param requestDto         이메일 인증 정보가 포함된 DTO
      * @param bindingResult      검증 내용에 대한 오류 내용을 보관하는 객체
      * @param redirectAttributes 리다이렉트 응답 시 정보를 담는 객체
-     * @param request            하나의 HTTP 요청 정보를 담는 객체
      * @return 로그인 페이지 HTML 이름; 이메일 인증 실패 시 이메일 인증 페이지 HTML 이름
      */
     @PostMapping("/email/verification/{sessionMemberUuid}")
     public String emailVerification(
             @PathVariable("sessionMemberUuid") String sessionMemberUuid,
             @Validated @ModelAttribute EmailVerificationRequestDto requestDto,
-            BindingResult bindingResult, RedirectAttributes redirectAttributes,
-            HttpServletRequest request) {
+            BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         
         if (bindingResult.hasErrors()) {
             
