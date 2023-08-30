@@ -11,8 +11,10 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import proj.chat.domain.dto.channel.ChannelSaveRequestDto;
 import proj.chat.domain.dto.member.MemberSaveRequestDto;
+import proj.chat.domain.dto.post.PostSaveRequestDto;
 import proj.chat.domain.service.ChannelService;
 import proj.chat.domain.service.MemberService;
+import proj.chat.domain.service.PostService;
 
 @Slf4j
 @Component
@@ -22,6 +24,7 @@ public class TestDataInit {
     
     private final MemberService memberService;
     private final ChannelService channelService;
+    private final PostService postService;
     
     @EventListener(ApplicationReadyEvent.class)
     public void init() {
@@ -33,11 +36,14 @@ public class TestDataInit {
         createTestChannels();
         log.info("테스트용 채널 데이터 저장 완료");
         
+        createTestPosts();
+        log.info("테스트용 게시글 데이터 저장 완료");
+        
         log.info("초기화 메서드 종료");
     }
     
     private void createTestUsers() {
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 20; i++) {
             MemberSaveRequestDto dto = MemberSaveRequestDto.builder()
                     .email("test" + i + "@test.com")
                     .name("name" + i)
@@ -52,7 +58,7 @@ public class TestDataInit {
     }
     
     private void createTestChannels() {
-        for (int i = 0; i < 25; i++) {
+        for (int i = 0; i < 11; i++) {
             ChannelSaveRequestDto dto = ChannelSaveRequestDto.builder()
                     .name("channel" + i)
                     .password("!Test" + i)
@@ -60,6 +66,18 @@ public class TestDataInit {
                     .build();
             
             channelService.save(dto, "test" + i + "@test.com");
+        }
+    }
+    
+    private void createTestPosts() {
+        
+        for (int i = 0; i < 11; i++) {
+            PostSaveRequestDto dto = PostSaveRequestDto.builder()
+                    .title("test" + i)
+                    .content("testContent" + i)
+                    .build();
+            
+            postService.save(dto, "test" + i + "@test.com");
         }
     }
 }
