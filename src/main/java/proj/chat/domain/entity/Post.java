@@ -42,7 +42,7 @@ public class Post extends BaseEntity {
     private Member member;
     
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private final List<VoterPost> voterPosts = new ArrayList<>();
+    private final List<Comment> comments = new ArrayList<>();
     
     @Builder
     public Post(Long id, String title, String content, Member member) {
@@ -50,6 +50,10 @@ public class Post extends BaseEntity {
         this.title = title;
         this.content = content;
         this.member = member;
+    }
+    
+    public int countComment() {
+        return comments.size();
     }
     
     public void update(String title, String content) {
