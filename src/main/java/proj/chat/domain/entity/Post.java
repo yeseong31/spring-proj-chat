@@ -52,6 +52,14 @@ public class Post extends BaseEntity {
         this.member = member;
     }
     
+    /**
+     * 사용자 정보 등록
+     * @param member 인증 정보를 소유할 사용자
+     */
+    public void registerMember(Member member) {
+        this.member = member;
+    }
+    
     public int countComment() {
         return comments.size();
     }
