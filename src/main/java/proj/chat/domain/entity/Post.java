@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private String title;
     
+    @Lob
     private String content;
     
     @ManyToOne(fetch = LAZY)
@@ -48,5 +50,10 @@ public class Post extends BaseEntity {
         this.title = title;
         this.content = content;
         this.member = member;
+    }
+    
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
     }
 }

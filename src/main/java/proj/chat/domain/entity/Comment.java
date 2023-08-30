@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class Comment extends BaseEntity {
     @Column(name = "comment_id")
     private Long id;
     
+    @Lob
     private String content;
     
     @ManyToOne(fetch = LAZY)
