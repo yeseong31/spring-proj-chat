@@ -16,7 +16,9 @@ public class PostResponseDto {
     private String content;
     private Long memberId;
     private String memberName;
+    private String memberEmail;
     private LocalDateTime createdDate;
+    private LocalDateTime lastModifiedDate;
     private List<Comment> comments;
     
     public PostResponseDto(Post entity) {
@@ -25,7 +27,9 @@ public class PostResponseDto {
         this.content = entity.getContent();
         this.memberId = entity.getMember().getId();
         this.memberName = entity.getMember().getName();
+        this.memberEmail = entity.getMember().getEmail();
         this.createdDate = entity.getCreatedDate();
+        this.lastModifiedDate = entity.getLastModifiedDate();
         this.comments = entity.getComments();
     }
 }
