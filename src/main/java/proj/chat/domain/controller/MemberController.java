@@ -120,26 +120,6 @@ public class MemberController {
     }
     
     /**
-     * 로그아웃을 진행한다.
-     *
-     * @param request  하나의 HTTP 요청 정보를 담는 객체
-     * @param response 하나의 HTTP 응답 정보를 담는 객체
-     * @return 홈페이지 HTML 이름
-     */
-    @GetMapping("/logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        
-        if (authentication != null) {
-            
-            log.info("[logout] 로그아웃: email={}", authentication.getName());
-            new SecurityContextLogoutHandler().logout(request, response, authentication);
-        }
-        
-        return "redirect:/";
-    }
-    
-    /**
      * 이메일 인증 페이지로 이동한다.
      *
      * @param model   결과 응답에 필요한 DTO 및 채널 목록을 담는 객체
