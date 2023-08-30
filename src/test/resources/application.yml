@@ -1,0 +1,85 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:test-db;MODE=MySQL
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+        dialect: org.hibernate.dialect.MySQL57Dialect
+
+  profiles:
+    active: test
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: ${GOOGLE_CLIENT_ID}
+            clientSecret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - profile
+              - email
+
+          kakao:
+            clientId: ${KAKAO_REST_API_KEY}
+            clientSecret: ${KAKAO_CLIENT_SECRET}
+            clientAuthenticationMethod: client_secret_post
+            authorizationGrantType: authorization_code
+            redirectUri: ${KAKAO_REDIRECT_URL}
+            scope:
+              - profile_nickname
+              - account_email
+            clientName: Kakao
+
+          naver:
+            clientId: ${NAVER_CLIENT_ID}
+            clientSecret: ${NAVER_CLIENT_SECRET}
+            authorizationGrantType: authorization_code
+            redirectUri: ${NAVER_REDIRECT_URL}
+            scope:
+              - name
+              - email
+            clientName: Naver
+
+        provider:
+          kakao:
+            authorizationUri: ${KAKAO_AUTHORIZE_URL}
+            tokenUri: ${KAKAO_RENEW_TOKEN_URL}
+            userInfoUri: ${KAKAO_GET_USER_INFO_URL}
+            userNameAttribute: id
+
+          naver:
+            authorizationUri: ${NAVER_AUTHORIZE_URL}
+            tokenUri: ${NAVER_RENEW_TOKEN_URL}
+            userInfoUri: ${NAVER_GET_USER_INFO_URL}
+            userNameAttribute: response
+
+  rabbitmq:
+    stream:
+      username: ${RABBITMQ_USERNAME}
+      password: ${RABBITMQ_PASSWORD}
+      host: ${RABBITMQ_HOST}
+      port: ${RABBITMQ_PORT}
+
+  data:
+    mongodb:
+      host: ${MONGODB_HOST}
+      port: ${MONGODB_PORT}
+      authentication-database: ${MONGODB_AUTHENTICATION_DATABASE}
+      username: ${MONGODB_USERNAME}
+      password: ${MONGODB_PASSWORD}
+      database: ${MONGODB_DATABASE_NAME}
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+        orm:
+          jdbc:
+            bind: trace
