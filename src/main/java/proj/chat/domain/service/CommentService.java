@@ -23,6 +23,8 @@ public class CommentService {
     public Long save(CommentSaveRequestDto dto) {
     
         Comment comment = dto.dtoToEntity();
+        
+        comment.addComment();
     
         return commentRepository.save(comment).getId();
     }
@@ -49,6 +51,12 @@ public class CommentService {
     
     @Transactional
     public Long delete(Long id) {
+    
+        Comment findComment = commentRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException(
+                        String.format("존재하지 않는 답변입니다 (id=%d)", id)));
+    
+        findComment.removeComment();
         
         commentRepository.deleteById(id);
         return id;

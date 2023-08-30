@@ -4,7 +4,6 @@ import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,9 +11,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,14 +38,19 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
     
-    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
-    private final List<VoterComment> voterComments = new ArrayList<>();
-    
     @Builder
     public Comment(String content, Post post, Member member) {
         this.content = content;
         this.post = post;
         this.member = member;
+    }
+    
+    public void addComment() {
+        post.getComments().add(this);
+    }
+    
+    public void removeComment() {
+        post.getComments().remove(this);
     }
     
     public void update(String content) {
