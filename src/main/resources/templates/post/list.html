@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base :: layout(~{::title}, ~{::section}, ~{::link})}"
+      lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>게시글 목록 페이지</title>
+  <!-- Custom CSS -->
+  <link th:href="@{/css/cover.css}" rel="stylesheet">
+</head>
+<body>
+
+<section>
+  <div class="container">
+    <h2>게시글 목록</h2>
+    <div class="d-grid gap-2 d-flex justify-content-end btn-snippet" style="margin-bottom: 10px">
+      <!-- search -->
+      <div class="col-auto">
+        <form th:action="@{/posts}" th:object="${postMemberSearchCond}" class="form-inline">
+          <div class="input-group">
+            <input type="text" class="form-control" th:field="*{keyword}" placeholder="게시판 이름 검색">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" type="submit">검색</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <!-- refresh button -->
+      <button type="button" class="btn btn-secondary" onclick="window.location.reload()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+          <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+        </svg>
+      </button>
+      <!-- toggle button -->
+      <div class="btn-group dropup">
+        <button type="button" class="btn btn-primary" th:onclick="|location.href='@{/post}'|">게시판 생성</button>
+        <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" data-bs-offset="0,10">
+          <span class="visually-hidden">메뉴</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
+          <li><a class="dropdown-item" href="#">둘러보기</a></li>
+          <li><a class="dropdown-item" href="#">북마크</a></li>
+        </ul>
+      </div>
+    </div>
+    <!-- post list -->
+    <table class="table">
+      <thead>
+      <tr class="text-center">
+        <th>번호</th>
+        <th style="width: 50%">게시글 제목</th>
+        <th style="width: 10%">작성자</th>
+        <th>생성일</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="post : ${posts}" class="text-center">
+        <td th:text="|${posts.number * 10 + postStat.count}|">게시글 번호</td>
+        <td class="tdPostId" th:text="${post.id}" hidden>게시글 ID</td>
+        <td class="text-center">
+          <a class="btnPostName" th:text="${post.title}" th:attrappend="id=${postStat.index}" th:href="@{post/{id}(id=${post.id})}">게시글 제목</a>
+        </td>
+        <td th:text="${post.memberName}">작성자</td>
+        <!-- createdDate -->
+        <td th:text="${#temporals.format(post.createdDate,'yyyy-MM-dd')}">생성일</td>
+      </tr>
+      </tbody>
+      <!-- if not exists channel list -->
+      <tr th:if="${posts eq null or posts.size eq 0}">
+        <td colspan="4">게시글이 없습니다</td>
+      </tr>
+    </table>
+    <br>
+    <!-- paging -->
+    <div th:if="${!posts.isEmpty()}">
+      <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+          <!-- prev -->
+          <li class="page-item" th:classappend="${!posts.hasPrevious} ? 'disabled'">
+            <a class="page-link" th:href="@{|/posts?page=${posts.number - 1}|}" tabindex="-1">이전</a>
+          </li>
+          <!-- pages -->
+          <li th:each="page: ${#numbers.sequence(1, posts.totalPages)}"
+              th:if="${page - 1 >= posts.number - 5 and page - 1 <= posts.number + 5}"
+              th:classappend="${page - 1 == posts.number} ? 'active'"
+              class="page-item">
+            <a th:text="${page}" class="page-link" th:href="@{|/posts?page=${page - 1}|}"></a>
+          </li>
+          <!-- next -->
+          <li class="page-item" th:classappend="${!posts.hasNext} ? 'disabled'">
+            <a class="page-link" th:href="@{|/posts?page=${posts.number + 1}|}" >다음</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>
