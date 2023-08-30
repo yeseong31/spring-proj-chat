@@ -1,5 +1,7 @@
 package proj.chat.domain.service;
 
+import static proj.chat.domain.controller.ChannelController.PAGE_SIZE;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,7 +17,9 @@ import proj.chat.common.exception.DataNotFoundException;
 import proj.chat.domain.dto.post.PostResponseDto;
 import proj.chat.domain.dto.post.PostSaveRequestDto;
 import proj.chat.domain.dto.post.PostUpdateRequestDto;
+import proj.chat.domain.entity.Member;
 import proj.chat.domain.entity.Post;
+import proj.chat.domain.repository.MemberRepository;
 import proj.chat.domain.repository.post.PostRepository;
 
 @Slf4j
@@ -25,55 +29,65 @@ import proj.chat.domain.repository.post.PostRepository;
 public class PostService {
     
     private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
     
     @Transactional
-    public Long save(PostSaveRequestDto dto) {
-    
+    public Long save(PostSaveRequestDto dto, String memberEmail) {
+        
+        Member findMember = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(() -> new DataNotFoundException("존재하지 않는 사용자입니다"));
+        
         Post post = dto.dtoToEntity();
-    
+        
+        post.registerMember(findMember);
+        
         return postRepository.save(post).getId();
     }
     
-    public Page<PostResponseDto> findAll(String keyword, int page, int size) {
+    public Page<PostResponseDto> findAll() {
+        return findAll(null, 0, PAGE_SIZE);
+    }
     
+    public Page<PostResponseDto> findAll(String keyword, int page, int size) {
+        
         Pageable pageable = PageRequest.of(page, size);
         
         List<PostResponseDto> result = postRepository.findSearch(keyword).stream()
                 .map(PostResponseDto::new)
                 .sorted(Comparator.comparing(PostResponseDto::getCreatedDate).reversed())
                 .collect(Collectors.toList());
-    
+        
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), result.size());
-    
+        
         List<PostResponseDto> pageContent = result.subList(start, end);
-    
+        
         return new PageImpl<>(pageContent, pageable, result.size());
     }
     
     public PostResponseDto findById(Long id) {
-    
+        
         Post findPost = postRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException(
                         String.format("존재하지 않는 게시글입니다 (id=%d)", id)));
-    
+        
         return new PostResponseDto(findPost);
     }
     
     @Transactional
     public Long update(Long id, PostUpdateRequestDto dto) {
-    
+        
         Post findPost = postRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException(
                         String.format("존재하지 않는 게시글입니다 (id=%d)", id)));
-    
+        
         findPost.update(dto.getTitle(), dto.getContent());
         return id;
     }
     
     @Transactional
     public Long delete(Long id) {
-    
+        
         postRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException(
                         String.format("존재하지 않는 게시글입니다 (id=%d)", id)));
