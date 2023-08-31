@@ -19,11 +19,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 import proj.chat.domain.dto.comment.CommentSaveRequestDto;
+import proj.chat.domain.dto.member.MemberResponseDto;
 import proj.chat.domain.dto.post.PostMemberSearchCond;
 import proj.chat.domain.dto.post.PostResponseDto;
 import proj.chat.domain.dto.post.PostSaveRequestDto;
 import proj.chat.domain.dto.post.PostUpdateRequestDto;
+import proj.chat.domain.dto.voter.VoterPostRequestDto;
+import proj.chat.domain.service.MemberService;
 import proj.chat.domain.service.PostService;
+import proj.chat.domain.service.VoterPostService;
 import proj.chat.security.auth.CustomUserDetails;
 
 @Slf4j
@@ -33,6 +37,8 @@ import proj.chat.security.auth.CustomUserDetails;
 public class PostController {
     
     private final PostService postService;
+    private final MemberService memberService;
+    private final VoterPostService voterPostService;
     
     @GetMapping("/list")
     public String list(
@@ -129,5 +135,40 @@ public class PostController {
         Long deletedId = postService.delete(id);
         
         return "redirect:/post/list";
+    }
+    
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/vote/{id}")
+    public String vote(@PathVariable("id") Long postId, Authentication authentication) {
+    
+        CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+    
+        MemberResponseDto findMemberDto = memberService.findByEmail(principal.getMember().getEmail());
+        if (findMemberDto == null) {
+            return "auth/signup";
+        }
+    
+        PostResponseDto findPostDto = postService.findById(postId);
+        if (findPostDto == null) {
+            return "post/list";
+        }
+    
+        if (findPostDto.getMemberEmail().equals(principal.getMember().getEmail())) {
+            log.info("본인의 개시물은 추천할 수 없습니다");
+            return "redirect:/post/" + postId;
+        }
+    
+        VoterPostRequestDto requestDto = VoterPostRequestDto.builder()
+                .postId(postId)
+                .memberId(findMemberDto.getId())
+                .build();
+        
+        if (voterPostService.existsPostAndMember(postId, findMemberDto.getId())) {
+            voterPostService.delete(requestDto);
+        } else {
+            voterPostService.save(requestDto);
+        }
+        
+        return "redirect:/post/" + postId;
     }
 }
