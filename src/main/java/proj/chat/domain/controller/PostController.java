@@ -39,27 +39,25 @@ public class PostController {
         return "post/list";
     }
     
-    @GetMapping
+    @GetMapping("/save")
     public String saveForm(@ModelAttribute("postSaveRequestDto") PostSaveRequestDto requestDto) {
         
         return "post/save";
     }
     
-    @PostMapping
-    public String save(@Validated @ModelAttribute PostSaveRequestDto requestDto,
+    @PostMapping("/save")
+    public String save(@Validated @ModelAttribute PostSaveRequestDto postSaveRequestDto,
             BindingResult bindingResult, Authentication authentication) {
         
         if (bindingResult.hasErrors()) {
-            
-            bindingResult.rejectValue("title", "게시글 생성에 실패했습니다");
             return "post/save";
         }
     
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
         
-        Long savedId = postService.save(requestDto, principal.getMember().getEmail());
+        Long savedId = postService.save(postSaveRequestDto, principal.getMember().getEmail());
         
-        return "redirect:/posts";
+        return "redirect:/post/" + savedId;
     }
     
     @GetMapping("/{id}")
@@ -100,6 +98,6 @@ public class PostController {
         
         Long deletedId = postService.delete(id);
         
-        return "redirect:/posts";
+        return "redirect:/post/list";
     }
 }
