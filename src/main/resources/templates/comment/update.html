@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::section}, ~{::script})}" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>답변 수정 페이지</title>
+</head>
+<body>
+
+<section>
+  <div class="container">
+    <h5 class="my-3 border-bottom pb-2">게시글 수정</h5>
+    <form th:action th:object="${commentUpdateRequestDto}" method="post">
+      <div th:replace="~{form_errors :: formErrorsFragment}"></div>
+      <div class="mb-3">
+        <label for="content" class="form-label">내용</label>
+        <textarea id="content" th:field="*{content}" class="form-control" rows="10"></textarea>
+      </div>
+      <input type="submit" value="저장하기" class="btn btn-primary my-2">
+    </form>
+  </div>
+</section>
+
+<script type='text/javascript'>
+</script>
+</body>
+</html>
