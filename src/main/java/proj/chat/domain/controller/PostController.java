@@ -116,8 +116,15 @@ public class PostController {
     }
     
     @PreAuthorize("isAuthenticated()")
-    @PostMapping("/{id}/delete")
-    public String delete(@PathVariable("id") Long id) {
+    @GetMapping("/{id}/delete")
+    public String delete(@PathVariable("id") Long id, Authentication authentication) {
+    
+        CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+    
+        PostResponseDto findPostDto = postService.findById(id);
+        if (!findPostDto.getMemberEmail().equals(principal.getMember().getEmail())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제 권한이 없습니다");
+        }
         
         Long deletedId = postService.delete(id);
         
