@@ -1,4 +1,4 @@
-package proj.chat.domain.dto.email;
+package proj.chat.domain.dto.member.email;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;

@@ -14,7 +14,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import proj.chat.aop.annotation.Trace;
 import proj.chat.domain.service.EmailTokenService;
-import proj.chat.domain.dto.email.EmailVerificationRequestDto;
+import proj.chat.domain.dto.member.email.EmailVerificationRequestDto;
 
 /**
  * 비동기 task를 관리하는 클래스
