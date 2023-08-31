@@ -35,7 +35,6 @@ public class SecurityConfig {
                         .requestMatchers("/image/**", "/css/**", "/js/**").permitAll()
                         .requestMatchers("/auth/login", "/auth/signup",
                                 "/auth/email/verification/*").permitAll()
-                        .requestMatchers("/oauth/**").permitAll()
                         .requestMatchers("/ws-rabbit").permitAll()
                         .anyRequest().authenticated()
                 )
