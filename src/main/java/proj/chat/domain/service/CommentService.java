@@ -26,21 +26,22 @@ public class CommentService {
     private final MemberRepository memberRepository;
     
     @Transactional
-    public Long save(CommentSaveRequestDto dto, String memberEmail) {
+    public Long save(CommentSaveRequestDto dto, Long postId, String memberEmail) {
     
-        Post post = postRepository.findById(dto.getPostId())
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new DataNotFoundException(
-                        String.format("존재하지 않는 게시글입니다 (id=%d)", dto.getPostId())));
-        
-        dto.setPost(post);
+                        String.format("존재하지 않는 게시글입니다 (id=%d)", postId)));
     
         Member findMember = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(() -> new DataNotFoundException("존재하지 않는 사용자입니다"));
-        
-        Comment comment = dto.dtoToEntity();
-        
+    
+        Comment comment = Comment.builder()
+                .content(dto.getContent())
+                .member(findMember)
+                .post(post)
+                .build();
+    
         comment.addComment();
-        comment.registerMember(findMember);
     
         return commentRepository.save(comment).getId();
     }

@@ -6,35 +6,23 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import proj.chat.domain.entity.Comment;
-import proj.chat.domain.entity.Member;
-import proj.chat.domain.entity.Post;
 
 @Getter
 @Setter
 @NoArgsConstructor
 public class CommentSaveRequestDto {
     
-    private Long postId;
-    
     @NotBlank(message = "내용을 입력해주세요")
     private String content;
-    
-    private Member member;
-    
-    private Post post;
     
     public Comment dtoToEntity() {
         return Comment.builder()
                 .content(content)
-                .member(member)
-                .post(post)
                 .build();
     }
     
     @Builder
-    public CommentSaveRequestDto(String content, Member member, Post post) {
+    public CommentSaveRequestDto(String content) {
         this.content = content;
-        this.member = member;
-        this.post = post;
     }
 }
