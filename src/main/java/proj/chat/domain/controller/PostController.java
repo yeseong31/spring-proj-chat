@@ -138,7 +138,7 @@ public class PostController {
     }
     
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/vote/{id}")
+    @GetMapping("/{id}/vote")
     public String vote(@PathVariable("id") Long postId, Authentication authentication) {
     
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
