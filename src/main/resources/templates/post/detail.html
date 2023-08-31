@@ -30,7 +30,7 @@
         </div>
         <div class="my-3">
           <a href="javascript:void(0);" class="recommend btn btn-sm btn-outline-secondary"
-             th:data-uri="@{|/post/vote/${post.id}|}">추천
+             th:data-uri="@{|/post/${post.id}/vote|}">추천
             <span class="badge rounded-pill bg-success" th:text="${post.voters}"></span>
           </a>
           <a th:href="@{|/post/${post.id}/update|}" class="btn btn-sm btn-outline-secondary"
@@ -66,6 +66,10 @@
           </div>
         </div>
         <div class="my-3">
+          <a href="javascript:void(0);" class="recommend btn btn-sm btn-outline-secondary"
+             th:data-uri="@{|/comment/${comment.id}/vote|}">추천
+            <span class="badge rounded-pill bg-success" th:text="${comment.voters}"></span>
+          </a>
           <a th:href="@{|/comment/${comment.id}/update|}" class="btn btn-sm btn-outline-secondary"
              sec:authorize="isAuthenticated()"
              th:if="${comment.memberEmail != null and #authentication.getPrincipal().getMember().getEmail() == comment.memberEmail}"
