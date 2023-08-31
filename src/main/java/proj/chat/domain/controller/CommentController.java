@@ -2,6 +2,7 @@ package proj.chat.domain.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,33 +15,38 @@ import proj.chat.domain.dto.comment.CommentResponseDto;
 import proj.chat.domain.dto.comment.CommentSaveRequestDto;
 import proj.chat.domain.dto.comment.CommentUpdateRequestDto;
 import proj.chat.domain.service.CommentService;
+import proj.chat.domain.service.PostService;
+import proj.chat.security.auth.CustomUserDetails;
 
 @Slf4j
 @Controller
 @RequiredArgsConstructor
 public class CommentController {
     
+    private final PostService postService;
     private final CommentService commentService;
     
     @PostMapping("/post/{postId}")
     public String save(@PathVariable("postId") Long postId,
             @Validated @ModelAttribute CommentSaveRequestDto requestDto,
-            BindingResult bindingResult) {
+            BindingResult bindingResult, Authentication authentication, Model model) {
     
         if (bindingResult.hasErrors()) {
-        
-            bindingResult.rejectValue("content", "답변 생성에 실패했습니다");
+            model.addAttribute("post", postService.findById(postId));
             return "post/detail";
         }
     
-        Long savedId = commentService.save(requestDto);
+        CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
     
-        return "redirect:/post/{id}";
+        requestDto.setPostId(postId);
+        Long savedId = commentService.save(requestDto, principal.getMember().getEmail());
+    
+        return "redirect:/post/" + postId;
     }
     
     @GetMapping("/comment/{id}/update")
     public String updateForm(@PathVariable("id") Long id,
-            @ModelAttribute("commentUpdateRequestDto")CommentUpdateRequestDto requestDto,
+            @ModelAttribute("commentUpdateRequestDto") CommentUpdateRequestDto requestDto,
             Model model) {
     
         model.addAttribute("commentId", id);
