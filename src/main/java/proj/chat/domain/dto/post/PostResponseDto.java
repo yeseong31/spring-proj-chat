@@ -1,10 +1,12 @@
 package proj.chat.domain.dto.post;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import proj.chat.domain.entity.Comment;
+import proj.chat.domain.dto.comment.CommentResponseDto;
 import proj.chat.domain.entity.Post;
 
 @Getter
@@ -19,7 +21,7 @@ public class PostResponseDto {
     private String memberEmail;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
-    private List<Comment> comments;
+    private List<CommentResponseDto> comments;
     
     public PostResponseDto(Post entity) {
         this.id = entity.getId();
@@ -30,6 +32,10 @@ public class PostResponseDto {
         this.memberEmail = entity.getMember().getEmail();
         this.createdDate = entity.getCreatedDate();
         this.lastModifiedDate = entity.getLastModifiedDate();
-        this.comments = entity.getComments();
+        this.comments = entity.getComments().stream()
+                .map(CommentResponseDto::new)
+                .sorted(Comparator.comparing(CommentResponseDto::getCreatedDate).reversed())
+                .collect(Collectors.toList());
+        ;
     }
 }
