@@ -90,7 +90,7 @@ public class MemberController {
             
             MemberResponseDto findMember = memberService.findById(savedId);
             
-            return "redirect:/auth/email/verification/" + findMember.getUuid();
+            return String.format("redirect:/auth/email/verification/%s", findMember.getUuid());
         } catch (DataIntegrityViolationException e) {
             bindingResult.rejectValue("email", "duplicate.email",
                     "이미 등록된 사용자입니다");

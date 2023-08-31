@@ -48,10 +48,9 @@ public class CommentController {
         
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
         
-        requestDto.setPostId(postId);
-        Long savedId = commentService.save(requestDto, principal.getMember().getEmail());
+        Long savedId = commentService.save(requestDto, postId, principal.getMember().getEmail());
         
-        return "redirect:/post/" + postId;
+        return String.format("redirect:/post/%d#comment_%d", postId, savedId);
     }
     
     @PreAuthorize("isAuthenticated()")
@@ -92,7 +91,7 @@ public class CommentController {
         Long updatedId = commentService.update(id, requestDto);
         CommentResponseDto findComment = commentService.findById(updatedId);
         
-        return "redirect:/post/" + findComment.getPostId();
+        return String.format("redirect:/post/%d", findComment.getPostId());
     }
     
     @PreAuthorize("isAuthenticated()")
@@ -110,7 +109,7 @@ public class CommentController {
         
         Long deletedId = commentService.delete(id);
         
-        return "redirect:/post/" + postId;
+        return String.format("redirect:/post/%d", postId);
     }
     
     @PreAuthorize("isAuthenticated()")
@@ -131,7 +130,7 @@ public class CommentController {
     
         if (findCommentDto.getMemberEmail().equals(principal.getMember().getEmail())) {
             log.info("본인의 게시물은 추천할 수 없습니다");
-            return "redirect:/post/" + findCommentDto.getPostId();
+            return String.format("redirect:/post/%d", findCommentDto.getPostId());
         }
     
         VoterCommentRequestDto requestDto = VoterCommentRequestDto.builder()
@@ -145,6 +144,6 @@ public class CommentController {
             voterCommentService.save(requestDto);
         }
     
-        return "redirect:/post/" + findCommentDto.getPostId();
+        return String.format("redirect:/post/%d", findCommentDto.getPostId());
     }
 }

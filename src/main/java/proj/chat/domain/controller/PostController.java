@@ -69,7 +69,7 @@ public class PostController {
         
         Long savedId = postService.save(postSaveRequestDto, principal.getMember().getEmail());
         
-        return "redirect:/post/" + savedId;
+        return String.format("redirect:/post/%d", savedId);
     }
     
     @GetMapping("/{id}")
@@ -118,7 +118,7 @@ public class PostController {
     
         Long updatedId = postService.update(id, requestDto);
         
-        return "redirect:/post/" + id;
+        return String.format("redirect:/post/%d", id);
     }
     
     @PreAuthorize("isAuthenticated()")
@@ -155,7 +155,7 @@ public class PostController {
     
         if (findPostDto.getMemberEmail().equals(principal.getMember().getEmail())) {
             log.info("본인의 개시물은 추천할 수 없습니다");
-            return "redirect:/post/" + postId;
+            return String.format("redirect:/post/%d", postId);
         }
     
         VoterPostRequestDto requestDto = VoterPostRequestDto.builder()
@@ -169,6 +169,6 @@ public class PostController {
             voterPostService.save(requestDto);
         }
         
-        return "redirect:/post/" + postId;
+        return String.format("redirect:/post/%d", postId);
     }
 }
