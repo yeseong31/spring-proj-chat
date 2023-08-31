@@ -64,7 +64,6 @@ public class ChannelController {
      * @param model 결과 응답에 필요한 DTO 및 채널 목록을 담는 객체
      * @return 채널 목록 페이지 HTML 이름
      */
-    @PreAuthorize("isAuthenticated()")
     @GetMapping("/list")
     public String list(
             @RequestParam(value = "page", defaultValue = "0") int page,
@@ -82,7 +81,6 @@ public class ChannelController {
      * @param requestDto    생성하고자 하는 채널 정보가 포함된 DTO
      * @param bindingResult 검증 내용에 대한 오류 내용을 보관하는 객체
      * @param model         결과 응답에 필요한 DTO 및 채널/사용자 정보를 담는 객체
-     * @param user          로그인 한 사용자 정보
      *                      null이면 로그인하지 않은 사용자
      * @return 채팅 페이지 HTML 이름; 채널 생성에 실패하면 채널 목록 페이지 HTML 이름
      */

@@ -4,6 +4,7 @@ import static proj.chat.domain.controller.ChannelController.PAGE_SIZE;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,12 +40,14 @@ public class PostController {
         return "post/list";
     }
     
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/save")
     public String saveForm(@ModelAttribute("postSaveRequestDto") PostSaveRequestDto requestDto) {
         
         return "post/save";
     }
     
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/save")
     public String save(@Validated @ModelAttribute PostSaveRequestDto postSaveRequestDto,
             BindingResult bindingResult, Authentication authentication) {
@@ -68,6 +71,7 @@ public class PostController {
         return "post/detail";
     }
     
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}/update")
     public String updateForm(@PathVariable("id") Long id,
             @ModelAttribute("postUpdateRequestDto") PostUpdateRequestDto requestDto,
@@ -77,6 +81,7 @@ public class PostController {
         return "post/update";
     }
     
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/update")
     public String update(@PathVariable("id") Long id,
             @Validated @ModelAttribute PostUpdateRequestDto requestDto,
@@ -93,6 +98,7 @@ public class PostController {
         return "redirect:/post/" + id;
     }
     
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable("id") Long id) {
         

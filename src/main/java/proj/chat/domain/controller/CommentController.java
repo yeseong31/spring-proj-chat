@@ -2,6 +2,7 @@ package proj.chat.domain.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +27,7 @@ public class CommentController {
     private final PostService postService;
     private final CommentService commentService;
     
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/post/{postId}")
     public String save(@PathVariable("postId") Long postId,
             @Validated @ModelAttribute CommentSaveRequestDto requestDto,
@@ -44,6 +46,7 @@ public class CommentController {
         return "redirect:/post/" + postId;
     }
     
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/comment/{id}/update")
     public String updateForm(@PathVariable("id") Long id,
             @ModelAttribute("commentUpdateRequestDto") CommentUpdateRequestDto requestDto,
@@ -53,6 +56,7 @@ public class CommentController {
         return "comment/update";
     }
     
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/comment/{id}/update")
     public String update(@PathVariable("id") Long id,
             @Validated @ModelAttribute CommentUpdateRequestDto requestDto,
@@ -70,6 +74,7 @@ public class CommentController {
         return "redirect:/post/" + findComment.getPostId();
     }
     
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/comment/{id}/delete")
     public String delete(@PathVariable("id") Long id) {
     
