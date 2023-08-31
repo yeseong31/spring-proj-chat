@@ -41,8 +41,7 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
     
-    @OneToMany(cascade = ALL, orphanRemoval = true)
-    @JoinColumn(name = "comment_id")
+    @OneToMany(mappedBy = "post", cascade = ALL)
     private final List<Comment> comments = new ArrayList<>();
     
     private int voters;
