@@ -11,7 +11,7 @@ import proj.chat.domain.dto.comment.CommentUpdateRequestDto;
 import proj.chat.domain.entity.Comment;
 import proj.chat.domain.entity.Member;
 import proj.chat.domain.entity.Post;
-import proj.chat.domain.repository.CommentRepository;
+import proj.chat.domain.repository.comment.CommentRepository;
 import proj.chat.domain.repository.MemberRepository;
 import proj.chat.domain.repository.post.PostRepository;
 
