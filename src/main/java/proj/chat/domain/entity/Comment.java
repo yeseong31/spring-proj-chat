@@ -41,7 +41,8 @@ public class Comment extends BaseEntity {
     private int voters;
     
     @Builder
-    public Comment(String content, Post post, Member member) {
+    public Comment(Long id, String content, Post post, Member member) {
+        this.id = id;
         this.content = content;
         this.post = post;
         this.member = member;
@@ -58,9 +59,5 @@ public class Comment extends BaseEntity {
     
     public void update(String content) {
         this.content = content;
-    }
-    
-    public void registerMember(Member member) {
-        this.member = member;
     }
 }
