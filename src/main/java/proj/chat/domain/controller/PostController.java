@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import proj.chat.domain.dto.comment.CommentSaveRequestDto;
 import proj.chat.domain.dto.post.PostMemberSearchCond;
@@ -23,12 +24,13 @@ import proj.chat.security.auth.CustomUserDetails;
 
 @Slf4j
 @Controller
+@RequestMapping("/post")
 @RequiredArgsConstructor
 public class PostController {
     
     private final PostService postService;
     
-    @GetMapping("/posts")
+    @GetMapping("/list")
     public String list(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @ModelAttribute("postMemberSearchCond") PostMemberSearchCond cond, Model model) {
@@ -37,13 +39,13 @@ public class PostController {
         return "post/list";
     }
     
-    @GetMapping("/post")
+    @GetMapping
     public String saveForm(@ModelAttribute("postSaveRequestDto") PostSaveRequestDto requestDto) {
         
         return "post/save";
     }
     
-    @PostMapping("/post")
+    @PostMapping
     public String save(@Validated @ModelAttribute PostSaveRequestDto requestDto,
             BindingResult bindingResult, Authentication authentication) {
         
@@ -60,7 +62,7 @@ public class PostController {
         return "redirect:/posts";
     }
     
-    @GetMapping("/post/{id}")
+    @GetMapping("/{id}")
     public String detail(@PathVariable("id") Long id, Model model) {
         
         model.addAttribute("post", postService.findById(id));
@@ -68,7 +70,7 @@ public class PostController {
         return "post/detail";
     }
     
-    @GetMapping("/post/{id}/update")
+    @GetMapping("/{id}/update")
     public String updateForm(@PathVariable("id") Long id,
             @ModelAttribute("postUpdateRequestDto") PostUpdateRequestDto requestDto,
             Model model) {
@@ -77,7 +79,7 @@ public class PostController {
         return "post/update";
     }
     
-    @PostMapping("/post/{id}/update")
+    @PostMapping("/{id}/update")
     public String update(@PathVariable("id") Long id,
             @Validated @ModelAttribute PostUpdateRequestDto requestDto,
             BindingResult bindingResult) {
@@ -93,7 +95,7 @@ public class PostController {
         return "redirect:/post/" + id;
     }
     
-    @PostMapping("/post/{id}/delete")
+    @PostMapping("/{id}/delete")
     public String delete(@PathVariable("id") Long id) {
         
         Long deletedId = postService.delete(id);
