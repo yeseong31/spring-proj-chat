@@ -4,10 +4,12 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import proj.chat.domain.entity.Member;
 import proj.chat.domain.entity.Post;
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class PostSaveRequestDto {
     
