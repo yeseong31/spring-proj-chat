@@ -1,10 +1,10 @@
 package proj.chat.domain.entity;
 
+import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -41,8 +41,11 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
     
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @OneToMany(cascade = ALL, orphanRemoval = true)
+    @JoinColumn(name = "comment_id")
     private final List<Comment> comments = new ArrayList<>();
+    
+    private int voters;
     
     @Builder
     public Post(Long id, String title, String content, Member member) {
@@ -50,18 +53,16 @@ public class Post extends BaseEntity {
         this.title = title;
         this.content = content;
         this.member = member;
+        this.voters = 0;
     }
     
     /**
      * 사용자 정보 등록
+     *
      * @param member 인증 정보를 소유할 사용자
      */
     public void registerMember(Member member) {
         this.member = member;
-    }
-    
-    public int countComment() {
-        return comments.size();
     }
     
     public void update(String title, String content) {

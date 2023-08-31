@@ -22,6 +22,7 @@ public class PostResponseDto {
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
     private List<CommentResponseDto> comments;
+    private int voters;
     
     public PostResponseDto(Post entity) {
         this.id = entity.getId();
@@ -36,6 +37,6 @@ public class PostResponseDto {
                 .map(CommentResponseDto::new)
                 .sorted(Comparator.comparing(CommentResponseDto::getCreatedDate).reversed())
                 .collect(Collectors.toList());
-        ;
+        this.voters = entity.getVoters();
     }
 }
