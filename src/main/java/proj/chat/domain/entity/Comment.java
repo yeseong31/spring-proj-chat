@@ -38,11 +38,14 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
     
+    private int voters;
+    
     @Builder
     public Comment(String content, Post post, Member member) {
         this.content = content;
         this.post = post;
         this.member = member;
+        this.voters = 0;
     }
     
     public void addComment() {

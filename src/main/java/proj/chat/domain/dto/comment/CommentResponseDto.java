@@ -19,6 +19,7 @@ public class CommentResponseDto {
     private Long postId;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
+    private int voters;
     
     public CommentResponseDto(Comment entity) {
         this.id = entity.getId();
@@ -29,5 +30,6 @@ public class CommentResponseDto {
         this.postId = entity.getPost().getId();
         this.createdDate = entity.getCreatedDate();
         this.lastModifiedDate = entity.getLastModifiedDate();
+        this.voters = entity.getVoters();
     }
 }
