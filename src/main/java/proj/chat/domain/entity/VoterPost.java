@@ -34,8 +34,6 @@ public class VoterPost extends BaseEntity {
     @JoinColumn(name = "post_id")
     private Post post;
     
-    private int count;
-    
     @Builder
     public VoterPost(Member member, Post post) {
         this.member = member;

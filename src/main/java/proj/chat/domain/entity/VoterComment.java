@@ -34,8 +34,6 @@ public class VoterComment extends BaseEntity {
     @JoinColumn(name = "comment_id")
     private Comment comment;
     
-    private int count;
-    
     @Builder
     public VoterComment(Member member, Comment comment) {
         this.member = member;
