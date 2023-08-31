@@ -6,4 +6,6 @@ import proj.chat.domain.entity.Post;
 public interface PostRepositoryCustom {
     
     List<Post> findSearch(String keyword);
+    
+    void updateVoters(Post post, boolean b);
 }

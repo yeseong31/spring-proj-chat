@@ -29,6 +29,24 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .fetch();
     }
     
+    @Override
+    public void updateVoters(Post post1, boolean b) {
+    
+        if (b) {
+            query
+                    .update(post)
+                    .set(post.voters, post.voters.add(1))
+                    .where(post.eq(post1))
+                    .execute();
+        } else {
+            query
+                    .update(post)
+                    .set(post.voters, post.voters.subtract(1))
+                    .where(post.eq(post1))
+                    .execute();
+        }
+    }
+    
     private BooleanExpression postTitleContains(String postTitle) {
         return hasText(postTitle) ? post.title.contains(postTitle) : null;
     }
