@@ -17,8 +17,12 @@ import org.springframework.web.server.ResponseStatusException;
 import proj.chat.domain.dto.comment.CommentResponseDto;
 import proj.chat.domain.dto.comment.CommentSaveRequestDto;
 import proj.chat.domain.dto.comment.CommentUpdateRequestDto;
+import proj.chat.domain.dto.member.MemberResponseDto;
+import proj.chat.domain.dto.voter.VoterCommentRequestDto;
 import proj.chat.domain.service.CommentService;
+import proj.chat.domain.service.MemberService;
 import proj.chat.domain.service.PostService;
+import proj.chat.domain.service.VoterCommentService;
 import proj.chat.security.auth.CustomUserDetails;
 
 @Slf4j
@@ -26,8 +30,10 @@ import proj.chat.security.auth.CustomUserDetails;
 @RequiredArgsConstructor
 public class CommentController {
     
-    private final PostService postService;
     private final CommentService commentService;
+    private final PostService postService;
+    private final MemberService memberService;
+    private final VoterCommentService voterCommentService;
     
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/post/{postId}")
@@ -105,5 +111,40 @@ public class CommentController {
         Long deletedId = commentService.delete(id);
         
         return "redirect:/post/" + postId;
+    }
+    
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/comment/{id}/vote")
+    public String vote(@PathVariable("id") Long commentId, Authentication authentication) {
+    
+        CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+    
+        MemberResponseDto findMemberDto = memberService.findByEmail(principal.getMember().getEmail());
+        if (findMemberDto == null) {
+            return "auth/signup";
+        }
+    
+        CommentResponseDto findCommentDto = commentService.findById(commentId);
+        if (findCommentDto == null) {
+            return "post/list";
+        }
+    
+        if (findCommentDto.getMemberEmail().equals(principal.getMember().getEmail())) {
+            log.info("본인의 게시물은 추천할 수 없습니다");
+            return "redirect:/post/" + findCommentDto.getPostId();
+        }
+    
+        VoterCommentRequestDto requestDto = VoterCommentRequestDto.builder()
+                .commentId(commentId)
+                .memberId(findMemberDto.getId())
+                .build();
+    
+        if (voterCommentService.existsPostAndMember(commentId, findMemberDto.getId())) {
+            voterCommentService.delete(requestDto);
+        } else {
+            voterCommentService.save(requestDto);
+        }
+    
+        return "redirect:/post/" + findCommentDto.getPostId();
     }
 }
