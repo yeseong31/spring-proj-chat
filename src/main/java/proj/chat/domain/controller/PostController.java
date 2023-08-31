@@ -4,6 +4,7 @@ import static proj.chat.domain.controller.ChannelController.PAGE_SIZE;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -16,8 +17,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 import proj.chat.domain.dto.comment.CommentSaveRequestDto;
 import proj.chat.domain.dto.post.PostMemberSearchCond;
+import proj.chat.domain.dto.post.PostResponseDto;
 import proj.chat.domain.dto.post.PostSaveRequestDto;
 import proj.chat.domain.dto.post.PostUpdateRequestDto;
 import proj.chat.domain.service.PostService;
@@ -75,8 +78,17 @@ public class PostController {
     @GetMapping("/{id}/update")
     public String updateForm(@PathVariable("id") Long id,
             @ModelAttribute("postUpdateRequestDto") PostUpdateRequestDto requestDto,
-            Model model) {
-        
+            Authentication authentication, Model model) {
+    
+        CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+    
+        PostResponseDto findPostDto = postService.findById(id);
+        if (!findPostDto.getMemberEmail().equals(principal.getMember().getEmail())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정 권한이 없습니다");
+        }
+    
+        requestDto.setTitle(findPostDto.getTitle());
+        requestDto.setContent(findPostDto.getContent());
         model.addAttribute("postId", id);
         return "post/update";
     }
@@ -85,14 +97,19 @@ public class PostController {
     @PostMapping("/{id}/update")
     public String update(@PathVariable("id") Long id,
             @Validated @ModelAttribute PostUpdateRequestDto requestDto,
-            BindingResult bindingResult) {
+            BindingResult bindingResult, Authentication authentication) {
         
         if (bindingResult.hasErrors()) {
-            
-            bindingResult.rejectValue("title", "게시글 수정에 실패했습니다");
             return "post/update";
         }
-        
+    
+        CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+    
+        PostResponseDto findPostDto = postService.findById(id);
+        if (!findPostDto.getMemberEmail().equals(principal.getMember().getEmail())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정 권한이 없습니다");
+        }
+    
         Long updatedId = postService.update(id, requestDto);
         
         return "redirect:/post/" + id;
