@@ -9,7 +9,11 @@ import proj.chat.domain.dto.comment.CommentResponseDto;
 import proj.chat.domain.dto.comment.CommentSaveRequestDto;
 import proj.chat.domain.dto.comment.CommentUpdateRequestDto;
 import proj.chat.domain.entity.Comment;
+import proj.chat.domain.entity.Member;
+import proj.chat.domain.entity.Post;
 import proj.chat.domain.repository.CommentRepository;
+import proj.chat.domain.repository.MemberRepository;
+import proj.chat.domain.repository.post.PostRepository;
 
 @Slf4j
 @Service
@@ -18,13 +22,25 @@ import proj.chat.domain.repository.CommentRepository;
 public class CommentService {
     
     private final CommentRepository commentRepository;
+    private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
     
     @Transactional
-    public Long save(CommentSaveRequestDto dto) {
+    public Long save(CommentSaveRequestDto dto, String memberEmail) {
     
+        Post post = postRepository.findById(dto.getPostId())
+                .orElseThrow(() -> new DataNotFoundException(
+                        String.format("존재하지 않는 게시글입니다 (id=%d)", dto.getPostId())));
+        
+        dto.setPost(post);
+    
+        Member findMember = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(() -> new DataNotFoundException("존재하지 않는 사용자입니다"));
+        
         Comment comment = dto.dtoToEntity();
         
         comment.addComment();
+        comment.registerMember(findMember);
     
         return commentRepository.save(comment).getId();
     }
