@@ -16,7 +16,7 @@
 </div>
 
 <section>
-  <div class="container">
+  <div class="container my-3">
     <h2>채널 목록</h2>
     <!-- modal: create channel form -->
     <form action="list.html" th:action="@{/channel/create}" th:object="${channelSaveRequestDto}" method="post" style="text-align: left">
@@ -125,10 +125,10 @@
     </div>
     <!-- channel list -->
     <table class="table">
-      <thead>
+      <thead class="table-dark">
       <tr class="text-center">
         <th>번호</th>
-        <th style="width: 50%">채널 이름</th>
+        <th style="width: 40%">채널 이름</th>
         <th style="width: 10%">인원</th>
         <th>생성일</th>
       </tr>
