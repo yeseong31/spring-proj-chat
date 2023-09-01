@@ -109,6 +109,29 @@ public class ChannelController {
     }
     
     /**
+     * 채널 입장 페이지로 이동한다.
+     *
+     * @param channelId 입장하고자 하는 페이지 ID(인덱스)
+     * @param requestDto 입장하고자 하는 페이지 정보를 담을 DTO
+     * @param model 결과 응답에 필요한 DTO 및 채널/사용자 정보를 담는 객체
+     * @return 채팅방 입장 페이지 HTML
+     */
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/enter")
+    public String enterForm(@RequestParam("channelId") Long channelId,
+            @ModelAttribute ChannelEnterRequestDto requestDto, Model model) {
+        
+        ChannelResponseDto findChannelDto = channelService.findById(channelId);
+        if (findChannelDto == null) {
+            return "channel/list";
+        }
+        
+        requestDto.setChannelId(findChannelDto.getId());
+        model.addAttribute("channelName", findChannelDto.getName());
+        return "channel/enter";
+    }
+    
+    /**
      * 비밀번호를 입력하여 채널에 입장한다.
      *
      * @param requestDto         입장하고자 하는 채널의 정보가 담긴 DTO
@@ -125,14 +148,10 @@ public class ChannelController {
             RedirectAttributes redirectAttributes) {
         
         if (bindingResult.hasErrors()) {
-            
-            log.info("[enter] errors={}", bindingResult);
-            controlChannelError(model, "채널 입장에 실패했습니다");
-            
-            return "channel/list";
+            return "channel/enter";
         }
         
-        Long channelId = Long.valueOf(requestDto.getChannelId());
+        Long channelId = requestDto.getChannelId();
         String password = requestDto.getPassword();
         
         log.info("[enter] 채널 ID={}", channelId);
@@ -146,7 +165,7 @@ public class ChannelController {
         
         if (findChannelDto == null) {
             
-            controlChannelError(model, "채널 입장에 실패했습니다");
+            model.addAttribute("err", "채널 입장에 실패했습니다");
             bindingResult.rejectValue(
                     "channelId", "invalid.channelId", "채널 입장에 실패했습니다");
             
@@ -155,16 +174,17 @@ public class ChannelController {
         
         if (!channelService.checkPassword(findChannelDto.getId(), password)) {
             
-            controlChannelError(model, "비밀번호가 일치하지 않습니다.");
+            model.addAttribute("err", "비밀번호가 일치하지 않습니다");
+            model.addAttribute("channelName", findChannelDto.getName());
             bindingResult.rejectValue(
-                    "password", "invalid.password", "비밀번호가 일치하지 않습니다.");
+                    "password", "invalid.password", "비밀번호가 일치하지 않습니다");
             
-            return "channel/list";
+            return "channel/enter";
         }
         
         if (findChannelDto.getCount() >= findChannelDto.getMaxCount()) {
             
-            controlChannelError(model, "정원이 가득 찼습니다");
+            model.addAttribute("err", "정원이 가득 찼습니다");
             redirectAttributes.addFlashAttribute("err", "정원이 가득 찼습니다");
             
             return "redirect:/channel/list";
@@ -177,11 +197,11 @@ public class ChannelController {
         
         if (findMemberDto == null) {
             
-            controlChannelError(model, "채널 입장에 실패했습니다");
+            model.addAttribute("err", "채널 입장에 실패했습니다");
             bindingResult.rejectValue(
                     "channelId", "invalid.channelId", "채널 입장에 실패했습니다");
             
-            return "/";
+            return "redirect:/auth/login";
         }
         
         model.addAttribute("messageDto", new MessageDto());
@@ -212,19 +232,5 @@ public class ChannelController {
         model.addAttribute("channelUuid", channelUuid);
         model.addAttribute("channelName", channelName);
         return "channel/chat";
-    }
-    
-    /**
-     * 채널 등록 및 입장 오류 시 model에 정보를 담는다.
-     *
-     * @param model        결과 응답에 필요한 정보를 담을 객체
-     * @param errorMessage 오류 메시지
-     */
-    private void controlChannelError(Model model, String errorMessage) {
-        
-        model.addAttribute("err", errorMessage);
-        model.addAttribute("channelEnterRequestDto", new ChannelEnterRequestDto());
-        model.addAttribute("channelMemberSearchCond", new ChannelMemberSearchCond());
-        model.addAttribute("channels", channelService.findAll(null, 0, 10));
     }
 }

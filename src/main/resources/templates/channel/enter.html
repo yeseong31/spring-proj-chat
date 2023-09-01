@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base :: layout(~{::title}, ~{::section}, ~{::#activeNav})}" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>채널 등록 페이지</title>
+</head>
+<body>
+
+<!-- navbar -->
+<div id="activeNav" style="display: flex;">
+  <a class="nav-link fw-bold py-1 px-0" th:href="@{/home}">Home</a>
+  <a class="nav-link fw-bold py-1 px-0 active" aria-current="page" th:href="@{/channel/list}">Channel</a>
+  <a class="nav-link fw-bold py-1 px-0" th:href="@{/post/list}">Post</a>
+</div>
+
+<section>
+  <div class="container">
+    <h2 class="my-3 border-bottom pb-2">채널 입장</h2>
+    <form th:action th:object="${channelEnterRequestDto}" method="post">
+      <div th:replace="~{form_errors :: formErrorsFragment}"></div>
+      <div class="mb-3" style="text-align: left">
+        <label for="channelName" class="form-label">채널 이름</label>
+        <input type="text" id="channelName" class="form-control" th:placeholder="${channelName}" disabled>
+      </div>
+      <div class="mb-3" hidden>
+        <label for="inputChannelId" class="form-label">채널 UUID</label>
+        <input type="text" class="form-control" id="inputChannelId" th:field="*{channelId}" placeholder="채널 ID">
+      </div>
+      <div class="mb-3" style="text-align: left">
+        <label for="exampleInputPassword1" class="form-label">비밀번호</label>
+        <input type="password" class="form-control" id="exampleInputPassword1" th:field="*{password}" placeholder="비밀번호를 입력해 주세요">
+      </div>
+      <input type="submit" value="입장" class="btn btn-primary my-2">
+    </form>
+  </div>
+</section>
+
+</body>
+</html>
