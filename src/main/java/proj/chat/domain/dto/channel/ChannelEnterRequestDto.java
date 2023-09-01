@@ -12,7 +12,7 @@ import lombok.ToString;
 @NoArgsConstructor
 public class ChannelEnterRequestDto {
     
-    private String channelId;
+    private Long channelId;
     
     @NotEmpty(message = "비밀번호를 입력해 주세요")
     private String password;
