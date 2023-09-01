@@ -3,17 +3,16 @@ package proj.chat.domain.dto.message;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import proj.chat.domain.entity.Message;
 
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
-@AllArgsConstructor
 public class MessageDto {
     
     private String channelUuid;
@@ -23,6 +22,23 @@ public class MessageDto {
     
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime createdDate;
+    
+    public MessageDto(Message entity) {
+        channelUuid = entity.getChannelUuid();
+        memberUuid = entity.getMemberUuid();
+        memberName = entity.getMemberName();
+        message = entity.getContent();
+        createdDate = LocalDateTime.now();
+    }
+    
+    public Message dtoToEntity() {
+        return Message.builder()
+                .channelUuid(channelUuid)
+                .memberUuid(memberUuid)
+                .memberName(memberName)
+                .content(message)
+                .build();
+    }
 }
 
 /*
