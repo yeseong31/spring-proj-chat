@@ -35,6 +35,16 @@ public class CommentController {
     private final MemberService memberService;
     private final VoterCommentService voterCommentService;
     
+    /**
+     * 게시글에 대한 답변을 등록한다.
+     *
+     * @param postId         답변을 등록할 게시글
+     * @param requestDto     답변 정보를 담을 DTO
+     * @param bindingResult  검증 내용에 대한 오류 내용을 보관하는 객체
+     * @param authentication 인증 정보
+     * @param model          결과 응답에 필요한 DTO 및 채널/사용자 정보를 담는 객체
+     * @return 게시글 상세 페이지 HTML 이름
+     */
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/post/{postId}")
     public String save(@PathVariable("postId") Long postId,
@@ -53,6 +63,15 @@ public class CommentController {
         return String.format("redirect:/post/%d#comment_%d", postId, savedId);
     }
     
+    /**
+     * 답변 수정 페이지로 이동한다.
+     *
+     * @param id             수정할 답변 ID(인덱스)
+     * @param requestDto     답변 정보가 담긴 DTO
+     * @param authentication 인증 정보
+     * @param model          결과 응답에 필요한 DTO 및 채널/사용자 정보를 담는 객체
+     * @return 답변 수정 페이지 HTML 이름
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/comment/{id}/update")
     public String updateForm(@PathVariable("id") Long id,
@@ -71,6 +90,15 @@ public class CommentController {
         return "comment/update";
     }
     
+    /**
+     * 답변을 수정한다.
+     *
+     * @param id             수정할 답변 ID(인덱스)
+     * @param requestDto     답변 정보를 담을 DTO
+     * @param bindingResult  검증 내용에 대한 오류 내용을 보관하는 객체
+     * @param authentication 인증 정보
+     * @return 답변 수정 성공 시 게시글 상세 페이지 HTML 이름; 그렇지 않으면 답변 수정 페이지 HTML 이름
+     */
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/comment/{id}/update")
     public String update(@PathVariable("id") Long id,
@@ -94,6 +122,13 @@ public class CommentController {
         return String.format("redirect:/post/%d", findComment.getPostId());
     }
     
+    /**
+     * 답변을 삭제한다.
+     *
+     * @param id             삭제할 답변 ID(인덱스)
+     * @param authentication 인증 정보
+     * @return 게시글 상세 페이지 HTML 이름
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/comment/{id}/delete")
     public String delete(@PathVariable("id") Long id, Authentication authentication) {
@@ -107,43 +142,50 @@ public class CommentController {
         
         Long postId = commentService.findById(id).getPostId();
         
-        Long deletedId = commentService.delete(id);
+        commentService.delete(id);
         
         return String.format("redirect:/post/%d", postId);
     }
     
+    /**
+     * 답변을 추천한다.
+     *
+     * @param commentId      추천할 답변 ID
+     * @param authentication 인증 정보
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/comment/{id}/vote")
     public String vote(@PathVariable("id") Long commentId, Authentication authentication) {
-    
+        
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-    
-        MemberResponseDto findMemberDto = memberService.findByEmail(principal.getMember().getEmail());
+        
+        MemberResponseDto findMemberDto = memberService.findByEmail(
+                principal.getMember().getEmail());
         if (findMemberDto == null) {
             return "auth/signup";
         }
-    
+        
         CommentResponseDto findCommentDto = commentService.findById(commentId);
         if (findCommentDto == null) {
             return "post/list";
         }
-    
+        
         if (findCommentDto.getMemberEmail().equals(principal.getMember().getEmail())) {
             log.info("본인의 게시물은 추천할 수 없습니다");
             return String.format("redirect:/post/%d", findCommentDto.getPostId());
         }
-    
+        
         VoterCommentRequestDto requestDto = VoterCommentRequestDto.builder()
                 .commentId(commentId)
                 .memberId(findMemberDto.getId())
                 .build();
-    
+        
         if (voterCommentService.existsPostAndMember(commentId, findMemberDto.getId())) {
             voterCommentService.delete(requestDto);
         } else {
             voterCommentService.save(requestDto);
         }
-    
+        
         return String.format("redirect:/post/%d", findCommentDto.getPostId());
     }
 }

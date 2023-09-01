@@ -8,6 +8,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class HelloController {
     
+    /**
+     * 홈페이지로 이동한다.
+     *
+     * @return 홈페이지 HTML 이름
+     */
     @GetMapping({"/", "/home"})
     public String home() {
         return "home";

@@ -40,6 +40,14 @@ public class PostController {
     private final MemberService memberService;
     private final VoterPostService voterPostService;
     
+    /**
+     * 게시글 목록 페이지로 이동한다.
+     *
+     * @param page  조회할 페이지; 기본 0
+     * @param cond  검색어를 포함하는 condition; null 허용
+     * @param model 결과 응답에 필요한 DTO 및 채널 목록을 담는 객체
+     * @return 게시글 목록 페이지 HTML 이름
+     */
     @GetMapping("/list")
     public String list(
             @RequestParam(value = "page", defaultValue = "0") int page,
@@ -49,6 +57,12 @@ public class PostController {
         return "post/list";
     }
     
+    /**
+     * 게시글 등록 페이지로 이동한다.
+     *
+     * @param requestDto 게시글 정보를 담을 DTO
+     * @return 게시글 등록 페이지 HTML 이름
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/save")
     public String saveForm(@ModelAttribute("postSaveRequestDto") PostSaveRequestDto requestDto) {
@@ -56,6 +70,14 @@ public class PostController {
         return "post/save";
     }
     
+    /**
+     * 게시글을 등록한다.
+     *
+     * @param postSaveRequestDto 게시글 정보가 담긴 DTO
+     * @param bindingResult      검증 내용에 대한 오류 내용을 보관하는 객체
+     * @param authentication     인증 정보
+     * @return 게시글 등록 성공 시 게시글 상세 페이지 HTML 이름; 그렇지 않으면 게시글 등록 페이지 HTML 이름
+     */
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/save")
     public String save(@Validated @ModelAttribute PostSaveRequestDto postSaveRequestDto,
@@ -64,7 +86,7 @@ public class PostController {
         if (bindingResult.hasErrors()) {
             return "post/save";
         }
-    
+        
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
         
         Long savedId = postService.save(postSaveRequestDto, principal.getMember().getEmail());
@@ -72,6 +94,13 @@ public class PostController {
         return String.format("redirect:/post/%d", savedId);
     }
     
+    /**
+     * 게시글 상세 페이지로 이동한다.
+     *
+     * @param id    게시글 ID(인덱스)
+     * @param model 결과 응답에 필요한 DTO 및 채널 목록을 담는 객체
+     * @return 게시글 상세 페이지 HTML 이름
+     */
     @GetMapping("/{id}")
     public String detail(@PathVariable("id") Long id, Model model) {
         
@@ -80,25 +109,43 @@ public class PostController {
         return "post/detail";
     }
     
+    /**
+     * 게시글 수정 페이지로 이동한다.
+     *
+     * @param id             수정할 게시글 ID(인덱스)
+     * @param requestDto     게시글 정보를 담을 DTO
+     * @param authentication 인증 정보
+     * @param model          결과 응답에 필요한 DTO 및 채널 목록을 담는 객체
+     * @return 게시글 수정 페이지 HTML 이름
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}/update")
     public String updateForm(@PathVariable("id") Long id,
             @ModelAttribute("postUpdateRequestDto") PostUpdateRequestDto requestDto,
             Authentication authentication, Model model) {
-    
+        
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-    
+        
         PostResponseDto findPostDto = postService.findById(id);
         if (!findPostDto.getMemberEmail().equals(principal.getMember().getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정 권한이 없습니다");
         }
-    
+        
         requestDto.setTitle(findPostDto.getTitle());
         requestDto.setContent(findPostDto.getContent());
         model.addAttribute("postId", id);
         return "post/update";
     }
     
+    /**
+     * 게시글을 수정한다.
+     *
+     * @param id             수정할 게시글 ID(인덱스)
+     * @param requestDto     게시글 정보가 담긴 DTO
+     * @param bindingResult  검증 내용에 대한 오류 내용을 보관하는 객체
+     * @param authentication 인증 정보
+     * @return 게시글 수정 성공 시 게시글 상세 페이지 HTML 이름; 그렇지 않으면 게시글 수정 페이지 HTML 이름
+     */
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/update")
     public String update(@PathVariable("id") Long id,
@@ -108,56 +155,70 @@ public class PostController {
         if (bindingResult.hasErrors()) {
             return "post/update";
         }
-    
+        
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-    
+        
         PostResponseDto findPostDto = postService.findById(id);
         if (!findPostDto.getMemberEmail().equals(principal.getMember().getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정 권한이 없습니다");
         }
-    
+        
         Long updatedId = postService.update(id, requestDto);
         
-        return String.format("redirect:/post/%d", id);
+        return String.format("redirect:/post/%d", updatedId);
     }
     
+    /**
+     * 게시글을 삭제한다.
+     *
+     * @param id             삭제할 게시글 ID(인덱스)
+     * @param authentication 인증 정보
+     * @return 게시글 목록 페이지 HTML 이름
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}/delete")
     public String delete(@PathVariable("id") Long id, Authentication authentication) {
-    
+        
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-    
+        
         PostResponseDto findPostDto = postService.findById(id);
         if (!findPostDto.getMemberEmail().equals(principal.getMember().getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제 권한이 없습니다");
         }
         
-        Long deletedId = postService.delete(id);
+        postService.delete(id);
         
         return "redirect:/post/list";
     }
     
+    /**
+     * 게시글을 추천한다.
+     *
+     * @param postId         추천할 게시글 ID(인덱스)
+     * @param authentication 인증 정보
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}/vote")
     public String vote(@PathVariable("id") Long postId, Authentication authentication) {
-    
+        
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-    
-        MemberResponseDto findMemberDto = memberService.findByEmail(principal.getMember().getEmail());
+        
+        MemberResponseDto findMemberDto = memberService.findByEmail(
+                principal.getMember().getEmail());
         if (findMemberDto == null) {
             return "auth/signup";
         }
-    
+        
         PostResponseDto findPostDto = postService.findById(postId);
         if (findPostDto == null) {
             return "post/list";
         }
-    
+        
         if (findPostDto.getMemberEmail().equals(principal.getMember().getEmail())) {
             log.info("본인의 개시물은 추천할 수 없습니다");
             return String.format("redirect:/post/%d", postId);
         }
-    
+        
         VoterPostRequestDto requestDto = VoterPostRequestDto.builder()
                 .postId(postId)
                 .memberId(findMemberDto.getId())

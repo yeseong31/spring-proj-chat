@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import proj.chat.domain.dto.channel.ChannelEnterRequestDto;
 import proj.chat.domain.dto.channel.ChannelMemberSearchCond;
 import proj.chat.domain.dto.channel.ChannelResponseDto;
@@ -55,8 +54,8 @@ public class ChannelController {
     /**
      * 검색어를 포함하여 채널 목록을 찾는다.
      *
-     * @param page  조회할 페이지 기본 0
-     * @param cond  검색어를 포함하는 condition null 허용
+     * @param page  조회할 페이지; 기본 0
+     * @param cond  검색어를 포함하는 condition; null 허용
      * @param model 결과 응답에 필요한 DTO 및 채널 목록을 담는 객체
      * @return 채널 목록 페이지 HTML 이름
      */
