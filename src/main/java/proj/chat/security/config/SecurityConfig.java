@@ -41,7 +41,7 @@ public class SecurityConfig {
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/auth/login")
-                        .defaultSuccessUrl("/channel/list", true)
+                        .defaultSuccessUrl("/", true)
                         .failureUrl("/auth/login")
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService))
@@ -52,7 +52,7 @@ public class SecurityConfig {
                         .loginProcessingUrl("/auth/login")
                         .usernameParameter("email")
                         .passwordParameter("password")
-                        .defaultSuccessUrl("/channel/list", true)
+                        .defaultSuccessUrl("/", true)
                         .failureUrl("/auth/login")
                         .permitAll()
                 )
