@@ -1,15 +1,22 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{layout :: layout(~{::section}, ~{::script})}" lang="en">
+      th:replace="~{base :: layout(~{::title}, ~{::section}, ~{::#activeNav})}" lang="en">
 <head>
   <meta charset="UTF-8">
   <title>답변 수정 페이지</title>
 </head>
 <body>
 
+<!-- navbar -->
+<div id="activeNav" style="display: flex;">
+  <a class="nav-link fw-bold py-1 px-0" th:href="@{/home}">Home</a>
+  <a class="nav-link fw-bold py-1 px-0" th:href="@{/channel/list}">Channel</a>
+  <a class="nav-link fw-bold py-1 px-0 active" aria-current="page" th:href="@{/post/list}">Post</a>
+</div>
+
 <section>
   <div class="container">
-    <h5 class="my-3 border-bottom pb-2">게시글 수정</h5>
+    <h2 class="my-3 border-bottom pb-2">게시글 수정</h2>
     <form th:action th:object="${commentUpdateRequestDto}" method="post">
       <div th:replace="~{form_errors :: formErrorsFragment}"></div>
       <div class="mb-3">
@@ -21,7 +28,5 @@
   </div>
 </section>
 
-<script type='text/javascript'>
-</script>
 </body>
 </html>

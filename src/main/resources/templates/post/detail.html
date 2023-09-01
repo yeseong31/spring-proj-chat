@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      th:replace="~{layout :: layout(~{::section}, ~{::script})}"
+      th:replace="~{base :: layout(~{::title}, ~{::section}, ~{::#activeNav})}"
       lang="en">
 <head>
   <meta charset="UTF-8">
@@ -9,36 +9,43 @@
 </head>
 <body>
 
+<!-- navbar -->
+<div id="activeNav" style="display: flex;">
+  <a class="nav-link fw-bold py-1 px-0" th:href="@{/home}">Home</a>
+  <a class="nav-link fw-bold py-1 px-0" th:href="@{/channel/list}">Channel</a>
+  <a class="nav-link fw-bold py-1 px-0 active" aria-current="page" th:href="@{/post/list}">Post</a>
+</div>
+
 <section>
   <div class="container my-3">
     <!-- 질문 -->
     <h2 class="border-bottom py-2" th:text="${post.title}"></h2>
     <div class="card my-3">
       <div class="card-body">
-        <div class="card-text" th:text="${post.content}"></div>
+        <div class="card-text" th:text="${post.content}" style="text-align: left"></div>
         <div class="d-flex justify-content-end">
-          <div th:if="${post.lastModifiedDate != post.createdDate}" class="badge bg-light text-dark p-2 text-start mx-3">
+          <div th:if="${post.lastModifiedDate != post.createdDate}" class="badge text-light p-2 text-start mx-3">
             <div class="mb-2">modified at</div>
             <div th:text="${#temporals.format(post.lastModifiedDate, 'yyyy-MM-dd HH:mm')}"></div>
           </div>
-          <div class="badge bg-light text-dark p-2 text-start">
+          <div class="badge text-light p-2 text-start">
             <div class="mb-2">
               <span th:if="${post.memberName != null}" th:text="${post.memberName}"></span>
             </div>
             <div th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}"></div>
           </div>
         </div>
-        <div class="my-3">
-          <a href="javascript:void(0);" class="recommend btn btn-sm btn-outline-secondary"
+        <div class="my-2">
+          <a href="javascript:void(0);" class="recommend btn btn-sm btn-outline-success fw-bold"
              th:data-uri="@{|/post/${post.id}/vote|}">추천
             <span class="badge rounded-pill bg-success" th:text="${post.voters}"></span>
           </a>
-          <a th:href="@{|/post/${post.id}/update|}" class="btn btn-sm btn-outline-secondary"
+          <a th:href="@{|/post/${post.id}/update|}" class="btn btn-sm fw-bold btn-outline-secondary"
              sec:authorize="isAuthenticated()"
              th:if="${post.memberEmail != null and #authentication.getPrincipal().getMember().getEmail() == post.memberEmail}"
              th:text="수정"></a>
           <a href="javascript:void(0);" th:data-uri="@{|/post/${post.id}/delete|}"
-             class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"
+             class="delete btn btn-sm fw-bold btn-outline-danger" sec:authorize="isAuthenticated()"
              th:if="${post.memberEmail != null and #authentication.getPrincipal().getMember().getEmail() == post.memberEmail}"
              th:text="삭제"></a>
         </div>
@@ -52,30 +59,30 @@
     <div class="card my-3" th:each="comment : ${post.comments}">
       <a th:id="|comment${comment.id}|"></a>
       <div class="card-body">
-        <div class="card-text" th:text="${comment.content}"></div>
+        <div class="card-text" th:text="${comment.content}" style="text-align: left"></div>
         <div class="d-flex justify-content-end">
-          <div th:if="${comment.lastModifiedDate != comment.createdDate}" class="badge bg-light text-dark p-2 text-start mx-3">
+          <div th:if="${comment.lastModifiedDate != comment.createdDate}" class="badge text-light p-2 text-start mx-3">
             <div class="mb-2">modified at</div>
             <div th:text="${#temporals.format(comment.lastModifiedDate, 'yyyy-MM-dd HH:mm')}"></div>
           </div>
-          <div class="badge bg-light text-dark p-2 text-start">
+          <div class="badge text-light p-2 text-start">
             <div class="mb-2">
               <span th:text="${comment.memberName}"></span>
             </div>
             <div th:text="${#temporals.format(comment.createdDate, 'yyyy-MM-dd HH:mm')}"></div>
           </div>
         </div>
-        <div class="my-3">
-          <a href="javascript:void(0);" class="recommend btn btn-sm btn-outline-secondary"
+        <div class="my-2">
+          <a href="javascript:void(0);" class="recommend btn btn-sm fw-bold btn-outline-success"
              th:data-uri="@{|/comment/${comment.id}/vote|}">추천
             <span class="badge rounded-pill bg-success" th:text="${comment.voters}"></span>
           </a>
-          <a th:href="@{|/comment/${comment.id}/update|}" class="btn btn-sm btn-outline-secondary"
+          <a th:href="@{|/comment/${comment.id}/update|}" class="btn btn-sm fw-bold btn-outline-secondary"
              sec:authorize="isAuthenticated()"
              th:if="${comment.memberEmail != null and #authentication.getPrincipal().getMember().getEmail() == comment.memberEmail}"
              th:text="수정"></a>
           <a href="javascript:void(0);" th:data-uri="@{|/comment/${comment.id}/delete|}"
-             class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"
+             class="delete btn btn-sm fw-bold btn-outline-danger" sec:authorize="isAuthenticated()"
              th:if="${comment.memberEmail != null and #authentication.getPrincipal().getMember().getEmail() == comment.memberEmail}"
              th:text="삭제"></a>
         </div>
@@ -87,28 +94,10 @@
       <div th:replace="~{form_errors :: formErrorsFragment}"></div>
       <textarea sec:authorize="isAnonymous()" disabled th:field="*{content}" class="form-control" rows="10"></textarea>
       <textarea sec:authorize="isAuthenticated()" th:field="*{content}" class="form-control" rows="10"></textarea>
-      <input type="submit" value="답변등록" class="btn btn-primary my-2">
+      <input type="submit" value="답변 등록" class="btn btn-primary my-2">
     </form>
   </div>
 </section>
 
-<script type='text/javascript'>
-  const delete_elements = document.getElementsByClassName("delete");
-  Array.from(delete_elements).forEach(function(element) {
-    element.addEventListener('click', function() {
-      if(confirm("정말로 삭제하시겠습니까?")) {
-        location.href = this.dataset.uri;
-      };
-    });
-  });
-  const recommend_elements = document.getElementsByClassName("recommend");
-  Array.from(recommend_elements).forEach(function(element) {
-    element.addEventListener('click', function() {
-      if(confirm("추천하시겠습니까?")) {
-        location.href = this.dataset.uri;
-      };
-    });
-  });
-</script>
 </body>
 </html>

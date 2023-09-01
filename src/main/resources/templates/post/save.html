@@ -1,33 +1,36 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{layout :: layout(~{::section}, ~{::script})}" lang="en">
+      th:replace="~{base :: layout(~{::title}, ~{::section}, ~{::#activeNav})}" lang="en">
 <head>
   <meta charset="UTF-8">
   <title>게시글 저장 페이지</title>
 </head>
 <body>
 
-<section>
+<!-- navbar -->
+<div id="activeNav" style="display: flex;">
+  <a class="nav-link fw-bold py-1 px-0" th:href="@{/home}">Home</a>
+  <a class="nav-link fw-bold py-1 px-0" th:href="@{/channel/list}">Channel</a>
+  <a class="nav-link fw-bold py-1 px-0 active" aria-current="page" th:href="@{/post/list}">Post</a>
+</div>
 
+<section>
   <div class="container">
-    <h5 class="my-3 border-bottom pb-2">게시글 등록</h5>
+    <h2 class="my-3 border-bottom pb-2">게시글 등록</h2>
     <form th:action th:object="${postSaveRequestDto}" method="post">
       <div th:replace="~{form_errors :: formErrorsFragment}"></div>
-      <div class="mb-3">
+      <div class="mb-3" style="text-align: left">
         <label for="title" class="form-label">제목</label>
         <input type="text" id="title" th:field="*{title}" class="form-control">
       </div>
-      <div class="mb-3">
+      <div class="mb-3" style="text-align: left">
         <label for="content" class="form-label">내용</label>
         <textarea id="content" th:field="*{content}" class="form-control" rows="10"></textarea>
       </div>
-      <input type="submit" value="저장하기" class="btn btn-primary my-2">
+      <input type="submit" value="저장" class="btn btn-primary my-2">
     </form>
   </div>
-
 </section>
 
-<script type='text/javascript'>
-</script>
 </body>
 </html>

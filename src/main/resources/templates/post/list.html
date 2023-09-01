@@ -1,28 +1,54 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{layout :: layout(~{::section}, ~{::script})}">
+      th:replace="~{base :: layout(~{::title}, ~{::section}, ~{::#activeNav})}">
 <head>
   <meta charset="UTF-8">
   <title>게시글 목록 페이지</title>
-  <!-- Custom CSS -->
-  <link th:href="@{/css/cover.css}" rel="stylesheet">
 </head>
 <body>
 
+<!-- navbar -->
+<div id="activeNav" style="display: flex;">
+  <a class="nav-link fw-bold py-1 px-0" th:href="@{/home}">Home</a>
+  <a class="nav-link fw-bold py-1 px-0" th:href="@{/channel/list}">Channel</a>
+  <a class="nav-link fw-bold py-1 px-0 active" aria-current="page" th:href="@{/post/list}">Post</a>
+</div>
+
 <section>
   <div class="container my-3">
-    <a th:href="@{/post/save}" class="btn btn-primary">게시글 등록</a>
-    <div class="row my-3">
+    <h2>게시글 목록</h2>
+    <div class="d-grid gap-2 d-flex justify-content-end btn-snippet" style="margin-bottom: 10px">
       <!-- search -->
-      <form th:action="@{/post/list}" th:object="${postMemberSearchCond}" class="form-inline">
-        <div class="input-group">
-          <input type="text" class="form-control" th:field="*{keyword}" placeholder="게시글 검색">
-          <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="submit">검색</button>
+      <div class="col-auto">
+        <form th:action="@{/post/list}" th:object="${postMemberSearchCond}" class="form-inline">
+          <div class="input-group">
+            <input type="text" class="form-control" th:field="*{keyword}" placeholder="게시글 검색">
+            <div class="input-group-append">
+              <button class="btn fw-bold btn-outline-secondary" type="submit">검색</button>
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
+      <!-- refresh button -->
+      <button type="button" class="btn btn-secondary" onclick="window.location.reload()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+          <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+        </svg>
+      </button>
+      <!-- toggle button -->
+      <div class="btn-group dropup">
+        <button type="button" class="btn btn-primary" th:onclick="|location.href='@{/post/save}'|">게시글 생성</button>
+        <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" data-bs-offset="0,10">
+          <span class="visually-hidden">메뉴</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
+          <li><a class="dropdown-item" href="#">둘러보기</a></li>
+          <li><a class="dropdown-item" href="#">북마크</a></li>
+        </ul>
+      </div>
     </div>
+    <!-- post list -->
     <table class="table">
       <thead class="table-dark">
       <tr class="text-center">
@@ -35,7 +61,7 @@
       <tbody>
       <tr class="text-center" th:each="post : ${posts}">
         <td th:text="|${posts.number * 10 + postStat.count}|">채널 번호</td>
-        <td class="text-start">
+        <td class="text-start" style="padding-left: 20px">
           <a th:href="@{|/post/${post.id}|}" th:text="${post.title}"></a>
           <span class="text-danger small ms-2" th:if="${#lists.size(post.comments) > 0}"
                 th:text="${#lists.size(post.comments)}">
@@ -71,20 +97,5 @@
   </div>
 </section>
 
-<script type='text/javascript'>
-  const page_elements = document.getElementsByClassName("page-link");
-  Array.from(page_elements).forEach(function(element) {
-    element.addEventListener('click', function() {
-      document.getElementById('page').value = this.dataset.page;
-      document.getElementById('searchForm').submit();
-    });
-  });
-  const btn_search = document.getElementById("btn_search");
-  btn_search.addEventListener('click', function() {
-    document.getElementById('kw').value = document.getElementById('search_kw').value;
-    document.getElementById('page').value = 0;  // 검색버튼을 클릭할 경우 0페이지부터 조회한다.
-    document.getElementById('searchForm').submit();
-  });
-</script>
 </body>
 </html>

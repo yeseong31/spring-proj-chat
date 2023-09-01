@@ -1,12 +1,19 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{base :: layout(~{::title}, ~{::section}, ~{::link})}"
+      th:replace="~{base :: layout(~{::title}, ~{::section}, ~{::#activeNav})}"
       lang="en">
 <head>
   <meta charset="UTF-8">
   <title>메인 페이지</title>
 </head>
 <body>
+
+<!-- navbar -->
+<div id="activeNav" style="display: flex;">
+  <a class="nav-link fw-bold py-1 px-0 active" aria-current="page" th:href="@{/home}">Home</a>
+  <a class="nav-link fw-bold py-1 px-0" th:href="@{/channel/list}">Channel</a>
+  <a class="nav-link fw-bold py-1 px-0" th:href="@{/post/list}">Post</a>
+</div>
 
 <section>
   <h1>Spring + WebSocket</h1>
