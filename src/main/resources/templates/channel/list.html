@@ -18,50 +18,9 @@
 <section>
   <div class="container my-3">
     <h2>채널 목록</h2>
-    <!-- modal: create channel form -->
-    <form action="list.html" th:action="@{/channel/create}" th:object="${channelSaveRequestDto}" method="post" style="text-align: left">
-      <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}" style="margin-bottom: 10px">
-        <div th:text="${errorMessage}"></div>
-      </div>
-      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel">채널 생성</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <!-- errors -->
-              <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}" style="margin-bottom: 10px">
-                <div th:each="err : ${#fields.allErrors()}" th:text="${err}"></div>
-              </div>
-              <div class="mb-3">
-                <label for="inputChannelName" class="form-label">채널 이름</label>
-                <input type="text" class="form-control" id="inputChannelName" th:field="*{name}" placeholder="채널 이름을 입력해 주세요">
-              </div>
-              <div class="mb-3">
-                <label for="exampleInputPassword1" class="form-label">비밀번호</label>
-                <input type="password" class="form-control" id="exampleInputPassword1" th:field="*{password}" placeholder="비밀번호를 입력해 주세요">
-              </div>
-              <div class="mb-3">
-                <label for="inputCount" class="form-label">최대 인원 (기본 10)</label>
-                <input type="number" class="form-control" id="inputCount" th:field="*{maxCount}" placeholder="최대 인원을 설정해 주세요">
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-              <button type="submit" class="btn btn-primary">채널 생성</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </form>
-  
     <!-- modal: enter channel -->
     <form action="list.html" th:action="@{/channel/enter}" th:object="${channelEnterRequestDto}" method="post" style="text-align: left">
-      <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}" style="margin-bottom: 10px">
-        <div th:text="${errorMessage}"></div>
-      </div>
+      <div th:replace="~{form_errors :: formErrorsFragment}"></div>
       <div class="modal fade" id="enterChannelModal" tabindex="-1" aria-labelledby="enterChannelModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
@@ -70,10 +29,6 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <!-- errors -->
-              <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}" style="margin-bottom: 10px">
-                <div th:each="err : ${#fields.allErrors()}" th:text="${err}"></div>
-              </div>
               <div class="mb-3" hidden>
                 <label for="inputChannelId" class="form-label">채널 UUID</label>
                 <input type="text" class="form-control" id="inputChannelId" th:field="*{channelId}" placeholder="채널 ID">
@@ -113,7 +68,7 @@
       </button>
       <!-- toggle button -->
       <div class="btn-group dropup">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">채널 생성</button>
+        <button type="button" class="btn btn-primary" th:onclick="|location.href='@{/channel/save}'|">채널 등록</button>
         <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" data-bs-offset="0,10">
           <span class="visually-hidden">메뉴</span>
         </button>
