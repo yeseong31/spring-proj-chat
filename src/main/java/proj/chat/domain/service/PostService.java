@@ -40,12 +40,7 @@ public class PostService {
         Post post = dto.dtoToEntity();
         
         post.registerMember(findMember);
-        
         return postRepository.save(post).getId();
-    }
-    
-    public Page<PostResponseDto> findAll() {
-        return findAll(null, 0, PAGE_SIZE);
     }
     
     public Page<PostResponseDto> findAll(String keyword, int page, int size) {

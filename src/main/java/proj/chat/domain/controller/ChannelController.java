@@ -111,9 +111,9 @@ public class ChannelController {
     /**
      * 채널 입장 페이지로 이동한다.
      *
-     * @param channelId 입장하고자 하는 페이지 ID(인덱스)
+     * @param channelId  입장하고자 하는 페이지 ID(인덱스)
      * @param requestDto 입장하고자 하는 페이지 정보를 담을 DTO
-     * @param model 결과 응답에 필요한 DTO 및 채널/사용자 정보를 담는 객체
+     * @param model      결과 응답에 필요한 DTO 및 채널/사용자 정보를 담는 객체
      * @return 채팅방 입장 페이지 HTML
      */
     @PreAuthorize("isAuthenticated()")
@@ -134,18 +134,16 @@ public class ChannelController {
     /**
      * 비밀번호를 입력하여 채널에 입장한다.
      *
-     * @param requestDto         입장하고자 하는 채널의 정보가 담긴 DTO
-     * @param bindingResult      검증 내용에 대한 오류 내용을 보관하는 객체
-     * @param model              결과 응답에 필요한 DTO 및 채널/사용자 정보를 담는 객체
-     * @param authentication     인증 정보
-     * @param redirectAttributes 리다이렉트 응답 시 정보를 담는 객체
+     * @param requestDto     입장하고자 하는 채널의 정보가 담긴 DTO
+     * @param bindingResult  검증 내용에 대한 오류 내용을 보관하는 객체
+     * @param model          결과 응답에 필요한 DTO 및 채널/사용자 정보를 담는 객체
+     * @param authentication 인증 정보
      * @return 채팅 페이지 HTML 이름; 채널 입장에 실패하면 채널 목록 페이지 HTML 이름
      */
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/enter")
     public String enter(@Validated @ModelAttribute ChannelEnterRequestDto requestDto,
-            BindingResult bindingResult, Model model, Authentication authentication,
-            RedirectAttributes redirectAttributes) {
+            BindingResult bindingResult, Model model, Authentication authentication) {
         
         if (bindingResult.hasErrors()) {
             return "channel/enter";
@@ -182,14 +180,6 @@ public class ChannelController {
             return "channel/enter";
         }
         
-        if (findChannelDto.getCount() >= findChannelDto.getMaxCount()) {
-            
-            model.addAttribute("err", "정원이 가득 찼습니다");
-            redirectAttributes.addFlashAttribute("err", "정원이 가득 찼습니다");
-            
-            return "redirect:/channel/list";
-        }
-        
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
         
         MemberResponseDto findMemberDto = memberService.findByEmail(
@@ -215,6 +205,16 @@ public class ChannelController {
         return "channel/chat";
     }
     
+    /**
+     * 채팅방 페이지로 이동한다.
+     *
+     * @param channelUuid    채널 UUID
+     * @param channelName    채널 이름
+     * @param messageDto     메시지 내용을 담을 DTO
+     * @param authentication 인증 정보
+     * @param model          결과 응답에 필요한 DTO 및 채널/사용자 정보를 담는 객체
+     * @return 채팅방 페이지 HTML 이름
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/chat")
     public String chat(

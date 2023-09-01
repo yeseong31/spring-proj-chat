@@ -54,8 +54,7 @@
       <thead class="table-dark">
       <tr class="text-center">
         <th>번호</th>
-        <th style="width: 40%">채널 이름</th>
-        <th style="width: 10%">인원</th>
+        <th style="width: 50%">채널 이름</th>
         <th>생성일</th>
       </tr>
       </thead>
@@ -66,10 +65,6 @@
         <td class="text-center">
           <a class="btnChannelName" th:text="${channel.name}" th:attrappend="id=${channelStat.index}"
              th:onclick="|location.href='@{/channel/enter(channelId=${channel.id})}'|" style="cursor: pointer"></a>
-        </td>
-        <!-- count -->
-        <td class="text-center">
-          <span class="text-danger small mx-2" th:text="|${channel.count}/${channel.maxCount}|">채널 인원</span>
         </td>
         <!-- createdDate -->
         <td th:text="${#temporals.format(channel.createdDate,'yyyy-MM-dd')}">생성일</td>
