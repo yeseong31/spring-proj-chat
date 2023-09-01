@@ -66,6 +66,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-amqp:2.6.4'
 
 	// MongoDB
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
 
 	// json
