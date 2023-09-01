@@ -1,46 +1,53 @@
 package proj.chat.domain.entity;
 
-import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-@Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@ToString(exclude = {"member", "channel"})
+@Document(collation = "message")
 public class Message extends BaseTimeEntity {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "message_id")
-    private Long id;
+    private String id;
     
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @Field("channel_uuid")
+    public String channelUuid;
     
+    @Field("member_uuid")
+    private String memberUuid;
+    
+    @Field("member_name")
+    private String memberName;
+    
+    @Field("content")
     private String content;
     
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "channel_id")
-    public Channel channel;
     
     @Builder
-    public Message(Long id, Member member, String content, Channel channel) {
+    public Message(String id, String channelUuid, String memberUuid, String memberName, String content) {
         this.id = id;
-        this.member = member;
+        this.channelUuid = channelUuid;
+        this.memberUuid = memberUuid;
+        this.memberName = memberName;
         this.content = content;
-        this.channel = channel;
+    }
+    
+    @Override
+    public String toString() {
+        return String.format(
+                "Message[id=%s, channelUuid=%s, memberUuid=%s]",
+                id, channelUuid, memberUuid);
+    }
+    
+    public Message update(String content) {
+        this.content = content;
+        return this;
     }
 }
