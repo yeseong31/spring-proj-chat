@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +45,7 @@ class MemberServiceTest {
     
     @Test
     @DisplayName("사용자 회원가입 - 중복 회원 예외")
-    void duplicateMemberTest() {
+    void duplicateMember() {
         // given
         MemberSaveRequestDto requestDto = createMemberSaveRequestDto();
         
@@ -55,60 +57,13 @@ class MemberServiceTest {
     }
     
     
-    @Test
-    @DisplayName("회원가입 - 이메일 @ 누락 예외")
-    void validateEmailTest1() {
+    @ParameterizedTest(name = "#{index} 이메일 '{0}' 형식 확인")
+    @ValueSource(strings = {"hong", "@test.com", "hong@test.", "hong@test."})
+    @DisplayName("회원가입 - 이메일 형식 누락")
+    void validateEmail(String email) {
         // given
         MemberSaveRequestDto requestDto = MemberSaveRequestDto.builder()
-                .email("hong")
-                .name("홍길동")
-                .password("password1")
-                .matchingPassword("password1")
-                .build();
-        
-        // when
-        assertThatThrownBy(() -> memberService.save(requestDto))
-                .isInstanceOf(NotValidateEmailException.class);
-    }
-    
-    @Test
-    @DisplayName("회원가입 - 이메일 local 누락 예외")
-    void validateEmailTest2() {
-        // given
-        MemberSaveRequestDto requestDto = MemberSaveRequestDto.builder()
-                .email("@test.com")
-                .name("홍길동")
-                .password("password1")
-                .matchingPassword("password1")
-                .build();
-        
-        // when
-        assertThatThrownBy(() -> memberService.save(requestDto))
-                .isInstanceOf(NotValidateEmailException.class);
-    }
-    
-    @Test
-    @DisplayName("회원가입 - 이메일 domain 누락 예외")
-    void validateEmailTest3() {
-        // given
-        MemberSaveRequestDto requestDto = MemberSaveRequestDto.builder()
-                .email("hong@test")
-                .name("홍길동")
-                .password("password1")
-                .matchingPassword("password1")
-                .build();
-        
-        // when
-        assertThatThrownBy(() -> memberService.save(requestDto))
-                .isInstanceOf(NotValidateEmailException.class);
-    }
-    
-    @Test
-    @DisplayName("회원가입 - 이메일 domain 누락 예외2")
-    void validateEmailTest4() {
-        // given
-        MemberSaveRequestDto requestDto = MemberSaveRequestDto.builder()
-                .email("hong@test.")
+                .email(email)
                 .name("홍길동")
                 .password("password1")
                 .matchingPassword("password1")
