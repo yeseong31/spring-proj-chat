@@ -62,10 +62,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             }
             case "naver" -> {
                 log.info("[loadUser] Naver 로그인");
-                oAuth2UserInfo = new NaverUserInfo((Map) oAuth2User.getAttributes().get("response"));
+                oAuth2UserInfo = new NaverUserInfo(
+                        (Map) oAuth2User.getAttributes().get("response"));
             }
         }
-    
+        
         String providerId = Objects.requireNonNull(oAuth2UserInfo).getProviderId();
         String memberName = oAuth2UserInfo.getName();
         
@@ -75,7 +76,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         log.info("[loadUser] providerId={}, memberName={}, uuid={}, email={}",
                 providerId, memberName, uuid, email);
         
-        Optional<Member> findMember = memberRepository.findByName(memberName);
+        Optional<Member> findMember = memberRepository.findByEmail(email);
         if (findMember.isPresent()) {
             return new CustomUserDetails(findMember.get(), oAuth2UserInfo);
         }
@@ -86,7 +87,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             case "kakao" -> fromSocial = KAKAO;
             case "naver" -> fromSocial = NAVER;
         }
-    
+        
         Member member = Member.builder()
                 .name(memberName)
                 .uuid(uuid)
