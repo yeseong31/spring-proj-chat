@@ -1,3 +1,5 @@
-FROM rabbitmq:3-management
-RUN rabbitmq-plugins enable --offline rabbitmq_stomp
-EXPOSE 61613
+FROM openjdk:17-alpine
+VOLUME /tmp
+ARG JAR_FILE=/build/libs/chat-0.0.1-SNAPSHOT.jar
+COPY ${JAR_FILE} app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
