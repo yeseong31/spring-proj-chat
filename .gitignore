@@ -7,9 +7,8 @@ build/
 
 lib/
 **/src/main/generated/
-.env.properties
-.env
 src/main/resources/static/image/**
+src/main/resources/env**
 mongodb/
 spy.log
 

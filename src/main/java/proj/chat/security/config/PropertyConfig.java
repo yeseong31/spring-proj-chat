@@ -6,7 +6,8 @@ import org.springframework.context.annotation.PropertySources;
 
 @Configuration
 @PropertySources({
-        @PropertySource("classpath:.env.properties")
+        @PropertySource("classpath:env.oauth.properties"),
+        @PropertySource("classpath:env.local.properties")
 })
 public class PropertyConfig {
 
