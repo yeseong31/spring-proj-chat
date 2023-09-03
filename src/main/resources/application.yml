@@ -1,4 +1,7 @@
 spring:
+  main:
+    allow-bean-definition-overriding: true
+
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: ${JDBC_URL}
@@ -74,9 +77,9 @@ spring:
       host: ${MONGODB_HOST}
       port: ${MONGODB_PORT}
       authentication-database: ${MONGODB_AUTHENTICATION_DATABASE}
+      database: ${MONGODB_DATABASE_NAME}
       username: ${MONGODB_USERNAME}
       password: ${MONGODB_PASSWORD}
-      database: ${MONGODB_DATABASE_NAME}
 
 logging:
   level:
