@@ -1,19 +1,23 @@
 package proj.chat.domain.service;
 
-import static proj.chat.domain.entity.MemberRole.*;
+import static proj.chat.domain.entity.MemberRole.MEMBER;
 
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import proj.chat.common.exception.DataNotFoundException;
+import proj.chat.common.exception.DuplicatedMemberEmailException;
+import proj.chat.common.exception.NotValidateEmailException;
 import proj.chat.domain.dto.member.MemberResponseDto;
 import proj.chat.domain.dto.member.MemberSaveRequestDto;
 import proj.chat.domain.dto.member.MemberUpdateRequestDto;
 import proj.chat.domain.entity.Member;
-import proj.chat.domain.entity.MemberRole;
 import proj.chat.domain.repository.MemberRepository;
-import proj.chat.common.exception.DataNotFoundException;
 
 @Slf4j
 @Service
@@ -32,6 +36,8 @@ public class MemberService {
      */
     @Transactional
     public Long save(MemberSaveRequestDto dto) {
+        
+        validateMember(dto.getEmail());
         
         dto.setRole(MEMBER);
         
@@ -118,7 +124,7 @@ public class MemberService {
         if (requestDto.getRole() == null) {
             requestDto.setRole(member.getRole());
         }
-    
+        
         requestDto.setFromSocial(requestDto.getFromSocial());
         requestDto.setStatus(true);
         
@@ -138,5 +144,32 @@ public class MemberService {
         
         memberRepository.deleteById(id);
         return id;
+    }
+    
+    // 사용자 통합 검증
+    private void validateMember(String email) {
+        validateDuplicateEmail(email);
+        validateEmailForm(email);
+    }
+    
+    // 사용자 중복 검증
+    private void validateDuplicateEmail(String email) {
+        
+        Optional<Member> result = memberRepository.findByEmail(email);
+        if (result.isPresent()) {
+            throw new DuplicatedMemberEmailException("이미 존재하는 회원입니다");
+        }
+    }
+    
+    // 이메일 형식 검증
+    private void validateEmailForm(String email) {
+        
+        String regex = "[a-z0-9]+@[a-z]+\\.[a-z]{2,3}";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(email);
+        
+        if (!m.matches()) {
+            throw new NotValidateEmailException("잘못된 형식의 이메일입니다");
+        }
     }
 }
