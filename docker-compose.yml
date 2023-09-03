@@ -20,21 +20,25 @@ services:
       - spring-chat-net
 
   rabbitmq:
-    image: yeseong31/rabbitmq-stomp
+    image: yeseong31/spring-rabbitmq
     container_name: rabbitmq_chat
     hostname: rabbitmq_container
     ports:
-      - "15672:15672"
       - "5672:5672"
+      - "25672:25672"
+      - "15672:15672"
+      - "15692:15692"
+      - "61613:61613"
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+    restart: always
     networks:
       - spring-chat-net
 
   mongodb:
     image: mongo
-    container_name: mongodb_chat
+    container_name: mongo_chat
     restart: always
     ports:
       - "27017:27017"
