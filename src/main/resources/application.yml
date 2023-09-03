@@ -1,7 +1,4 @@
 spring:
-  main:
-    allow-bean-definition-overriding: true
-
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: ${JDBC_URL}
