@@ -7,5 +7,7 @@ public interface PostRepositoryCustom {
     
     List<Post> findSearch(String keyword);
     
-    void updateVoters(Post post, boolean b);
+    void addVoter(Post post);
+    
+    void subtractVoter(Post post);
 }

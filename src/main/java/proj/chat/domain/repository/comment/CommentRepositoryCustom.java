@@ -4,5 +4,7 @@ import proj.chat.domain.entity.Comment;
 
 public interface CommentRepositoryCustom {
     
-    void updateVoters(Comment comment, boolean b);
+    void addVoter(Comment comment);
+    
+    void subtractVoter(Comment comment);
 }

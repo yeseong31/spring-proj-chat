@@ -49,7 +49,7 @@ public class VoterPostService {
         
         voterPostRepository.save(voterPost);
         
-        postRepository.updateVoters(post, true);
+        postRepository.addVoter(post);
     }
     
     @Transactional
@@ -68,7 +68,7 @@ public class VoterPostService {
     
         voterPostRepository.delete(voterPost);
         
-        postRepository.updateVoters(post, false);
+        postRepository.subtractVoter(post);
     }
     
     public boolean existsPostAndMember(Long postId, Long memberId) {

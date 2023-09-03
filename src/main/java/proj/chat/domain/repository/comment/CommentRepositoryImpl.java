@@ -12,20 +12,22 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
     private final JPAQueryFactory query;
     
     @Override
-    public void updateVoters(Comment comment1, boolean b) {
+    public void addVoter(Comment comment1) {
     
-        if (b) {
-            query
-                    .update(comment)
-                    .set(comment.voters, comment.voters.add(1))
-                    .where(comment.eq(comment1))
-                    .execute();
-        } else {
-            query
-                    .update(comment)
-                    .set(comment.voters, comment.voters.subtract(1))
-                    .where(comment.eq(comment1))
-                    .execute();
-        }
+        query
+                .update(comment)
+                .set(comment.voters, comment.voters.add(1))
+                .where(comment.eq(comment1))
+                .execute();
+    }
+    
+    @Override
+    public void subtractVoter(Comment comment1) {
+    
+        query
+                .update(comment)
+                .set(comment.voters, comment.voters.subtract(1))
+                .where(comment.eq(comment1))
+                .execute();
     }
 }

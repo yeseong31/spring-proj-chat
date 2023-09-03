@@ -30,21 +30,24 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     }
     
     @Override
-    public void updateVoters(Post post1, boolean b) {
+    public void addVoter(Post post1) {
     
-        if (b) {
-            query
-                    .update(post)
-                    .set(post.voters, post.voters.add(1))
-                    .where(post.eq(post1))
-                    .execute();
-        } else {
-            query
-                    .update(post)
-                    .set(post.voters, post.voters.subtract(1))
-                    .where(post.eq(post1))
-                    .execute();
-        }
+        query
+                .update(post)
+                .set(post.voters, post.voters.add(1))
+                .where(post.eq(post1))
+                .execute();
+        
+    }
+    
+    @Override
+    public void subtractVoter(Post post1) {
+    
+        query
+                .update(post)
+                .set(post.voters, post.voters.subtract(1))
+                .where(post.eq(post1))
+                .execute();
     }
     
     private BooleanExpression postTitleContains(String postTitle) {
