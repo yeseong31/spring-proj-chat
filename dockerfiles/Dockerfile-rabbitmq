@@ -1,0 +1,4 @@
+FROM rabbitmq:3-management
+RUN rabbitmq-plugins enable --offline rabbitmq_stomp
+RUN rabbitmq-plugins enable --offline rabbitmq_web_stomp_examples
+EXPOSE 15671 15672 61613
