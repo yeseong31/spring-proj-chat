@@ -1,12 +1,71 @@
 version: "3"
 services:
+  database:
+    container_name: database
+    image: mariadb
+    environment:
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_ROOT_HOST: '%'
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_USER: ${DATABASE_USERNAME}
+      MARIADB_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      TZ: 'Asia/Seoul'
+    ports:
+      - "3306:3306"
+    command:
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_unicode_ci"
+    restart: always
+    networks:
+      - spring-chat-net
+
   rabbitmq:
-    image: yeseong31/spring-chat-repo
+    image: yeseong31/rabbitmq-stomp
     container_name: rabbitmq_chat
+    hostname: rabbitmq_container
     ports:
       - "15672:15672"
       - "5672:5672"
-      - "61613:61613"
     environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+    networks:
+      - spring-chat-net
+
+  mongodb:
+    image: mongo
+    container_name: mongodb_chat
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongodb:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGODB_DATABASE_NAME}
+    networks:
+      - spring-chat-net
+
+  application:
+    image: yeseong31/spring-chat-app
+    container_name: spring_chat_app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_DATASOURCE_URL: jdbc:mariadb://database:3306/${MARIADB_DATABASE}?characterEncoding=UTF-8&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: ${DATABASE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DATABASE_PASSWORD}
+    depends_on:
+      - database
+      - rabbitmq
+      - mongodb
+    restart: always
+    networks:
+      - spring-chat-net
+
+networks:
+  spring-chat-net:
+    driver: bridge
+    external: true
