@@ -17,7 +17,8 @@ services:
       - "--collation-server=utf8mb4_unicode_ci"
     restart: always
     networks:
-      - spring-chat-net
+      spring-chat-net:
+        ipv4_address: 172.27.0.2
 
   rabbitmq:
     image: yeseong31/spring-rabbitmq
@@ -34,7 +35,8 @@ services:
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
     restart: always
     networks:
-      - spring-chat-net
+      spring-chat-net:
+        ipv4_address: 172.27.0.4
 
   mongodb:
     image: mongo
@@ -49,7 +51,8 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
       MONGO_INITDB_DATABASE: ${MONGODB_DATABASE_NAME}
     networks:
-      - spring-chat-net
+      spring-chat-net:
+        ipv4_address: 172.27.0.3
 
   application:
     image: yeseong31/spring-chat-app
@@ -67,9 +70,12 @@ services:
       - mongodb
     restart: always
     networks:
-      - spring-chat-net
+      spring-chat-net:
+        ipv4_address: 172.27.0.5
 
 networks:
   spring-chat-net:
-    driver: bridge
-    external: true
+    ipam:
+      config:
+        - subnet: 172.27.0.0/16
+          gateway: 172.27.0.1
