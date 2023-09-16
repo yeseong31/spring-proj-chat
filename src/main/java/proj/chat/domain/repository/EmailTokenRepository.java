@@ -9,9 +9,5 @@ import proj.chat.domain.entity.Member;
 @Transactional(readOnly = true)
 public interface EmailTokenRepository extends JpaRepository<EmailToken, Long> {
     
-    boolean existsByMember(Member member);
-    
     Optional<EmailToken> findByMemberId(Long memberId);
-    
-    Optional<EmailToken> findByMemberEmail(String email);
 }
