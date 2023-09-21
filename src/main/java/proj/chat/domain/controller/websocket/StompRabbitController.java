@@ -30,14 +30,8 @@ public class StompRabbitController {
         messageDto.setMessage(messageDto.getMemberName() + "님이 입장했습니다");
         messageDto.setCreatedDate(LocalDateTime.now());
     
-        String savedId = messageService.save(messageDto);
+        messageService.save(messageDto);
         log.info(String.format("[enter] 채팅방 입장: UUID=%s", channelUuid));
-    
-        // exchange
-        // template.convertAndSend(CHAT_EXCHANGE_NAME, "room." + channelUuid, chat);
-        
-        // queue
-        // template.convertAndSend("room." + channelUuid, chat);
         
         // topic
         template.convertAndSend("amq.topic", "room." + channelUuid, messageDto);
@@ -51,15 +45,9 @@ public class StompRabbitController {
         
         messageDto.setCreatedDate(LocalDateTime.now());
     
-        String savedId = messageService.save(messageDto);
+        messageService.save(messageDto);
         log.info(String.format(
                         "[send] 채팅: UUID=%s, 메시지=%s", channelUuid, messageDto.getMessage()));
-        
-        // exchange
-        // template.convertAndSend(CHAT_EXCHANGE_NAME, "room." + channelUuid, chat);
-        
-        // queue
-        // template.convertAndSend("room." + channelUuid, chat);
         
         // topic
         template.convertAndSend("amq.topic", "room." + channelUuid, messageDto);
