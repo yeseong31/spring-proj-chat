@@ -9,6 +9,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,6 +19,10 @@ import lombok.ToString;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
+@Table(name = "MEMBER", uniqueConstraints = {@UniqueConstraint(
+        name = "UUID_EMAIL_UNIQUE",
+        columnNames = {"uuid", "email"}
+)})
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @ToString(exclude = "password")
@@ -30,10 +36,10 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false)
     private String name;
     
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String uuid;
     
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String email;
     
     private String password;

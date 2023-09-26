@@ -10,6 +10,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,6 +20,10 @@ import lombok.ToString;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
+@Table(uniqueConstraints = {@UniqueConstraint(
+        name = "UUID_UNIQUE",
+        columnNames = {"uuid", }
+)})
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @ToString(exclude = {"owner", "password"})
@@ -28,7 +34,7 @@ public class Channel extends BaseEntity {
     @Column(name = "channel_id")
     private Long id;
     
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String uuid;
     
     @Column(nullable = false)
